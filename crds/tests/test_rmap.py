@@ -15,6 +15,7 @@ from nose.tools import assert_raises, assert_true
 
 # ==================================================================================
 
+
 def dt_get_derived_from_created():
     """
     >>> old_state = test_config.setup()
@@ -23,6 +24,8 @@ def dt_get_derived_from_created():
     CRDS - INFO - Skipping derivation checks for root mapping 'hst.pmap' derived_from = 'created by hand 12-23-2011'
     >>> test_config.cleanup(old_state)
     """
+
+
 def dt_get_derived_from_phony():
     """
     >>> old_state = test_config.setup()
@@ -31,6 +34,7 @@ def dt_get_derived_from_phony():
     CRDS - WARNING - Parent mapping for 'hst_acs_darkfile_phony_derive.rmap' = 'phony.rmap' does not exist.
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_rmap_missing_references():
     """
@@ -53,6 +57,7 @@ def dt_rmap_missing_references():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_rmap_minimum_header():
     """
     >>> old_state = test_config.setup()
@@ -70,7 +75,6 @@ def dt_rmap_minimum_header():
      'TIME-OBS': '11:00:47'}
     >>> test_config.cleanup(old_state)
     """
-
 
 
 def dt_rmap_str():
@@ -106,6 +110,7 @@ def dt_rmap_str():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_rmap_obs_package():
     """
     >>> old_state = test_config.setup()
@@ -114,6 +119,7 @@ def dt_rmap_obs_package():
     'crds.hst'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_rmap_format_with_comment():
     '''
@@ -164,6 +170,7 @@ def dt_rmap_format_with_comment():
     >>> test_config.cleanup(old_state)
     '''
 
+
 def dt_rmap_warn_checksum():
     """
     >>> old_state = test_config.setup()
@@ -190,6 +197,7 @@ def dt_rmap_warn_checksum():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_rmap_get_reference_parkeys():
     """
     >>> old_state = test_config.setup()
@@ -200,6 +208,7 @@ def dt_rmap_get_reference_parkeys():
     ('BAND', 'CHANNEL', 'DETECTOR', 'META.EXPOSURE.TYPE', 'META.INSTRUMENT.BAND', 'META.INSTRUMENT.CHANNEL', 'META.INSTRUMENT.DETECTOR', 'META.INSTRUMENT.LAMP_STATE', 'META.SUBARRAY.NAME', 'META.VISIT.TSOVISIT', 'SUBARRAY')
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_rmap_get_valid_values_map():
     """
@@ -354,6 +363,7 @@ def dt_rmap_get_valid_values_map():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_rmap_get_valid_values_map_range():
     """
     >>> old_state = test_config.setup()
@@ -362,6 +372,7 @@ def dt_rmap_get_valid_values_map_range():
     True
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_rmap_get_best_references_fail():
     """
@@ -379,12 +390,13 @@ def dt_rmap_get_best_references_fail():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_validate_mapping_ambiguous():
     """
     >>> old_state = test_config.setup()
     >>> r = rmap.get_cached_mapping("data/hst_acs_darkfile.rmap")
     >>> r.validate_mapping()
-    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('HRC', 'C', '1.0|2.0|4.0|8.0') : 
+    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('HRC', 'C', '1.0|2.0|4.0|8.0') :
     ----------------------------------------
     Match case
     (('DETECTOR', 'HRC'), ('CCDAMP', 'C'), ('CCDGAIN', '1.0|2.0|4.0|8.0'))
@@ -396,7 +408,7 @@ def dt_validate_mapping_ambiguous():
     For more explanation, see the file submission section of the CRDS server user's guide here:
     https://jwst-crds.stsci.edu/static/users_guide/index.html
     ----------------------------------------
-    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('HRC', 'C', '2.0') : 
+    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('HRC', 'C', '2.0') :
     ----------------------------------------
     Match case
     (('DETECTOR', 'HRC'), ('CCDAMP', 'C'), ('CCDGAIN', '2.0'))
@@ -408,7 +420,7 @@ def dt_validate_mapping_ambiguous():
     For more explanation, see the file submission section of the CRDS server user's guide here:
     https://jwst-crds.stsci.edu/static/users_guide/index.html
     ----------------------------------------
-    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('HRC', 'D', '1.0|2.0|4.0|8.0') : 
+    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('HRC', 'D', '1.0|2.0|4.0|8.0') :
     ----------------------------------------
     Match case
     (('DETECTOR', 'HRC'), ('CCDAMP', 'D'), ('CCDGAIN', '1.0|2.0|4.0|8.0'))
@@ -420,7 +432,7 @@ def dt_validate_mapping_ambiguous():
     For more explanation, see the file submission section of the CRDS server user's guide here:
     https://jwst-crds.stsci.edu/static/users_guide/index.html
     ----------------------------------------
-    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('WFC', 'ABCD', '1.0') : 
+    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('WFC', 'ABCD', '1.0') :
     ----------------------------------------
     Match case
     (('DETECTOR', 'WFC'), ('CCDAMP', 'ABCD'), ('CCDGAIN', '1.0'))
@@ -432,7 +444,7 @@ def dt_validate_mapping_ambiguous():
     For more explanation, see the file submission section of the CRDS server user's guide here:
     https://jwst-crds.stsci.edu/static/users_guide/index.html
     ----------------------------------------
-    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0') : 
+    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('WFC', 'A|ABCD|AC|AD|B|BC|BD|C|D', '1.0') :
     ----------------------------------------
     Match case
     (('DETECTOR', 'WFC'), ('CCDAMP', 'A|ABCD|AC|AD|B|BC|BD|C|D'), ('CCDGAIN', '1.0'))
@@ -444,7 +456,7 @@ def dt_validate_mapping_ambiguous():
     For more explanation, see the file submission section of the CRDS server user's guide here:
     https://jwst-crds.stsci.edu/static/users_guide/index.html
     ----------------------------------------
-    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('WFC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0') : 
+    CRDS - ERROR -  Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('WFC', 'A|ABCD|AD|B|BC|C|D', '1.0|2.0|4.0|8.0') :
     ----------------------------------------
     Match case
     (('DETECTOR', 'WFC'), ('CCDAMP', 'A|ABCD|AD|B|BC|C|D'), ('CCDGAIN', '1.0|2.0|4.0|8.0'))
@@ -459,6 +471,7 @@ def dt_validate_mapping_ambiguous():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_validate_mapping_invalid1():
     """
     >>> old_state = test_config.setup()
@@ -467,6 +480,7 @@ def dt_validate_mapping_invalid1():
     CRDS - ERROR - Match('DETECTOR', 'CCDAMP', 'CCDGAIN') : ('HRC', 'A|ABCD|AD|B|BC|C|DDDD', '1.0|2.0|4.0|8.0') :  parameter='CCDAMP' value='DDDD' is not in ('A', 'B', 'C', 'D', 'AC', 'AD', 'BC', 'BD', 'ABCD', 'N/A')
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_validate_mapping_invalid2():
     """
@@ -477,12 +491,14 @@ def dt_validate_mapping_invalid2():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_rmap_asmapping_readonly():
     """
     >>> old_state = test_config.setup()
     >>> r = rmap.asmapping("data/hst_acs_darkfile.rmap", cached="readonly")
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_rmap_get_equivalent_mapping_missing():
     """
@@ -492,6 +508,7 @@ def dt_rmap_get_equivalent_mapping_missing():
     CRDS - WARNING - No equivalent filekind in 'hst_cos.imap' corresponding to 'hst_cos_twozxtab_0001.rmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_imap_match_not_applicable():
     """
@@ -514,6 +531,7 @@ def dt_imap_match_not_applicable():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_imap_match_omit():
     """
     >>> old_state = test_config.setup()
@@ -534,6 +552,7 @@ def dt_imap_match_omit():
     False
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_pickling():
     """
@@ -566,10 +585,11 @@ def dt_pickling():
     >>> test_config.cleanup(old_state)
     """
 
+
 # ==================================================================================
 
-class TestRmap(test_config.CRDSTestCase):
 
+class TestRmap(test_config.CRDSTestCase):
     def test_rmap_get_imap_except(self):
         r = rmap.get_cached_mapping("hst.pmap")
         with self.assertRaises(CrdsUnknownInstrumentError):
@@ -577,35 +597,84 @@ class TestRmap(test_config.CRDSTestCase):
 
     def test_rmap_get_filekind(self):
         r = rmap.get_cached_mapping("hst.pmap")
-        self.assertEqual(set(r.get_filekinds("data/j8bt05njq_raw.fits")),
-                         {'atodtab','biasfile','bpixtab','ccdtab','cfltfile','crrejtab',
-                          'd2imfile','darkfile','dgeofile','drkcfile','flshfile','idctab',
-                          'imphttab','mdriztab','mlintab','npolfile','oscntab','pctetab',
-                          'pfltfile','shadfile','spottab'})
+        self.assertEqual(
+            set(r.get_filekinds("data/j8bt05njq_raw.fits")),
+            {
+                "atodtab",
+                "biasfile",
+                "bpixtab",
+                "ccdtab",
+                "cfltfile",
+                "crrejtab",
+                "d2imfile",
+                "darkfile",
+                "dgeofile",
+                "drkcfile",
+                "flshfile",
+                "idctab",
+                "imphttab",
+                "mdriztab",
+                "mlintab",
+                "npolfile",
+                "oscntab",
+                "pctetab",
+                "pfltfile",
+                "shadfile",
+                "spottab",
+            },
+        )
 
     def test_rmap_get_equivalent_mapping(self):
         i = rmap.get_cached_mapping("data/hst_acs_0002.imap")
         self.assertEqual(i.get_equivalent_mapping("hst.pmap"), None)
-        self.assertEqual(i.get_equivalent_mapping("data/hst_acs_0001.imap").name, "hst_acs.imap")
-        self.assertEqual(i.get_equivalent_mapping("data/hst_acs_biasfile_0002.rmap").name, "hst_acs_biasfile.rmap")
+        self.assertEqual(
+            i.get_equivalent_mapping("data/hst_acs_0001.imap").name, "hst_acs.imap"
+        )
+        self.assertEqual(
+            i.get_equivalent_mapping("data/hst_acs_biasfile_0002.rmap").name,
+            "hst_acs_biasfile.rmap",
+        )
 
     def test_rmap_list_mappings(self):
         os.environ["CRDS_MAPPATH_SINGLE"] = self.data_dir
-        self.assertEqual(rmap.list_mappings("*.imap", "hst"), [
-                'hst_acs.imap', 'hst_acs_0001.imap', 'hst_acs_0002.imap', 'hst_acs_9999.imap',
-                'hst_cos.imap', 'hst_nicmos.imap', 'hst_stis.imap', 'hst_wfc3.imap', 'hst_wfpc2.imap',
-                'jwst_fgs_na.imap', 'jwst_miri_omit.imap', 'jwst_niriss_na_omit.imap', 'roman_wfi_0001.imap'])
+        self.assertEqual(
+            rmap.list_mappings("*.imap", "hst"),
+            [
+                "hst_acs.imap",
+                "hst_acs_0001.imap",
+                "hst_acs_0002.imap",
+                "hst_acs_9999.imap",
+                "hst_cos.imap",
+                "hst_nicmos.imap",
+                "hst_stis.imap",
+                "hst_wfc3.imap",
+                "hst_wfpc2.imap",
+                "jwst_fgs_na.imap",
+                "jwst_miri_omit.imap",
+                "jwst_niriss_na_omit.imap",
+                "roman_wfi_0001.imap",
+            ],
+        )
 
     def test_rmap_list_references(self):
         os.environ["CRDS_REFPATH_SINGLE"] = self.data_dir
         config.CRDS_REF_SUBDIR_MODE = "flat"
-        self.assertEqual(rmap.list_references("*.r1h", "hst"), ['dbu1405fu.r1h', 'dbu1405iu.r1h', 'e1b09593u.r1h', 'e1b09594u.r1h', 'valid.r1h'])
+        self.assertEqual(
+            rmap.list_references("*.r1h", "hst"),
+            [
+                "dbu1405fu.r1h",
+                "dbu1405iu.r1h",
+                "e1b09593u.r1h",
+                "e1b09594u.r1h",
+                "valid.r1h",
+            ],
+        )
 
     def test_rmap_get_derived_from(self):
         # api.dump_mappings("hst.pmap", mappings=["hst_acs_flshfile_0251.rmap"])
         os.environ["CRDS_MAPPATH_SINGLE"] = self.data_dir
         r = rmap.get_cached_mapping("data/hst_acs_flshfile_0252.rmap")
-        self.assertEqual(r.get_derived_from().name, 'hst_acs_flshfile_0251.rmap')
+        self.assertEqual(r.get_derived_from().name, "hst_acs_flshfile_0251.rmap")
 
     def test_missing_required_header_key(self):
         with self.assertRaises(MissingHeaderKeyError):
@@ -622,7 +691,8 @@ class TestRmap(test_config.CRDSTestCase):
 
     def test_rmap_missing_checksum(self):
         with self.assertRaises(ChecksumError):
-            r = rmap.ReferenceMapping.from_string('''
+            r = rmap.ReferenceMapping.from_string(
+                """
 header = {
    'derived_from' : 'generated from CDBS database 2013-01-11 13:58:14.664182',
    'filekind' : 'DARKFILE',
@@ -639,10 +709,12 @@ selector = Match({
        '2002-03-01 00:00:00' : 'n3o1022cj_drk.fits',
     }),
 })
-''')
+"""
+            )
 
     def test_rmap_schema_uri(self):
-        r = rmap.ReferenceMapping.from_string('''
+        r = rmap.ReferenceMapping.from_string(
+            """
 header = {
     'derived_from' : 'jwst_nircam_pars-tweakregstep_0001.rmap',
     'file_ext' : '.asdf',
@@ -661,12 +733,17 @@ header = {
 
 selector = Match({
 })
-''', ignore_checksum=True)
-        self.assertEquals(r.schema_uri, 'http://stsci.edu/schemas/asdf/core/ndarray-1.0.0')
+""",
+            ignore_checksum=True,
+        )
+        self.assertEquals(
+            r.schema_uri, "http://stsci.edu/schemas/asdf/core/ndarray-1.0.0"
+        )
         r.validate()
 
     def test_rmap_schema_uri_missing(self):
-        r = rmap.ReferenceMapping.from_string('''
+        r = rmap.ReferenceMapping.from_string(
+            """
 header = {
     'derived_from' : 'jwst_nircam_pars-tweakregstep_0001.rmap',
     'file_ext' : '.asdf',
@@ -685,201 +762,282 @@ header = {
 
 selector = Match({
 })
-''', ignore_checksum=True)
+""",
+            ignore_checksum=True,
+        )
         with self.assertRaises(FileNotFoundError):
             r.validate()
 
     def test_rmap_get_best_references_include(self):
         r = rmap.get_cached_mapping("data/hst_acs_darkfile_comment.rmap")
         header = {
-            'CCDAMP': 'ABCD',
-            'CCDGAIN': '1.0',
-            'DARKCORR': 'UNDEFINED',
-            'DATE-OBS': '2002-07-18',
-            'DETECTOR': 'WFC',
-            'TIME-OBS': '18:09:15.773332'}
+            "CCDAMP": "ABCD",
+            "CCDGAIN": "1.0",
+            "DARKCORR": "UNDEFINED",
+            "DATE-OBS": "2002-07-18",
+            "DETECTOR": "WFC",
+            "TIME-OBS": "18:09:15.773332",
+        }
         with self.assertRaises(CrdsUnknownReftypeError):
             r.get_best_references(header, include=["flatfile"])
 
     def test_rmap_get_parkey_map(self):
         i = rmap.get_cached_mapping("hst_acs.imap")
-        i.get_parkey_map() == {'APERTURE': ['*',
-                  'WFC',
-                  'WFC-FIX',
-                  'WFC1',
-                  'WFC1-1K',
-                  'WFC1-2K',
-                  'WFC1-512',
-                  'WFC1-CTE',
-                  'WFC1-FIX',
-                  'WFC1-IRAMP',
-                  'WFC1-IRAMPQ',
-                  'WFC1-MRAMP',
-                  'WFC1-MRAMPQ',
-                  'WFC1-POL0UV',
-                  'WFC1-POL0V',
-                  'WFC1-POL120UV',
-                  'WFC1-POL120V',
-                  'WFC1-POL60UV',
-                  'WFC1-POL60V',
-                  'WFC1-SMFL',
-                  'WFC2',
-                  'WFC2-2K',
-                  'WFC2-FIX',
-                  'WFC2-MRAMP',
-                  'WFC2-ORAMP',
-                  'WFC2-ORAMPQ',
-                  'WFC2-POL0UV',
-                  'WFC2-POL0V',
-                  'WFC2-POL120UV',
-                  'WFC2-POL120V',
-                  'WFC2-POL60UV',
-                  'WFC2-POL60V',
-                  'WFC2-SMFL',
-                  'WFCENTER'],
-     'ATODCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'BIASCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'CCDAMP': ['A', 'ABCD', 'AC', 'AD', 'B', 'BC', 'BD', 'C', 'D', 'N/A'],
-     'CCDCHIP': ['N/A'],
-     'CCDGAIN': ['0.5', '1.0', '1.4', '2.0', '4.0', '8.0', 'N/A'],
-     'CRCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'DARKCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'DETECTOR': ['HRC', 'SBC', 'WFC'],
-     'DQICORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'DRIZCORR': ['NONE', 'COMPLETE', 'PERFORM', 'OMIT', 'UNDEFINED'],
-     'FILTER1': ['*',
-                 'BLOCK1',
-                 'BLOCK2',
-                 'BLOCK3',
-                 'BLOCK4',
-                 'CLEAR1L',
-                 'CLEAR1S',
-                 'F115LP',
-                 'F122M',
-                 'F125LP',
-                 'F140LP',
-                 'F150LP',
-                 'F165LP',
-                 'F475W',
-                 'F502N',
-                 'F550M',
-                 'F555W',
-                 'F606W',
-                 'F625W',
-                 'F658N',
-                 'F775W',
-                 'F850LP',
-                 'F892N',
-                 'G800L',
-                 'N/A',
-                 'POL0UV',
-                 'POL120UV',
-                 'POL60UV',
-                 'PR110L',
-                 'PR130L'],
-     'FILTER2': ['CLEAR2L',
-                 'CLEAR2S',
-                 'F220M',
-                 'F220W',
-                 'F250W',
-                 'F330W',
-                 'F344N',
-                 'F410W',
-                 'F435W',
-                 'F660N',
-                 'F814W',
-                 'FR1016N',
-                 'FR388N',
-                 'FR423N',
-                 'FR459M',
-                 'FR462N',
-                 'FR505N',
-                 'FR551N',
-                 'FR555N',
-                 'FR601N',
-                 'FR647M',
-                 'FR656N',
-                 'FR716N',
-                 'FR782N',
-                 'FR853N',
-                 'FR914M',
-                 'FR931N',
-                 'N/A',
-                 'POL0V',
-                 'POL120V',
-                 'POL60V',
-                 'PR200L'],
-     'FLASHCUR': ['HIGH', 'LOW', 'MED'],
-     'FLATCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'FLSHCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'FW1OFFST': ['-1.0', '1.0', 'N/A'],
-     'FW2OFFST': ['-1.0', '1.0', 'N/A'],
-     'FWSOFFST': ['N/A'],
-     'GLINCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'LTV1': ['-1816.0',
-              '-2048.0',
-              '-3072.0',
-              '-3584.0',
-              '-3604.0',
-              '19.0',
-              '22.0',
-              '24.0',
-              'N/A'],
-     'LTV2': ['-1.0',
-              '-1023.0',
-              '-1535.0',
-              '-1591.0',
-              '-57.0',
-              '-824.0',
-              '0.0',
-              '20.0',
-              'N/A'],
-     'NUMCOLS': ['1046.0',
-                 '1062.0',
-                 '2070.0',
-                 '2300.0',
-                 '4144.0',
-                 '512.0',
-                 '534.0',
-                 'N/A'],
-     'NUMROWS': ['1024.0', '1044.0', '2046.0', '2068.0', '400.0', '512.0', 'N/A'],
-     'OBSTYPE': ['CORONAGRAPHIC', 'IMAGING', 'SPECTROSCOPIC'],
-     'PCTECORR': ['NONE', 'COMPLETE', 'PERFORM', 'OMIT', 'UNDEFINED'],
-     'PHOTCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'SHADCORR': ['PERFORM', 'NONE', 'OMIT', 'COMPLETE', 'UNDEFINED'],
-     'SHUTRPOS': ['A', 'B'],
-     'XCORNER': ['N/A'],
-     'YCORNER': ['N/A']}
+        i.get_parkey_map() == {
+            "APERTURE": [
+                "*",
+                "WFC",
+                "WFC-FIX",
+                "WFC1",
+                "WFC1-1K",
+                "WFC1-2K",
+                "WFC1-512",
+                "WFC1-CTE",
+                "WFC1-FIX",
+                "WFC1-IRAMP",
+                "WFC1-IRAMPQ",
+                "WFC1-MRAMP",
+                "WFC1-MRAMPQ",
+                "WFC1-POL0UV",
+                "WFC1-POL0V",
+                "WFC1-POL120UV",
+                "WFC1-POL120V",
+                "WFC1-POL60UV",
+                "WFC1-POL60V",
+                "WFC1-SMFL",
+                "WFC2",
+                "WFC2-2K",
+                "WFC2-FIX",
+                "WFC2-MRAMP",
+                "WFC2-ORAMP",
+                "WFC2-ORAMPQ",
+                "WFC2-POL0UV",
+                "WFC2-POL0V",
+                "WFC2-POL120UV",
+                "WFC2-POL120V",
+                "WFC2-POL60UV",
+                "WFC2-POL60V",
+                "WFC2-SMFL",
+                "WFCENTER",
+            ],
+            "ATODCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "BIASCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "CCDAMP": ["A", "ABCD", "AC", "AD", "B", "BC", "BD", "C", "D", "N/A"],
+            "CCDCHIP": ["N/A"],
+            "CCDGAIN": ["0.5", "1.0", "1.4", "2.0", "4.0", "8.0", "N/A"],
+            "CRCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "DARKCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "DETECTOR": ["HRC", "SBC", "WFC"],
+            "DQICORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "DRIZCORR": ["NONE", "COMPLETE", "PERFORM", "OMIT", "UNDEFINED"],
+            "FILTER1": [
+                "*",
+                "BLOCK1",
+                "BLOCK2",
+                "BLOCK3",
+                "BLOCK4",
+                "CLEAR1L",
+                "CLEAR1S",
+                "F115LP",
+                "F122M",
+                "F125LP",
+                "F140LP",
+                "F150LP",
+                "F165LP",
+                "F475W",
+                "F502N",
+                "F550M",
+                "F555W",
+                "F606W",
+                "F625W",
+                "F658N",
+                "F775W",
+                "F850LP",
+                "F892N",
+                "G800L",
+                "N/A",
+                "POL0UV",
+                "POL120UV",
+                "POL60UV",
+                "PR110L",
+                "PR130L",
+            ],
+            "FILTER2": [
+                "CLEAR2L",
+                "CLEAR2S",
+                "F220M",
+                "F220W",
+                "F250W",
+                "F330W",
+                "F344N",
+                "F410W",
+                "F435W",
+                "F660N",
+                "F814W",
+                "FR1016N",
+                "FR388N",
+                "FR423N",
+                "FR459M",
+                "FR462N",
+                "FR505N",
+                "FR551N",
+                "FR555N",
+                "FR601N",
+                "FR647M",
+                "FR656N",
+                "FR716N",
+                "FR782N",
+                "FR853N",
+                "FR914M",
+                "FR931N",
+                "N/A",
+                "POL0V",
+                "POL120V",
+                "POL60V",
+                "PR200L",
+            ],
+            "FLASHCUR": ["HIGH", "LOW", "MED"],
+            "FLATCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "FLSHCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "FW1OFFST": ["-1.0", "1.0", "N/A"],
+            "FW2OFFST": ["-1.0", "1.0", "N/A"],
+            "FWSOFFST": ["N/A"],
+            "GLINCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "LTV1": [
+                "-1816.0",
+                "-2048.0",
+                "-3072.0",
+                "-3584.0",
+                "-3604.0",
+                "19.0",
+                "22.0",
+                "24.0",
+                "N/A",
+            ],
+            "LTV2": [
+                "-1.0",
+                "-1023.0",
+                "-1535.0",
+                "-1591.0",
+                "-57.0",
+                "-824.0",
+                "0.0",
+                "20.0",
+                "N/A",
+            ],
+            "NUMCOLS": [
+                "1046.0",
+                "1062.0",
+                "2070.0",
+                "2300.0",
+                "4144.0",
+                "512.0",
+                "534.0",
+                "N/A",
+            ],
+            "NUMROWS": [
+                "1024.0",
+                "1044.0",
+                "2046.0",
+                "2068.0",
+                "400.0",
+                "512.0",
+                "N/A",
+            ],
+            "OBSTYPE": ["CORONAGRAPHIC", "IMAGING", "SPECTROSCOPIC"],
+            "PCTECORR": ["NONE", "COMPLETE", "PERFORM", "OMIT", "UNDEFINED"],
+            "PHOTCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "SHADCORR": ["PERFORM", "NONE", "OMIT", "COMPLETE", "UNDEFINED"],
+            "SHUTRPOS": ["A", "B"],
+            "XCORNER": ["N/A"],
+            "YCORNER": ["N/A"],
+        }
 
     maxDiff = None
 
     def test_rmap_todict(self):
         r = rmap.get_cached_mapping("data/hst_cos_bpixtab_0252.rmap")
-        self.assertEqual(r.todict(), {'text_descr': 'Data Quality (Bad Pixel) Initialization Table', 'selections': [('FUV', '1996-10-01 00:00:00', 's7g1700dl_bpix.fits'), ('FUV', '2009-05-11 00:00:00', 'z1r1943fl_bpix.fits'), ('NUV', '1996-10-01 00:00:00', 's7g1700pl_bpix.fits'), ('NUV', '2009-05-11 00:00:00', 'uas19356l_bpix.fits')], 'header': {'sha1sum': 'd2024dade52a406af70fcdf27a81088004d67cae', 'reffile_switch': 'none', 'filekind': 'bpixtab', 'instrument': 'cos', 'derived_from': 'hst_cos_bpixtab_0251.rmap', 'reffile_format': 'table', 'observatory': 'hst', 'parkey': (('DETECTOR',), ('DATE-OBS', 'TIME-OBS')), 'reffile_required': 'none', 'rmap_relevance': 'always', 'mapping': 'reference', 'name': 'hst_cos_bpixtab_0252.rmap'}, 'parameters': ('DETECTOR', 'USEAFTER', 'REFERENCE')})
+        self.assertEqual(
+            r.todict(),
+            {
+                "text_descr": "Data Quality (Bad Pixel) Initialization Table",
+                "selections": [
+                    ("FUV", "1996-10-01 00:00:00", "s7g1700dl_bpix.fits"),
+                    ("FUV", "2009-05-11 00:00:00", "z1r1943fl_bpix.fits"),
+                    ("NUV", "1996-10-01 00:00:00", "s7g1700pl_bpix.fits"),
+                    ("NUV", "2009-05-11 00:00:00", "uas19356l_bpix.fits"),
+                ],
+                "header": {
+                    "sha1sum": "d2024dade52a406af70fcdf27a81088004d67cae",
+                    "reffile_switch": "none",
+                    "filekind": "bpixtab",
+                    "instrument": "cos",
+                    "derived_from": "hst_cos_bpixtab_0251.rmap",
+                    "reffile_format": "table",
+                    "observatory": "hst",
+                    "parkey": (("DETECTOR",), ("DATE-OBS", "TIME-OBS")),
+                    "reffile_required": "none",
+                    "rmap_relevance": "always",
+                    "mapping": "reference",
+                    "name": "hst_cos_bpixtab_0252.rmap",
+                },
+                "parameters": ("DETECTOR", "USEAFTER", "REFERENCE"),
+            },
+        )
 
     def test_rmap_tojson(self):
         r = rmap.get_cached_mapping("data/hst_cos_bpixtab_0252.rmap")
-        self.assertEqual(json.loads(r.tojson()), {u'header': {u'observatory': u'hst', u'name': u'hst_cos_bpixtab_0252.rmap', u'reffile_required': u'none', u'parkey': [[u'DETECTOR'], [u'DATE-OBS', u'TIME-OBS']], u'mapping': u'reference', u'filekind': u'bpixtab', u'instrument': u'cos', u'derived_from': u'hst_cos_bpixtab_0251.rmap', u'reffile_switch': u'none', u'reffile_format': u'table', u'rmap_relevance': u'always', u'sha1sum': u'd2024dade52a406af70fcdf27a81088004d67cae'}, u'text_descr': u'Data Quality (Bad Pixel) Initialization Table', u'parameters': [u'DETECTOR', u'USEAFTER', u'REFERENCE'], u'selections': [[u'FUV', u'1996-10-01 00:00:00', u's7g1700dl_bpix.fits'], [u'FUV', u'2009-05-11 00:00:00', u'z1r1943fl_bpix.fits'], [u'NUV', u'1996-10-01 00:00:00', u's7g1700pl_bpix.fits'], [u'NUV', u'2009-05-11 00:00:00', u'uas19356l_bpix.fits']]})
+        self.assertEqual(
+            json.loads(r.tojson()),
+            {
+                u"header": {
+                    u"observatory": u"hst",
+                    u"name": u"hst_cos_bpixtab_0252.rmap",
+                    u"reffile_required": u"none",
+                    u"parkey": [[u"DETECTOR"], [u"DATE-OBS", u"TIME-OBS"]],
+                    u"mapping": u"reference",
+                    u"filekind": u"bpixtab",
+                    u"instrument": u"cos",
+                    u"derived_from": u"hst_cos_bpixtab_0251.rmap",
+                    u"reffile_switch": u"none",
+                    u"reffile_format": u"table",
+                    u"rmap_relevance": u"always",
+                    u"sha1sum": u"d2024dade52a406af70fcdf27a81088004d67cae",
+                },
+                u"text_descr": u"Data Quality (Bad Pixel) Initialization Table",
+                u"parameters": [u"DETECTOR", u"USEAFTER", u"REFERENCE"],
+                u"selections": [
+                    [u"FUV", u"1996-10-01 00:00:00", u"s7g1700dl_bpix.fits"],
+                    [u"FUV", u"2009-05-11 00:00:00", u"z1r1943fl_bpix.fits"],
+                    [u"NUV", u"1996-10-01 00:00:00", u"s7g1700pl_bpix.fits"],
+                    [u"NUV", u"2009-05-11 00:00:00", u"uas19356l_bpix.fits"],
+                ],
+            },
+        )
 
     def test_rmap_match_not_applicable(self):
         r = rmap.get_cached_mapping("data/hst_acs_darkfile_na_omit.rmap")
-        r.get_best_ref({
-                "DETECTOR" : "SBC",
-                "CCDAMP" : "A",
-                "CCDGAIN" : "1.0",
-                "DATE-OBS" : "1993-01-01",
-                "TIME-OBS" : "12:00:00",
-                }) == "NOT FOUNT n/a"
+        r.get_best_ref(
+            {
+                "DETECTOR": "SBC",
+                "CCDAMP": "A",
+                "CCDGAIN": "1.0",
+                "DATE-OBS": "1993-01-01",
+                "TIME-OBS": "12:00:00",
+            }
+        ) == "NOT FOUNT n/a"
 
     def test_rmap_match_omit(self):
         r = rmap.get_cached_mapping("data/hst_acs_darkfile_na_omit.rmap")
-        r.get_best_ref({
-                "DETECTOR" : "SBC",
-                "CCDAMP" : "A",
-                "CCDGAIN" : "1.0",
-                "DATE-OBS" : "2002-03-19",
-                "TIME-OBS" : "00:34:32",
-                }) is None
+        r.get_best_ref(
+            {
+                "DETECTOR": "SBC",
+                "CCDAMP": "A",
+                "CCDGAIN": "1.0",
+                "DATE-OBS": "2002-03-19",
+                "TIME-OBS": "00:34:32",
+            }
+        ) is None
 
     def test_rmap_todict(self):
         p = rmap.get_cached_mapping("hst.pmap")
@@ -892,7 +1050,8 @@ selector = Match({
 
     def _get_rmap(self):
         log.set_verbose(55)
-        return rmap.ReferenceMapping.from_string("""
+        return rmap.ReferenceMapping.from_string(
+            """
 header = {
     'derived_from' : 'hst_wfc3_darkfile_0379.rmap',
     'filekind' : 'DARKFILE',
@@ -928,7 +1087,9 @@ selector = Match({
         '2008-02-20 00:00:00' : 't3420177i_drk.fits',
     }),
 })
-""", ignore_checksum=True)
+""",
+            ignore_checksum=True,
+        )
 
     def test_ref_to_dataset_ir(self):
 
@@ -937,16 +1098,23 @@ selector = Match({
         r = self._get_rmap()
 
         header = dict(
-            DETECTOR="IR", CCDAMP="ABCD", BINAXIS1="1.0", BINAXIS2="2.0",
-            CCDGAIN="1.0", SAMP_SEQ="MIF1200", SUBTYPE="FULLIMAG", DARKCORR="PERFORM")
+            DETECTOR="IR",
+            CCDAMP="ABCD",
+            BINAXIS1="1.0",
+            BINAXIS2="2.0",
+            CCDGAIN="1.0",
+            SAMP_SEQ="MIF1200",
+            SUBTYPE="FULLIMAG",
+            DARKCORR="PERFORM",
+        )
 
         # transform for rmap updates
         dheader = utils.Struct(r.reference_to_dataset_header(header))
 
         self.assertEqual(dheader.DETECTOR, "IR")
         self.assertEqual(dheader.CCDAMP, "ABCD")
-        self.assertEqual(dheader.BINAXIS1, "1.0")   # comment
-        self.assertEqual(dheader.BINAXIS2, "N/A")   # non-comment
+        self.assertEqual(dheader.BINAXIS1, "1.0")  # comment
+        self.assertEqual(dheader.BINAXIS2, "N/A")  # non-comment
         self.assertEqual(dheader.CCDGAIN, "1.0")
         self.assertEqual(dheader.SAMP_SEQ, "MIF1200")
         self.assertEqual(dheader.SUBTYPE, "FULLIMAG")
@@ -957,16 +1125,23 @@ selector = Match({
         r = self._get_rmap()
 
         header = dict(
-            DETECTOR="UVIS", CCDAMP="ABCD", BINAXIS1="1.0", BINAXIS2="2.0",
-            CCDGAIN="1.0", SAMP_SEQ="MIF1200", SUBTYPE="FULLIMAG", DARKCORR="PERFORM")
+            DETECTOR="UVIS",
+            CCDAMP="ABCD",
+            BINAXIS1="1.0",
+            BINAXIS2="2.0",
+            CCDGAIN="1.0",
+            SAMP_SEQ="MIF1200",
+            SUBTYPE="FULLIMAG",
+            DARKCORR="PERFORM",
+        )
 
         # transform for rmap updates
         dheader = utils.Struct(r.reference_to_dataset_header(header))
 
         self.assertEqual(dheader.DETECTOR, "UVIS")
         self.assertEqual(dheader.CCDAMP, "ABCD")
-        self.assertEqual(dheader.BINAXIS1, "1.0")   # comment
-        self.assertEqual(dheader.BINAXIS2, "2.0")   # non-comment
+        self.assertEqual(dheader.BINAXIS1, "1.0")  # comment
+        self.assertEqual(dheader.BINAXIS2, "2.0")  # non-comment
         self.assertEqual(dheader.CCDGAIN, "N/A")
         self.assertEqual(dheader.SAMP_SEQ, "N/A")
         self.assertEqual(dheader.SUBTYPE, "N/A")
@@ -979,16 +1154,23 @@ selector = Match({
         # bestrefs time conversions still map comment parkeys to N/A
 
         header = dict(
-            DETECTOR="IR", CCDAMP="ABCD", BINAXIS1="1.0", BINAXIS2="2.0",
-            CCDGAIN="1.0", SAMP_SEQ="MIF1200", SUBTYPE="FULLIMAG", DARKCORR="PERFORM")
+            DETECTOR="IR",
+            CCDAMP="ABCD",
+            BINAXIS1="1.0",
+            BINAXIS2="2.0",
+            CCDGAIN="1.0",
+            SAMP_SEQ="MIF1200",
+            SUBTYPE="FULLIMAG",
+            DARKCORR="PERFORM",
+        )
 
         # transform for bestrefs
         dheader = utils.Struct(r.map_irrelevant_parkeys_to_na(header))
 
         self.assertEqual(dheader.DETECTOR, "IR")
         self.assertEqual(dheader.CCDAMP, "ABCD")
-        self.assertEqual(dheader.BINAXIS1, "N/A")   # comment
-        self.assertEqual(dheader.BINAXIS2, "N/A")   # non-comment
+        self.assertEqual(dheader.BINAXIS1, "N/A")  # comment
+        self.assertEqual(dheader.BINAXIS2, "N/A")  # non-comment
         self.assertEqual(dheader.CCDGAIN, "1.0")
         self.assertEqual(dheader.SAMP_SEQ, "MIF1200")
         self.assertEqual(dheader.SUBTYPE, "FULLIMAG")
@@ -999,20 +1181,28 @@ selector = Match({
         r = self._get_rmap()
 
         header = dict(
-            DETECTOR="UVIS", CCDAMP="ABCD", BINAXIS1="1.0", BINAXIS2="2.0",
-            CCDGAIN="1.0", SAMP_SEQ="MIF1200", SUBTYPE="FULLIMAG", DARKCORR="PERFORM")
+            DETECTOR="UVIS",
+            CCDAMP="ABCD",
+            BINAXIS1="1.0",
+            BINAXIS2="2.0",
+            CCDGAIN="1.0",
+            SAMP_SEQ="MIF1200",
+            SUBTYPE="FULLIMAG",
+            DARKCORR="PERFORM",
+        )
 
         # transform for bestrefs
         dheader = utils.Struct(r.map_irrelevant_parkeys_to_na(header))
 
         self.assertEqual(dheader.DETECTOR, "UVIS")
         self.assertEqual(dheader.CCDAMP, "ABCD")
-        self.assertEqual(dheader.BINAXIS1, "N/A")   # comment
-        self.assertEqual(dheader.BINAXIS2, "2.0")   # non-comment
+        self.assertEqual(dheader.BINAXIS1, "N/A")  # comment
+        self.assertEqual(dheader.BINAXIS2, "2.0")  # non-comment
         self.assertEqual(dheader.CCDGAIN, "N/A")
         self.assertEqual(dheader.SAMP_SEQ, "N/A")
         self.assertEqual(dheader.SUBTYPE, "N/A")
         self.assertEqual(dheader.DARKCORR, "PERFORM")
+
 
 # ==================================================================================
 
@@ -1020,11 +1210,14 @@ selector = Match({
 def tst():
     """Run module tests,  for now just doctests only."""
     import unittest
+
     suite = unittest.TestLoader().loadTestsFromTestCase(TestRmap)
     unittest.TextTestRunner().run(suite)
 
     from crds.tests import test_rmap, tstmod
+
     return tstmod(test_rmap)
+
 
 if __name__ == "__main__":
     print(tst())

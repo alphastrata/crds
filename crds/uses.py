@@ -20,6 +20,7 @@ import os.path
 
 from crds.core import config, cmdline, utils, log, rmap
 
+
 @utils.cached
 def load_all_mappings(observatory, pattern="*map"):
     """Return a dictionary mapping the names of all CRDS Mappings matching `pattern`
@@ -32,12 +33,16 @@ def load_all_mappings(observatory, pattern="*map"):
             loaded[name] = rmap.get_cached_mapping(name)
     return loaded
 
+
 @utils.cached
 def mapping_type_names(observatory, ending):
     """Return a mapping dictionary containing only mappings with names with `ending`."""
-    return { name : mapping.mapping_names() + mapping.reference_names()
-             for (name, mapping) in load_all_mappings(observatory).items()
-             if name.endswith(ending) }
+    return {
+        name: mapping.mapping_names() + mapping.reference_names()
+        for (name, mapping) in load_all_mappings(observatory).items()
+        if name.endswith(ending)
+    }
+
 
 def uses_files(files, observatory, ending):
     """Alternate approach to uses that works by loading all mappings instead of grepping
@@ -51,17 +56,21 @@ def uses_files(files, observatory, ending):
         referrers |= for_filename
     return sorted(list(referrers))
 
+
 def _findall_rmaps_using_reference(filename, observatory="hst"):
     """Return the basename of all reference mappings which mention `filename`."""
     return uses_files([filename], observatory, "rmap")
+
 
 def _findall_imaps_using_rmap(filename, observatory="hst"):
     """Return the basenames of all instrument contexts which mention `filename`."""
     return uses_files([filename], observatory, "imap")
 
+
 def _findall_pmaps_using_imap(filename, observatory="hst"):
     """Return the basenames of all pipeline contexts which mention `filename`."""
     return uses_files([filename], observatory, "pmap")
+
 
 def _findall_mappings_using_reference(reference, observatory="hst"):
     """Return the basenames of all mapping files in the hierarchy which
@@ -76,6 +85,7 @@ def _findall_mappings_using_reference(reference, observatory="hst"):
                 mappings.append(pmap)
     return sorted(list(set(mappings)))
 
+
 def _findall_mappings_using_rmap(rmap, observatory="hst"):
     """Return the basenames of all mapping files in the hierarchy which
     mentions reference mapping `rmap`.
@@ -86,6 +96,7 @@ def _findall_mappings_using_rmap(rmap, observatory="hst"):
         for pmap in _findall_pmaps_using_imap(imap, observatory):
             mappings.append(pmap)
     return sorted(list(set(mappings)))
+
 
 def uses(files, observatory="hst"):
     """Return the list of mappings which use any of `files`."""
@@ -100,6 +111,7 @@ def uses(files, observatory="hst"):
         else:
             mappings.extend(_findall_mappings_using_reference(file_, observatory))
     return sorted(list(set(mappings)))
+
 
 class UsesScript(cmdline.Script):
     """Command line script for printing rmaps using references,  or datasets using references."""
@@ -138,13 +150,22 @@ hst_acs_darkfile_0003.rmap
 hst_acs_darkfile_0005.rmap
 
 """
+
     def add_args(self):
         """Add command line parameters unique to this script."""
         super(UsesScript, self).add_args()
-        self.add_argument("--files", nargs="+",
-                          help="References for which to dump using mappings or datasets.")
-        self.add_argument("-i", "--include-used", action="store_true", dest="include_used",
-                          help="Include the used file in the output as the first column.")
+        self.add_argument(
+            "--files",
+            nargs="+",
+            help="References for which to dump using mappings or datasets.",
+        )
+        self.add_argument(
+            "-i",
+            "--include-used",
+            action="store_true",
+            dest="include_used",
+            help="Include the used file in the output as the first column.",
+        )
 
     def main(self):
         """Process command line parameters in to a context and list of
@@ -170,11 +191,14 @@ hst_acs_darkfile_0005.rmap
                 else:
                     print(use)
 
+
 def test():
     """Run the module doctest."""
     import doctest
     from . import uses
+
     return doctest.testmod(uses)
+
 
 if __name__ == "__main__":
     sys.exit(UsesScript()())

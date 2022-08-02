@@ -39,7 +39,9 @@ class HeaderGenerator:
 
     def __init__(self, context, sources, datasets_since):
         self.context = context
-        self.observatory = None if context is None else utils.file_to_observatory(context)
+        self.observatory = (
+            None if context is None else utils.file_to_observatory(context)
+        )
         self.sources = sources
         self.headers = {}
         self._datasets_since = datasets_since
@@ -47,8 +49,12 @@ class HeaderGenerator:
     def __iter__(self):
         """Return the sources from self with EXPTIME >= self.datasets_since."""
         for source in sorted(self.sources):
-            with log.error_on_exception("Failed loading source", repr(source),
-                                        "from", repr(self.__class__.__name__)):
+            with log.error_on_exception(
+                "Failed loading source",
+                repr(source),
+                "from",
+                repr(self.__class__.__name__),
+            ):
                 instrument = utils.header_to_instrument(self.header(source))
                 exptime = matches.get_exptime(self.header(source))
                 since = self.datasets_since(instrument)
@@ -56,9 +62,14 @@ class HeaderGenerator:
                 if since is None or exptime >= since:
                     yield source
                 else:
-                    log.verbose("Dropping source", repr(source),
-                                "with EXPTIME =", repr(exptime),
-                                "< --datasets-since =", repr(since))
+                    log.verbose(
+                        "Dropping source",
+                        repr(source),
+                        "with EXPTIME =",
+                        repr(exptime),
+                        "< --datasets-since =",
+                        repr(since),
+                    )
 
     def datasets_since(self, instrument):
         """Return the earliest dataset processed cut-off date for `instrument`.
@@ -70,7 +81,7 @@ class HeaderGenerator:
         were identified by --datsets-since=auto.
         """
         if isinstance(self._datasets_since, dict):
-            return self._datasets_since.get(instrument.lower(),  MIN_DATE)
+            return self._datasets_since.get(instrument.lower(), MIN_DATE)
         else:
             return self._datasets_since
 
@@ -78,7 +89,9 @@ class HeaderGenerator:
         """Return the full header corresponding to `source`.   If header is a string, raise an exception."""
         header = self._header(source)
         if isinstance(header, str):
-            raise CrdsError("Failed to fetch header for " + repr(source) + ": " + repr(header))
+            raise CrdsError(
+                "Failed to fetch header for " + repr(source) + ": " + repr(header)
+            )
         else:
             return dict(header)
 
@@ -112,7 +125,11 @@ class HeaderGenerator:
         if only_ids is None:
             only_hdrs = self.headers
         else:
-            only_hdrs = {dataset_id: hdr for (dataset_id, hdr) in self.headers.items() if dataset_id in only_ids}
+            only_hdrs = {
+                dataset_id: hdr
+                for (dataset_id, hdr) in self.headers.items()
+                if dataset_id in only_ids
+            }
         log.info("Writing all headers to", repr(outpath))
         if outpath.endswith(".json"):
             with open(outpath, "w+") as pick:
@@ -134,13 +151,20 @@ class HeaderGenerator:
         items = headers2.items()
         for dataset_id, header in items:
             if isinstance(header, str):
-                log.warning("Skipping bad dataset", dataset_id, ":", headers2[dataset_id])
+                log.warning(
+                    "Skipping bad dataset", dataset_id, ":", headers2[dataset_id]
+                )
                 del headers2[dataset_id]
 
         # Munge for consistent case and value formatting regardless of source
-        headers2 = {dataset_id:
-                    {key.upper(): bestrefs_condition(val) for (key, val) in headers2[dataset_id].items()}
-                    for dataset_id in headers2 if dataset_id in only_ids}
+        headers2 = {
+            dataset_id: {
+                key.upper(): bestrefs_condition(val)
+                for (key, val) in headers2[dataset_id].items()
+            }
+            for dataset_id in headers2
+            if dataset_id in only_ids
+        }
 
         # replace param-by-param,  not id-by-id, since headers2[id] may be partial
         for dataset_id in headers2:
@@ -173,6 +197,7 @@ def bestrefs_condition(value):
         val = "N/A"
     return val
 
+
 # ===================================================================
 
 # FileHeaderGenerator uses a deferred header loading scheme which incrementally reads each header
@@ -188,7 +213,9 @@ class FileHeaderGenerator(HeaderGenerator):
         """Get the best references recommendations recorded in the header of file `dataset`."""
         gc.collect()
         if filename not in self.headers:
-            self.headers[filename] = data_file.get_free_header(filename, (), None, self.observatory)
+            self.headers[filename] = data_file.get_free_header(
+                filename, (), None, self.observatory
+            )
         return self.headers[filename]
 
     def handle_updates(self, all_updates):
@@ -200,6 +227,7 @@ class FileHeaderGenerator(HeaderGenerator):
                 log.verbose("-" * 120)
                 update_file_bestrefs(self.context, source, updates)
 
+
 # ===================================================================
 
 
@@ -207,17 +235,33 @@ class DatasetHeaderGenerator(HeaderGenerator):
     """Generates lookup parameters and historical best references from dataset ids.   Server/DB bases"""
 
     def __init__(self, context, datasets, datasets_since):
-        """"Contact the CRDS server and get headers for the list of `datasets` ids with respect to `context`."""
+        """ "Contact the CRDS server and get headers for the list of `datasets` ids with respect to `context`."""
         super(DatasetHeaderGenerator, self).__init__(context, datasets, datasets_since)
         server = api.get_crds_server()
-        log.info("Dumping dataset parameters from CRDS server at", repr(server), "for", repr(datasets))
+        log.info(
+            "Dumping dataset parameters from CRDS server at",
+            repr(server),
+            "for",
+            repr(datasets),
+        )
         self.headers = api.get_dataset_headers_by_id(context, datasets)
-        log.info("Dumped", len(self.headers), "of", len(datasets), "datasets from CRDS server at", repr(server))
+        log.info(
+            "Dumped",
+            len(self.headers),
+            "of",
+            len(datasets),
+            "datasets from CRDS server at",
+            repr(server),
+        )
 
         # every command line id should correspond to 1 or more headers
         for source in self.sources:
             if self.matching_two_part_id(source) not in self.headers.keys():
-                log.warning("Dataset", repr(source), "isn't represented by downloaded parameters.")
+                log.warning(
+                    "Dataset",
+                    repr(source),
+                    "isn't represented by downloaded parameters.",
+                )
 
         # Process according to downloaded 2-part ids,  not command line ids.
         self.sources = sorted(self.headers.keys())
@@ -233,14 +277,17 @@ class DatasetHeaderGenerator(HeaderGenerator):
         """
         parts = [_normalize_jwst_id_part(part) for part in source.split(":")]
         assert 1 <= len(parts) <= 2, "Invalid dataset id " + repr(source)
-        try:    # when specifying datasets with 1-part id, return first of "associated ids"
-                # when specifying datasets with 2-part id,
+        try:  # when specifying datasets with 1-part id, return first of "associated ids"
+            # when specifying datasets with 2-part id,
             if len(parts) == 1:
-                return sorted(dataset_id for dataset_id in self.headers if parts[0] in dataset_id)[0]
+                return sorted(
+                    dataset_id for dataset_id in self.headers if parts[0] in dataset_id
+                )[0]
             else:
                 return source
         except Exception:
             return source
+
 
 def _normalize_jwst_id_part(part):
     """Converts jw88600071001_02101_00001_nrs1  --> jw88600071001_02101_00001.nrs.   The former is
@@ -251,15 +298,16 @@ def _normalize_jwst_id_part(part):
         bits = part.split("_")
         fileSetName = "_".join(bits[:-1])
         detector = bits[-1]
-        return fileSetName + "." + detector   # Formal archive API
+        return fileSetName + "." + detector  # Formal archive API
     else:
         return part
+
 
 class InstrumentHeaderGenerator(HeaderGenerator):
     """Generates lookup parameters and historical best references from a list of instrument names.  Server/DB based."""
 
     def __init__(self, context, instruments, datasets_since, save_pickles, server_info):
-        """"Contact the CRDS server and get headers for the list of `instruments` names with respect to `context`."""
+        """ "Contact the CRDS server and get headers for the list of `instruments` names with respect to `context`."""
         super(InstrumentHeaderGenerator, self).__init__(context, [], datasets_since)
         self.instruments = instruments
         self.sources = self.determine_source_ids()
@@ -276,14 +324,36 @@ class InstrumentHeaderGenerator(HeaderGenerator):
         for instrument in self.instruments:
             since_date = self.datasets_since(instrument)
             if since_date:
-                log.info("Dumping dataset parameters for", repr(instrument), "from CRDS server at", repr(server),
-                         "since", repr(since_date))
+                log.info(
+                    "Dumping dataset parameters for",
+                    repr(instrument),
+                    "from CRDS server at",
+                    repr(server),
+                    "since",
+                    repr(since_date),
+                )
             else:
-                log.info("Dumping dataset parameters for", repr(instrument), "from CRDS server at", repr(server))
-            instr_ids = api.get_dataset_ids(self.context, instrument, self.datasets_since(instrument))
-            log.info("Downloaded ", len(instr_ids), "dataset ids for", repr(instrument), "since", repr(since_date))
+                log.info(
+                    "Dumping dataset parameters for",
+                    repr(instrument),
+                    "from CRDS server at",
+                    repr(server),
+                )
+            instr_ids = api.get_dataset_ids(
+                self.context, instrument, self.datasets_since(instrument)
+            )
+            log.info(
+                "Downloaded ",
+                len(instr_ids),
+                "dataset ids for",
+                repr(instrument),
+                "since",
+                repr(since_date),
+            )
             source_ids.extend(instr_ids)
-        return sorted(source_ids)  # sort is needed to match generic __iter__() sort. assumes instruments don't shuffle
+        return sorted(
+            source_ids
+        )  # sort is needed to match generic __iter__() sort. assumes instruments don't shuffle
 
     def _header(self, source):
         """Return the header associated with dataset id `source`,  fetching the surround segment of
@@ -302,11 +372,20 @@ class InstrumentHeaderGenerator(HeaderGenerator):
         lower = index * self.segment_size
         upper = (index + 1) * self.segment_size
         segment_ids = self.sources[lower:upper]
-        log.verbose("Dumping", len(segment_ids), "datasets from indices", lower, "to",
-                    lower + len(segment_ids), verbosity=20)
+        log.verbose(
+            "Dumping",
+            len(segment_ids),
+            "datasets from indices",
+            lower,
+            "to",
+            lower + len(segment_ids),
+            verbosity=20,
+        )
         dumped_headers = api.get_dataset_headers_by_id(self.context, segment_ids)
         log.verbose("Dumped", len(dumped_headers), "datasets", verbosity=20)
-        if self.save_pickles:  # keep all headers,  causes memory problems with multiple instruments on ~8G ram.
+        if (
+            self.save_pickles
+        ):  # keep all headers,  causes memory problems with multiple instruments on ~8G ram.
             self.headers.update(dumped_headers)
         else:  # conserve memory by keeping only the last N headers
             self.headers = dumped_headers
@@ -318,22 +397,34 @@ class PickleHeaderGenerator(HeaderGenerator):
     """
 
     def __init__(self, context, pickles, datasets_since, only_ids=None):
-        """"Contact the CRDS server and get headers for the list of `datasets` ids with respect to `context`."""
+        """ "Contact the CRDS server and get headers for the list of `datasets` ids with respect to `context`."""
         super(PickleHeaderGenerator, self).__init__(context, pickles, datasets_since)
         for pickle in pickles:
             log.info("Loading file", repr(pickle))
             pick_headers = load_bestrefs_headers(pickle)
             if not self.headers:
-                log.info("Loaded", len(pick_headers), "datasets from file", repr(pickle),
-                         "completely replacing existing headers.")
-                self.headers.update(pick_headers)   # replace all of dataset_id
+                log.info(
+                    "Loaded",
+                    len(pick_headers),
+                    "datasets from file",
+                    repr(pickle),
+                    "completely replacing existing headers.",
+                )
+                self.headers.update(pick_headers)  # replace all of dataset_id
             else:  # OPUS bestrefs don't include original matching parameters,  so full replacement doesn't work.
-                log.info("Loaded", len(pick_headers), "datasets from file", repr(pickle),
-                         "augmenting existing headers.")
+                log.info(
+                    "Loaded",
+                    len(pick_headers),
+                    "datasets from file",
+                    repr(pickle),
+                    "augmenting existing headers.",
+                )
                 self.update_headers(pick_headers, only_ids=only_ids)
         self.sources = only_ids or self.headers.keys()
 
+
 # ============================================================================
+
 
 def load_bestrefs_headers(path):
     """Given `path` to a serialization file,  load  {dataset_id : header, ...}.
@@ -361,12 +452,14 @@ def load_bestrefs_headers(path):
         raise ValueError("Valid serialization formats are .json and .pkl")
     return headers
 
+
 def add_instrument(header):
     """Add INSTRUME keyword."""
     instrument = utils.header_to_instrument(header)
     header["INSTRUME"] = instrument
     header["META.INSTRUMENT.NAME"] = instrument
     return header
+
 
 def update_file_bestrefs(context, dataset, updates):
     """Update the header of `dataset` with best reference recommendations
@@ -380,7 +473,9 @@ def update_file_bestrefs(context, dataset, updates):
     locator = utils.instrument_to_locator(instrument)
     prefix = locator.get_env_prefix(instrument)
 
-    with data_file.fits_open(dataset, mode="update", do_not_scale_image_data=True, checksum=False) as hdulist:
+    with data_file.fits_open(
+        dataset, mode="update", do_not_scale_image_data=True, checksum=False
+    ) as hdulist:
 
         def set_key(keyword, value):
             """Set a single keyword value with logging,  bound to outer-scope hdulist."""

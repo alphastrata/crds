@@ -16,6 +16,7 @@ from nose.tools import assert_raises, assert_true
 
 # ==================================================================================
 
+
 def dt_refactor_add_files():
     """
     >>> log.set_test_mode()
@@ -42,6 +43,7 @@ def dt_refactor_add_files():
     >>> _ = os.system("rm ./*.rmap")
 
     """
+
 
 def dt_refactor_delete_files():
     """
@@ -74,6 +76,7 @@ def dt_refactor_delete_files():
 
     """
 
+
 def dt_refactor_add_header():
     """
     >>> log.set_test_mode()
@@ -93,6 +96,7 @@ def dt_refactor_add_header():
 
     >>> _ = os.system("rm ./*.rmap")
     """
+
 
 def dt_refactor_replace_header():
     """
@@ -114,6 +118,7 @@ def dt_refactor_replace_header():
     >>> _ = os.system("rm ./*.rmap")
     """
 
+
 def dt_refactor_del_header():
     """
     >>> log.set_test_mode()
@@ -134,6 +139,7 @@ def dt_refactor_del_header():
     >>> _ = os.system("rm ./*.rmap")
     """
 
+
 def dt_refactor_bad_modify_count():
     """
     >>> log.set_test_mode()
@@ -151,12 +157,12 @@ def dt_refactor_bad_modify_count():
     """
 
 
-
 # ==================================================================================
+
 
 class TestRefactor(test_config.CRDSTestCase):
 
-    '''
+    """
     example unit test code,  not for test_refactor
 
     def test_get_imap_except(self):
@@ -164,7 +170,8 @@ class TestRefactor(test_config.CRDSTestCase):
         with self.assertRaises(exceptions.CrdsUnknownInstrumentError):
             r.get_imap("foo")
 
-    '''
+    """
+
 
 # ==================================================================================
 
@@ -173,11 +180,14 @@ def tst():
     """Run module tests,  for now just doctests only."""
 
     import unittest
+
     suite = unittest.TestLoader().loadTestsFromTestCase(TestRefactor)
     unittest.TextTestRunner().run(suite)
 
     from crds.tests import test_refactor, tstmod
+
     return tstmod(test_refactor)
+
 
 if __name__ == "__main__":
     print(tst())

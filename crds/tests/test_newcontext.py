@@ -15,6 +15,7 @@ from nose.tools import assert_raises, assert_true
 
 # ==================================================================================
 
+
 def dt_fake_name():
     """
     Fake names are only used by crds.newcontext when it is run from the command line.
@@ -33,6 +34,7 @@ def dt_fake_name():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_new_context():
     """>>> old_state = test_config.setup()
@@ -68,13 +70,15 @@ def dt_new_context():
 
     """
 
+
 class TestNewContext(test_config.CRDSTestCase):
-    '''
+    """
     def test_get_imap_except(self):
         r = rmap.get_cached_mapping("hst.pmap")
         with self.assertRaises(exceptions.CrdsUnknownInstrumentError):
             r.get_imap("foo")
-    '''
+    """
+
 
 # ==================================================================================
 
@@ -92,6 +96,7 @@ def main():
     test_config.cleanup(old_state)
 
     return result
+
 
 if __name__ == "__main__":
     print(main())

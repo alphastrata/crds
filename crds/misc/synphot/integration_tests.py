@@ -15,6 +15,7 @@ class SynphotIntegrationTestBase:
     """
     Base class for synphot integration tests.
     """
+
     def __init__(
         self,
         context,
@@ -22,7 +23,7 @@ class SynphotIntegrationTestBase:
         throughput_lookup_file=None,
         thermal_lookup_file=None,
         delivered_throughput_files=None,
-        delivered_thermal_files=None
+        delivered_thermal_files=None,
     ):
         self.context = context
 
@@ -32,12 +33,16 @@ class SynphotIntegrationTestBase:
             self.graph_file = graph_file
 
         if throughput_lookup_file is None:
-            self.throughput_lookup_file = utils.get_cache_path(context, utils.THROUGHPUT_LOOKUP_REFTYPE)
+            self.throughput_lookup_file = utils.get_cache_path(
+                context, utils.THROUGHPUT_LOOKUP_REFTYPE
+            )
         else:
             self.throughput_lookup_file = throughput_lookup_file
 
         if thermal_lookup_file is None:
-            self.thermal_lookup_file = utils.get_cache_path(context, utils.THERMAL_LOOKUP_REFTYPE)
+            self.thermal_lookup_file = utils.get_cache_path(
+                context, utils.THERMAL_LOOKUP_REFTYPE
+            )
         else:
             self.thermal_lookup_file = thermal_lookup_file
 
@@ -54,13 +59,11 @@ class SynphotIntegrationTestBase:
         self.imap = rmap.asmapping(context).get_imap(utils.SYNPHOT_INSTRUMENT)
 
         self.throughput_compname_to_path = self._build_compname_to_path(
-            utils.THROUGHPUT_REFTYPE,
-            self.delivered_throughput_files
+            utils.THROUGHPUT_REFTYPE, self.delivered_throughput_files
         )
 
         self.thermal_compname_to_path = self._build_compname_to_path(
-            utils.THERMAL_REFTYPE,
-            self.delivered_thermal_files
+            utils.THERMAL_REFTYPE, self.delivered_thermal_files
         )
 
     def _build_compname_to_path(self, reftype, delivered_files):
@@ -93,7 +96,9 @@ def _configured_stsynphot(synphot_root):
         try:
             import stsynphot
         except ImportError:
-            raise ImportError("Missing stsynphot package.  Install the 'synphot' extras and try again.")
+            raise ImportError(
+                "Missing stsynphot package.  Install the 'synphot' extras and try again."
+            )
 
     original_rootdir = stsynphot.conf.rootdir
     try:
@@ -111,7 +116,9 @@ def _configured_pysynphot(synphot_root):
         try:
             import pysynphot
         except ImportError:
-            raise ImportError("Missing pysynphot package.  Install the 'synphot' extras and try again.")
+            raise ImportError(
+                "Missing pysynphot package.  Install the 'synphot' extras and try again."
+            )
 
         yield pysynphot
     finally:
@@ -130,9 +137,17 @@ def _test_synphot_mode(synphot_root, obsmode):
             with warnings.catch_warnings(record=True) as warning_list:
                 sts.band(obsmode)
                 for warning in warning_list:
-                    warns.append("Warning from stsynphot with obsmode '{}': {}".format(obsmode, warning.message))
+                    warns.append(
+                        "Warning from stsynphot with obsmode '{}': {}".format(
+                            obsmode, warning.message
+                        )
+                    )
         except Exception as e:
-            errors.append("Exception from stsynphot with obsmode '{}': {}".format(obsmode, repr(e)))
+            errors.append(
+                "Exception from stsynphot with obsmode '{}': {}".format(
+                    obsmode, repr(e)
+                )
+            )
             result = False
 
     with warnings.catch_warnings(record=True) as warning_list:
@@ -140,11 +155,19 @@ def _test_synphot_mode(synphot_root, obsmode):
             try:
                 pys.ObsBandpass(obsmode)
             except Exception as e:
-                errors.append("Exception from pysynphot with obsmode '{}': {}".format(obsmode, repr(e)))
+                errors.append(
+                    "Exception from pysynphot with obsmode '{}': {}".format(
+                        obsmode, repr(e)
+                    )
+                )
                 result = False
         for warning in warning_list:
             if not str(warning.message).startswith("Extinction files not found in"):
-                warns.append("Warning from pysynphot with obsmode '{}': {}".format(obsmode, warning.message))
+                warns.append(
+                    "Warning from pysynphot with obsmode '{}': {}".format(
+                        obsmode, warning.message
+                    )
+                )
 
     return result, errors, warns
 
@@ -155,6 +178,7 @@ class SynphotObsmodeIntegrationTest(SynphotIntegrationTestBase):
     observation mode strings in the obsmode reference file.  Requires
     that stsynphot be installed.
     """
+
     def __init__(
         self,
         context,
@@ -170,7 +194,9 @@ class SynphotObsmodeIntegrationTest(SynphotIntegrationTestBase):
         self.synphot_root = synphot_root
 
         if obsmodes_file is None:
-            self.obsmodes_file = utils.get_cache_path(self.context, utils.OBSMODES_REFTYPE)
+            self.obsmodes_file = utils.get_cache_path(
+                self.context, utils.OBSMODES_REFTYPE
+            )
         else:
             self.obsmodes_file = obsmodes_file
 
@@ -186,10 +212,14 @@ class SynphotObsmodeIntegrationTest(SynphotIntegrationTestBase):
         os.makedirs(self.synphot_root, exist_ok=True)
         os.makedirs(utils.get_mtab_path(self.synphot_root), exist_ok=True)
         for instrument in utils.ALL_INSTRUMENTS:
-            os.makedirs(utils.get_instrument_path(self.synphot_root, instrument), exist_ok=True)
+            os.makedirs(
+                utils.get_instrument_path(self.synphot_root, instrument), exist_ok=True
+            )
 
         self.link_or_copy_table(utils.GRAPH_REFTYPE, self.graph_file)
-        self.link_or_copy_table(utils.THROUGHPUT_LOOKUP_REFTYPE, self.throughput_lookup_file)
+        self.link_or_copy_table(
+            utils.THROUGHPUT_LOOKUP_REFTYPE, self.throughput_lookup_file
+        )
         self.link_or_copy_table(utils.THERMAL_LOOKUP_REFTYPE, self.thermal_lookup_file)
 
         for component, path in self.throughput_compname_to_path.items():
@@ -208,7 +238,11 @@ class SynphotObsmodeIntegrationTest(SynphotIntegrationTestBase):
         failed = 0
         with fits.open(self.obsmodes_file) as hdul:
             total_modes = len(hdul[-1].data)
-            log.info("Creating bandpass objects from {} observation modes".format(total_modes))
+            log.info(
+                "Creating bandpass objects from {} observation modes".format(
+                    total_modes
+                )
+            )
 
             if self.processes > 1:
                 with Pool(processes=self.processes) as pool:
@@ -216,7 +250,10 @@ class SynphotObsmodeIntegrationTest(SynphotIntegrationTestBase):
                         end_index = start_index + self.batch_size
                         results = pool.starmap(
                             _test_synphot_mode,
-                            [(self.synphot_root, m) for m in hdul[-1].data["OBSMODE"][start_index:end_index]]
+                            [
+                                (self.synphot_root, m)
+                                for m in hdul[-1].data["OBSMODE"][start_index:end_index]
+                            ],
                         )
                         for i, (result, errors, warns) in enumerate(results):
                             if not result:
@@ -230,7 +267,9 @@ class SynphotObsmodeIntegrationTest(SynphotIntegrationTestBase):
                                 progress_callback(start_index + i + 1, total_modes)
             else:
                 for i, obsmode in enumerate(hdul[-1].data["OBSMODE"]):
-                    result, errors, warns = _test_synphot_mode(self.synphot_root, obsmode)
+                    result, errors, warns = _test_synphot_mode(
+                        self.synphot_root, obsmode
+                    )
                     if not result:
                         failed += 1
                     for warning in warns:
@@ -251,7 +290,9 @@ class SynphotObsmodeIntegrationTest(SynphotIntegrationTestBase):
     def link_or_copy_component(self, component, source):
         source_basename = os.path.basename(source)
         instrument = utils.get_instrument(component)
-        dest = os.path.join(utils.get_instrument_path(self.synphot_root, instrument), source_basename)
+        dest = os.path.join(
+            utils.get_instrument_path(self.synphot_root, instrument), source_basename
+        )
         self.link_or_copy(source, dest)
 
     def link_or_copy_table(self, reftype, source):
@@ -306,47 +347,58 @@ class SynphotCoreIntegrationTest(SynphotIntegrationTestBase):
             set(),
             "TMC COMPNAME",
             throughput_lookup_compnames,
-            set()
+            set(),
         )
 
-        result = self.check_compname_agreement(
-            "TMG THCOMPNAME",
-            graph_thermal_compnames,
-            utils.KNOWN_MISSING_GRAPH_THERMAL_COMPONENTS,
-            "TMT COMPNAME",
-            thermal_lookup_compnames,
-            utils.KNOWN_MISSING_THERMAL_LOOKUP_COMPONENTS
-        ) and result
+        result = (
+            self.check_compname_agreement(
+                "TMG THCOMPNAME",
+                graph_thermal_compnames,
+                utils.KNOWN_MISSING_GRAPH_THERMAL_COMPONENTS,
+                "TMT COMPNAME",
+                thermal_lookup_compnames,
+                utils.KNOWN_MISSING_THERMAL_LOOKUP_COMPONENTS,
+            )
+            and result
+        )
 
-        result = self.check_compname_agreement(
-            "TMG COMPNAME",
-            graph_throughput_compnames,
-            set(),
-            "throughput table COMPNAME",
-            set(self.throughput_compname_to_path.keys()),
-            utils.KNOWN_MISSING_THROUGHPUT_COMPONENTS
-        ) and result
+        result = (
+            self.check_compname_agreement(
+                "TMG COMPNAME",
+                graph_throughput_compnames,
+                set(),
+                "throughput table COMPNAME",
+                set(self.throughput_compname_to_path.keys()),
+                utils.KNOWN_MISSING_THROUGHPUT_COMPONENTS,
+            )
+            and result
+        )
 
-        result = self.check_compname_agreement(
-            "TMG THCOMPNAME",
-            graph_thermal_compnames,
-            utils.KNOWN_MISSING_GRAPH_THERMAL_COMPONENTS,
-            "thermal table COMPNAME",
-            set(self.thermal_compname_to_path.keys()),
-            utils.KNOWN_MISSING_THERMAL_COMPONENTS.union(utils.KNOWN_MISSING_THERMAL_LOOKUP_COMPONENTS)
-        ) and result
+        result = (
+            self.check_compname_agreement(
+                "TMG THCOMPNAME",
+                graph_thermal_compnames,
+                utils.KNOWN_MISSING_GRAPH_THERMAL_COMPONENTS,
+                "thermal table COMPNAME",
+                set(self.thermal_compname_to_path.keys()),
+                utils.KNOWN_MISSING_THERMAL_COMPONENTS.union(
+                    utils.KNOWN_MISSING_THERMAL_LOOKUP_COMPONENTS
+                ),
+            )
+            and result
+        )
 
-        result = self.check_filenames(
-            "TMC",
-            throughput_lookup,
-            self.throughput_compname_to_path
-        ) and result
+        result = (
+            self.check_filenames(
+                "TMC", throughput_lookup, self.throughput_compname_to_path
+            )
+            and result
+        )
 
-        result = self.check_filenames(
-            "TMT",
-            thermal_lookup,
-            self.thermal_compname_to_path
-        ) and result
+        result = (
+            self.check_filenames("TMT", thermal_lookup, self.thermal_compname_to_path)
+            and result
+        )
 
         return result
 
@@ -364,9 +416,11 @@ class SynphotCoreIntegrationTest(SynphotIntegrationTestBase):
         """
         result = True
 
-        log.info("Checking for components present in {} but missing from {}".format(
-            description_a, description_b
-        ))
+        log.info(
+            "Checking for components present in {} but missing from {}".format(
+                description_a, description_b
+            )
+        )
         missing_from_b = (compnames_a - compnames_b) - known_missing_b
         if len(missing_from_b) > 0:
             missing_compnames = ", ".join(missing_from_b)
@@ -376,9 +430,11 @@ class SynphotCoreIntegrationTest(SynphotIntegrationTestBase):
             log.error(message)
             result = False
 
-        log.info("Checking for components present in {} but missing from {}".format(
-            description_b, description_a
-        ))
+        log.info(
+            "Checking for components present in {} but missing from {}".format(
+                description_b, description_a
+            )
+        )
         missing_from_a = (compnames_b - compnames_a) - known_missing_a
         if len(missing_from_a) > 0:
             missing_compnames = ", ".join(missing_from_a)
@@ -399,8 +455,7 @@ class SynphotCoreIntegrationTest(SynphotIntegrationTestBase):
         log.info("Confirming correctly formed {} filenames".format(description))
         for row in lookup:
             lookup_filename = utils.get_lookup_filename(
-                row["COMPNAME"],
-                os.path.basename(compname_to_path[row["COMPNAME"]])
+                row["COMPNAME"], os.path.basename(compname_to_path[row["COMPNAME"]])
             )
             if lookup_filename != row["FILENAME"]:
                 log.error(

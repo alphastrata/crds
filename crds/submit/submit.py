@@ -13,6 +13,7 @@ from crds.certify import certify
 
 # ===================================================================
 
+
 class ReferenceSubmissionScript(cmdline.Script):
     """Command line script file submission script."""
 
@@ -53,35 +54,89 @@ this command line interface must be members of the CRDS operators group
     def add_args(self):
         """Add additional command-line parameters for file submissions not found in baseclass Script."""
         super(ReferenceSubmissionScript, self).add_args()
-        self.add_argument("--files", nargs="*", help="Files to submit.  A file preceded with @ is treated as containing the list of files.")
-        self.add_argument("--derive-from-context", type=cmdline.context_spec, default=None,
-                          help="Set of CRDS rules these files will be added to.  Defaults to edit context.")
-        self.add_argument("--change-level", type=str, choices=["SEVERE","MODERATE","TRIVIAL"], default="SEVERE",
-                          help="The degree to which the new files are expected to impact science results.")
-        self.add_argument("--creator", type=str,
-                          help="Author of this set of references,  most likely not file submitter.  Can be comma separated list of people in quotes.")
-        self.add_argument("--description", type=str, default=None,
-                          help="Brief description of the purpose of this delivery, mention instrument and type(s).")
-        self.add_argument("--dont-auto-rename", action="store_true",
-                          help="Unless specified, CRDS will automatically rename incoming files.")
-        self.add_argument("--dont-compare-old-reference", action="store_true",
-                          help="Unless specified, CRDS will check the current reference against any reference it replaces, as appropriate and possible.")
-        self.add_argument("--username", type=str, default=None, help="CRDS username of file submitter.")
-        self.add_argument("--monitor-processing", action="store_true",
-                          help="Monitor CRDS processing for on-going status and final confirmation link.")
-        self.add_argument("--wait-for-completion", action="store_true",
-                          help="Wait until the server reports that the submission is done before exiting.  Otherwise use e-mail.")
-        self.add_argument("--submission-kind", type=str, choices=["batch","certify","none"], default="batch", # mapping, reference
-                          help="Which form of submission to perform.  Defaults to batch.")
-        self.add_argument("--wipe-existing-files", action="store_true",
-                          help="Before performing action,  remove all files from the appropriate CRDS ingest directory.")
-        self.add_argument("--keep-existing-files", action="store_true",
-                          help="Don't recopy files already in the server ingest directory that have the correct length.")
-        self.add_argument("--certify-files", action="store_true",
-                          help="Run CRDS certify and fail if errors are found.")
+        self.add_argument(
+            "--files",
+            nargs="*",
+            help="Files to submit.  A file preceded with @ is treated as containing the list of files.",
+        )
+        self.add_argument(
+            "--derive-from-context",
+            type=cmdline.context_spec,
+            default=None,
+            help="Set of CRDS rules these files will be added to.  Defaults to edit context.",
+        )
+        self.add_argument(
+            "--change-level",
+            type=str,
+            choices=["SEVERE", "MODERATE", "TRIVIAL"],
+            default="SEVERE",
+            help="The degree to which the new files are expected to impact science results.",
+        )
+        self.add_argument(
+            "--creator",
+            type=str,
+            help="Author of this set of references,  most likely not file submitter.  Can be comma separated list of people in quotes.",
+        )
+        self.add_argument(
+            "--description",
+            type=str,
+            default=None,
+            help="Brief description of the purpose of this delivery, mention instrument and type(s).",
+        )
+        self.add_argument(
+            "--dont-auto-rename",
+            action="store_true",
+            help="Unless specified, CRDS will automatically rename incoming files.",
+        )
+        self.add_argument(
+            "--dont-compare-old-reference",
+            action="store_true",
+            help="Unless specified, CRDS will check the current reference against any reference it replaces, as appropriate and possible.",
+        )
+        self.add_argument(
+            "--username",
+            type=str,
+            default=None,
+            help="CRDS username of file submitter.",
+        )
+        self.add_argument(
+            "--monitor-processing",
+            action="store_true",
+            help="Monitor CRDS processing for on-going status and final confirmation link.",
+        )
+        self.add_argument(
+            "--wait-for-completion",
+            action="store_true",
+            help="Wait until the server reports that the submission is done before exiting.  Otherwise use e-mail.",
+        )
+        self.add_argument(
+            "--submission-kind",
+            type=str,
+            choices=["batch", "certify", "none"],
+            default="batch",  # mapping, reference
+            help="Which form of submission to perform.  Defaults to batch.",
+        )
+        self.add_argument(
+            "--wipe-existing-files",
+            action="store_true",
+            help="Before performing action,  remove all files from the appropriate CRDS ingest directory.",
+        )
+        self.add_argument(
+            "--keep-existing-files",
+            action="store_true",
+            help="Don't recopy files already in the server ingest directory that have the correct length.",
+        )
+        self.add_argument(
+            "--certify-files",
+            action="store_true",
+            help="Run CRDS certify and fail if errors are found.",
+        )
 
-        self.add_argument("--logout", action="store_true",
-                          help="Log out of the server,  dropping any lock.")
+        self.add_argument(
+            "--logout",
+            action="store_true",
+            help="Log out of the server,  dropping any lock.",
+        )
 
     # -------------------------------------------------------------------------------------------------
 
@@ -90,10 +145,22 @@ this command line interface must be members of the CRDS operators group
         self.username = self.args.username or config.get_username()
         password = config.get_password()
         self.base_url = config.get_server_url(self.observatory)
-        self.instruments_filekinds = utils.get_instruments_filekinds(self.observatory, self.files) if self.args.files else {}
-        self.instrument = list(self.instruments_filekinds.keys())[0] if len(self.instruments_filekinds) == 1 else "none"
+        self.instruments_filekinds = (
+            utils.get_instruments_filekinds(self.observatory, self.files)
+            if self.args.files
+            else {}
+        )
+        self.instrument = (
+            list(self.instruments_filekinds.keys())[0]
+            if len(self.instruments_filekinds) == 1
+            else "none"
+        )
         self.connection = web.CrdsDjangoConnection(
-            locked_instrument=self.instrument, username=self.username, password=password, base_url=self.base_url)
+            locked_instrument=self.instrument,
+            username=self.username,
+            password=password,
+            base_url=self.base_url,
+        )
         if self.args.derive_from_context is None:
             self.args.derive_from_context = self.observatory + "-edit"
         if self.args.derive_from_context.endswith(("-edit", "-operational")):
@@ -102,9 +169,12 @@ this command line interface must be members of the CRDS operators group
         else:
             self.pmap_mode = "pmap_text"
         self.pmap_name = self.resolve_context(self.args.derive_from_context)
-        assert config.is_context(self.pmap_name), "Invalid pmap_name " + repr(self.pmap_name)
-        assert not (self.args.keep_existing_files and self.args.wipe_existing_files), \
-            "--keep-existing-files and --wipe-existing-files are mutually exclusive."
+        assert config.is_context(self.pmap_name), "Invalid pmap_name " + repr(
+            self.pmap_name
+        )
+        assert not (
+            self.args.keep_existing_files and self.args.wipe_existing_files
+        ), "--keep-existing-files and --wipe-existing-files are mutually exclusive."
 
     # -------------------------------------------------------------------------------------------------
 
@@ -117,14 +187,28 @@ this command line interface must be members of the CRDS operators group
 
         self.scan_for_nonsubmitted_ingests(ingest_info)
 
-        remaining_files = self.keep_existing_files(ingest_info, self.files) \
-            if self.args.keep_existing_files else self.files
+        remaining_files = (
+            self.keep_existing_files(ingest_info, self.files)
+            if self.args.keep_existing_files
+            else self.files
+        )
 
         for i, filename in enumerate(remaining_files):
             file_size = utils.file_size(filename)
-            log.info("Upload started", repr(filename), "[", i+1, "/", len(self.files), " files ]",
-                     "[", utils.human_format_number(file_size),
-                     "/", utils.human_format_number(total_size), " bytes ]")
+            log.info(
+                "Upload started",
+                repr(filename),
+                "[",
+                i + 1,
+                "/",
+                len(self.files),
+                " files ]",
+                "[",
+                utils.human_format_number(file_size),
+                "/",
+                utils.human_format_number(total_size),
+                " bytes ]",
+            )
             self.connection.upload_file(filename)
             stats.increment("bytes", file_size)
             stats.increment("files", 1)
@@ -139,16 +223,20 @@ this command line interface must be members of the CRDS operators group
         """Check for junk in the submitter's ingest directory,  left over files not
         in the current submission and fail if found.
         """
-        submitted_basenames = [ os.path.basename(filepath) for filepath in self.files ]
+        submitted_basenames = [os.path.basename(filepath) for filepath in self.files]
         msg = None
         for ingested in ingest_info.keys():
             if ingested not in submitted_basenames:
-                msg = log.format("Non-submitted file", log.srepr(ingested),
-                                 "is already in the CRDS server's ingest directory.  Delete it (--wipe-existing-files or web page Upload Files panel) or submit it.")
+                msg = log.format(
+                    "Non-submitted file",
+                    log.srepr(ingested),
+                    "is already in the CRDS server's ingest directory.  Delete it (--wipe-existing-files or web page Upload Files panel) or submit it.",
+                )
                 log.error(msg)
         if msg is not None:
             raise exceptions.CrdsExtraneousFileError(
-                "Unexpected files already delivered to CRDS server. See ERROR messages.")
+                "Unexpected files already delivered to CRDS server. See ERROR messages."
+            )
 
     def keep_existing_files(self, ingest_info, files):
         """Keep files which have already been copied and have the correct server side
@@ -160,28 +248,37 @@ this command line interface must be members of the CRDS operators group
             try:
                 existing_size = int(ingest_info[basename]["size"])
             except Exception:
-                log.info("File", repr(filename),
-                         "does not exist in ingest directory and will be copied to CRDS server.")
+                log.info(
+                    "File",
+                    repr(filename),
+                    "does not exist in ingest directory and will be copied to CRDS server.",
+                )
                 continue
             if local_size == existing_size:
-                log.info("File", repr(filename),
-                         "has already been copied and has correct length on CRDS server",
-                         utils.human_format_number(existing_size))
+                log.info(
+                    "File",
+                    repr(filename),
+                    "has already been copied and has correct length on CRDS server",
+                    utils.human_format_number(existing_size),
+                )
                 files.remove(filename)
             else:
-                log.info("File", repr(filename),
-                         "exists but has incorrect size and must be recopied.  Deleting old ingest.")
+                log.info(
+                    "File",
+                    repr(filename),
+                    "exists but has incorrect size and must be recopied.  Deleting old ingest.",
+                )
                 self.connection.get(ingest_info[basename]["deleteUrl"])
         return files
 
     def get_ingested_files(self):
         """Return the server-side JSON info on the files already in the submitter's ingest directory."""
         log.verbose("Querying for existing files.")
-        result = self.connection.get('/upload/list/').json()
+        result = self.connection.get("/upload/list/").json()
         log.verbose("JSON info on existing ingested files:\n", log.PP(result))
         if "files" in result and isinstance(result["files"], list):
-            return { info["name"] : info for info in result["files"] }
-        return { info["name"] : info for info in result }
+            return {info["name"]: info for info in result["files"]}
+        return {info["name"]: info for info in result}
 
     def wipe_files(self):
         """Delete all files from the user's ingest directory on the CRDS server."""
@@ -197,7 +294,13 @@ this command line interface must be members of the CRDS operators group
         stats = utils.TimingStats(output=log.verbose)
         stats.start()
         log.divider(name="ingest files", char="=")
-        log.info("Uploading", len(self.files), "file(s) totalling", utils.human_format_number(total_bytes), "bytes")
+        log.info(
+            "Uploading",
+            len(self.files),
+            "file(s) totalling",
+            utils.human_format_number(total_bytes),
+            "bytes",
+        )
         log.divider(func=log.verbose)
         return stats
 
@@ -215,8 +318,11 @@ this command line interface must be members of the CRDS operators group
         """Run the CRDS server Certify Files page on `filepaths`."""
         self.ingest_files()
         t = self.connection.repost_start(
-            "/certify/", pmap_name=self.pmap_name, pmap_mode=self.pmap_mode,
-            compare_old_reference=not self.args.dont_compare_old_reference)
+            "/certify/",
+            pmap_name=self.pmap_name,
+            pmap_mode=self.pmap_mode,
+            compare_old_reference=not self.args.dont_compare_old_reference,
+        )
         time.sleep(10)
         return t
 
@@ -236,7 +342,9 @@ this command line interface must be members of the CRDS operators group
 
     def _submission(self, relative_url):
         """Do a generic submission re-post to the specified relative_url."""
-        assert self.args.description is not None, "You must supply a --description for this function."
+        assert (
+            self.args.description is not None
+        ), "You must supply a --description for this function."
         self.ingest_files()
         log.info("Posting web request for", srepr(relative_url))
         submission_args = self.get_submission_args()
@@ -250,14 +358,14 @@ this command line interface must be members of the CRDS operators group
         line submission parameters.
         """
         result = dict(
-            pmap_mode = self.pmap_mode,
-            pmap_name = self.pmap_name,
-            instrument = self.instrument,
-            change_level = self.args.change_level,
-            creator = self.args.creator,
-            description = self.args.description,
-            auto_rename = not self.args.dont_auto_rename,
-            compare_old_reference = not self.args.dont_compare_old_reference,
+            pmap_mode=self.pmap_mode,
+            pmap_name=self.pmap_name,
+            instrument=self.instrument,
+            change_level=self.args.change_level,
+            creator=self.args.creator,
+            description=self.args.description,
+            auto_rename=not self.args.dont_auto_rename,
+            compare_old_reference=not self.args.dont_compare_old_reference,
         )
 
         if self.pmap_mode == "pmap_text":
@@ -275,8 +383,12 @@ this command line interface must be members of the CRDS operators group
         extra_params = ""
         if "--log-time" in sys.argv:
             extra_params = "--log-time"
-        submission_monitor = monitor.MonitorScript("crds.monitor --key {} --poll {} {}".format(
-            self.jpoll_key, 3, extra_params), reset_log=False)
+        submission_monitor = monitor.MonitorScript(
+            "crds.monitor --key {} --poll {} {}".format(
+                self.jpoll_key, 3, extra_params
+            ),
+            reset_log=False,
+        )
         submission_monitor()
         return submission_monitor
 
@@ -305,9 +417,15 @@ this command line interface must be members of the CRDS operators group
         if log.errors():
             raise CrdsError("Errors encountered before CRDS certify run.")
         certify.certify_files(
-            self.files, context=self.pmap_name, dump_provenance=True,
-            compare_old_reference=True, observatory=self.observatory,
-            run_fitsverify=True, check_rmap=False, check_sha1sums=True)
+            self.files,
+            context=self.pmap_name,
+            dump_provenance=True,
+            compare_old_reference=True,
+            observatory=self.observatory,
+            run_fitsverify=True,
+            check_rmap=False,
+            check_sha1sums=True,
+        )
         if log.errors():
             raise CrdsError("Certify errors found.  Aborting submission.")
 
@@ -359,6 +477,7 @@ this command line interface must be members of the CRDS operators group
         self._warning_count = log.warnings()
 
         return log.errors()
+
 
 # ===================================================================
 

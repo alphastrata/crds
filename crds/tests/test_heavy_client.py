@@ -21,6 +21,7 @@ from nose.tools import assert_raises, assert_true
 
 # ==================================================================================
 
+
 def dt_getreferences_rmap_na():
     """
     >>> old_state = test_config.setup(cache=None, url="https://jwst-crds.stsci.edu")
@@ -36,6 +37,7 @@ def dt_getreferences_rmap_na():
     >> config.get_crds_state()
     """
 
+
 def dt_getreferences_rmap_omit():
     """
     >>> old_state = test_config.setup(cache=None, url="https://jwst-crds.stsci.edu")
@@ -50,6 +52,7 @@ def dt_getreferences_rmap_omit():
     >> config.get_crds_state()
     """
 
+
 def dt_getreferences_imap_na():
     """
     >>> old_state = test_config.setup(cache=None, url="https://jwst-crds.stsci.edu")
@@ -62,6 +65,7 @@ def dt_getreferences_imap_na():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_getreferences_imap_omit():
     """
     >>> old_state = test_config.setup(cache=None, url="https://jwst-crds.stsci.edu")
@@ -73,6 +77,7 @@ def dt_getreferences_imap_omit():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_getreferences_ignore_cache():
     """
@@ -88,6 +93,7 @@ def dt_getreferences_ignore_cache():
     {'flat': '.../crds-cache-default-test/references/jwst/jwst_miri_flat_0001.fits'}
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_cache_references_multiple_bad_files():
     """
@@ -116,6 +122,7 @@ def dt_cache_references_multiple_bad_files():
 
     """
 
+
 def dt_get_context_name_literal():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -123,6 +130,7 @@ def dt_get_context_name_literal():
     'jwst_0341.pmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_context_name_crds_context():
     """
@@ -133,6 +141,7 @@ def dt_get_context_name_crds_context():
     >>> del os.environ["CRDS_CONTEXT"]
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_context_name_symbolic():
     """
@@ -145,6 +154,7 @@ def dt_get_context_name_symbolic():
     'jwst_...pmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_translate_date_based_context():
     """
@@ -166,6 +176,8 @@ def dt_translate_date_based_context():
     crds.core.exceptions.ServiceError: CRDS jsonrpc failure 'get_context_by_date' InvalidDateBasedContext: Bad instrument 'foo' in CRDS date based context specification.
     >>> test_config.cleanup(old_state)
     """
+
+
 def dt_get_bad_mappings_in_context_no_instrument():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -173,6 +185,7 @@ def dt_get_bad_mappings_in_context_no_instrument():
     ['jwst_miri_flat_0002.rmap']
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_pickled_mappings(mapping):
     """
@@ -214,6 +227,7 @@ def dt_pickled_mappings(mapping):
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_check_parameters():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -235,10 +249,12 @@ def dt_check_parameters():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_check_context():
     """
     >>> heavy_client.check_context(None)
     """
+
 
 def dt_get_context_parkeys():
     """
@@ -252,9 +268,9 @@ def dt_get_context_parkeys():
     >>> test_config.cleanup(old_state)
     """
 
-# ==================================================================================
+    # ==================================================================================
 
-# class TestHeavyClient(test_config.CRDSTestCase):
+    # class TestHeavyClient(test_config.CRDSTestCase):
 
     """
     def test_rmap_get_imap_except(self):
@@ -263,7 +279,9 @@ def dt_get_context_parkeys():
             r.get_imap("foo")
     """
 
+
 # ==================================================================================
+
 
 def tst():
     """Run module tests,  for now just doctests only."""
@@ -272,7 +290,9 @@ def tst():
     # unittest.TextTestRunner().run(suite)
 
     from crds.tests import test_heavy_client, tstmod
+
     return tstmod(test_heavy_client)
+
 
 if __name__ == "__main__":
     print(tst())

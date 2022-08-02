@@ -1,7 +1,7 @@
-'''
+"""
 This module defines the generic functions and abstract class used to manage
 file access in CRDS.
-'''
+"""
 from collections.abc import Mapping
 import functools
 import warnings
@@ -22,7 +22,7 @@ from crds.core import exceptions, config, log, utils, timestamp
 
 # ================================================================================================
 
-DUPLICATES_OK = ["COMMENT", "HISTORY", "NAXIS","EXTNAME","EXTVER"]
+DUPLICATES_OK = ["COMMENT", "HISTORY", "NAXIS", "EXTNAME", "EXTVER"]
 APPEND_KEYS = ["COMMENT", "HISTORY"]
 
 # ===========================================================================
@@ -32,8 +32,10 @@ APPEND_KEYS = ["COMMENT", "HISTORY"]
 # NOTE:  hijack_warnings needs to be nestable
 # XXX: hijack_warnings is non-reentrant and FAILS with THREADS
 
+
 def hijack_warnings(func):
     """Decorator that redirects warning messages to CRDS warnings."""
+
     @functools.wraps(func)
     def wrapper(*args, **keys):
         """Reassign warnings to CRDS warnings prior to executing `func`,  restore
@@ -41,6 +43,7 @@ def hijack_warnings(func):
         """
         # warnings.resetwarnings()
         from astropy.utils.exceptions import AstropyUserWarning
+
         with warnings.catch_warnings():
             old_showwarning = warnings.showwarning
             warnings.showwarning = hijacked_showwarning
@@ -51,17 +54,22 @@ def hijack_warnings(func):
                 log.verbose_warning(
                     "stdatamodels ValidationWarning import failed.  "
                     "Not a problem for HST.",
-                    verbosity=70)
+                    verbosity=70,
+                )
             else:
                 warnings.filterwarnings("always", r".*", ValidationWarning, r".*jwst.*")
                 if not config.ALLOW_SCHEMA_VIOLATIONS:
-                    warnings.filterwarnings("error", r".*is not one of.*", ValidationWarning, r".*jwst.*")
+                    warnings.filterwarnings(
+                        "error", r".*is not one of.*", ValidationWarning, r".*jwst.*"
+                    )
             try:
                 result = func(*args, **keys)
             finally:
                 warnings.showwarning = old_showwarning
         return result
+
     return wrapper
+
 
 def hijacked_showwarning(message, category, filename, lineno, *args, **keys):
     """Map the warnings.showwarning plugin function parameters onto log.warning."""
@@ -70,13 +78,20 @@ def hijacked_showwarning(message, category, filename, lineno, *args, **keys):
     except Exception:
         scat = category
     try:
-        sfile = str(filename).split(".egg")[-1].split("site-packages")[-1].replace("/",".").replace(".py", "")
-        while sfile.startswith(("/",".")):
+        sfile = (
+            str(filename)
+            .split(".egg")[-1]
+            .split("site-packages")[-1]
+            .replace("/", ".")
+            .replace(".py", "")
+        )
+        while sfile.startswith(("/", ".")):
             sfile = sfile[1:]
     except Exception:
         sfile = filename
-    message = str(message).replace("\n","")
+    message = str(message).replace("\n", "")
     log.warning(scat, ":", sfile, ":", message)
+
 
 # ----------------------------------------------------------------------------------------------
 #
@@ -107,20 +122,25 @@ def cross_strap_header(header):
         locator = utils.header_to_locator(header)
     except Exception:
         log.verbose_warning(
-            "Cannot identify observatory from header. Skipping keyword aliasing")
+            "Cannot identify observatory from header. Skipping keyword aliasing"
+        )
         return crossed
     equivalency_pairs = locator.get_cross_strapped_pairs(header)
     for pair in equivalency_pairs:
         _cross_strap_pair(crossed, pair)
     return crossed
 
+
 def equivalence_dict_to_pairs(equivalent_keywords_dict):
     """Convert a dictionary mapping master keywords to equivalents to
     a list of keyword pairs that should be cross-strapped.
     """
     pairs = []
-    log.verbose("Explicitly cross_strapped_keywords:",
-                log.PP(equivalent_keywords_dict), verbosity=90)
+    log.verbose(
+        "Explicitly cross_strapped_keywords:",
+        log.PP(equivalent_keywords_dict),
+        verbosity=90,
+    )
     for master, slaves in equivalent_keywords_dict.items():
         for slave in slaves:
             if master != slave:
@@ -136,11 +156,13 @@ def _cross_strap_pair(header, keyword_pair):
     """
     master_key, slave_key = keyword_pair
     master_val = header.get(master_key, "UNDEFINED")
-    slave_val =  header.get(slave_key, "UNDEFINED")
+    slave_val = header.get(slave_key, "UNDEFINED")
     if slave_val == "UNDEFINED" and master_val != "UNDEFINED":
         header[slave_key] = master_val
 
+
 # ----------------------------------------------------------------------------------------------
+
 
 def convert_to_eval_header(header):
     """To support using file headers in eval expressions,  two changes need to be made:
@@ -154,6 +176,7 @@ def convert_to_eval_header(header):
     header = _destringize_numbers(header)
     header = _convert_dotted_paths(header)
     return header
+
 
 def _destringize_numbers(header):
     """Convert string values in `header` that work as numbers back into
@@ -171,6 +194,7 @@ def _destringize_numbers(header):
         with_numbers[key] = val
     return with_numbers
 
+
 def _convert_dotted_paths(header):
     """Convert header dotted-path keys into valid Python identifiers
     (for eval()) by using underscores instead of periods and add to
@@ -182,7 +206,9 @@ def _convert_dotted_paths(header):
         cleaned[clean] = val
     return cleaned
 
+
 # ----------------------------------------------------------------------------------------------
+
 
 def ensure_keys_defined(header, needed_keys=(), define_as="UNDEFINED"):
     """Define any keywords from `needed_keys` which are missing in `header`,  or defined as 'UNDEFINED',
@@ -198,7 +224,9 @@ def ensure_keys_defined(header, needed_keys=(), define_as="UNDEFINED"):
             header[key] = define_as
     return header
 
+
 # ================================================================================================
+
 
 class AbstractFile:
 
@@ -224,7 +252,11 @@ class AbstractFile:
 
     def _unsupported_file_op_error(self, method):
         return exceptions.UnsupportedFileOpError(
-            "Method", repr(method), "is not supported for file format", repr(self.format))
+            "Method",
+            repr(method),
+            "is not supported for file format",
+            repr(self.format),
+        )
 
     def add_checksum(self):
         """Add checksum to`self.filepath`."""
@@ -266,13 +298,12 @@ class AbstractFile:
 
     def get_header(self, needed_keys, **keys):
         """Return dictionary of metadata for this file,  e.g. FITS primary header
-         dictionary featuring keywords `needed_keys`.
-         """
+        dictionary featuring keywords `needed_keys`.
+        """
         raw_header = self.get_raw_header(needed_keys, **keys)
         reduced_header = self._reduce_header(raw_header, needed_keys)
         crossed_header = cross_strap_header(reduced_header)
-        crossed_header["FILE_FORMAT"] = \
-            self.__class__.__name__[:-len("File")].upper()
+        crossed_header["FILE_FORMAT"] = self.__class__.__name__[: -len("File")].upper()
         return crossed_header
 
     def get_raw_header(self, needed_keys, **keys):
@@ -280,6 +311,7 @@ class AbstractFile:
         describing the FITS header, ASDF tree, or JSON or YAML contents.
         """
         raise self._unsupported_file_op_error("get_raw_header")
+
     # ----------------------------------------------------------------------------------------------
 
     def _reduce_header(self, old_header, needed_keys=()):
@@ -299,8 +331,17 @@ class AbstractFile:
             if (not needed_keys) or key in needed_keys:
                 if key in header and header[key] != value:
                     if key not in DUPLICATES_OK:
-                        log.verbose_warning("Duplicate key", repr(key), "in", repr(self.filepath),
-                                            "using", repr(header[key]), "not", repr(value), verbosity=70)
+                        log.verbose_warning(
+                            "Duplicate key",
+                            repr(key),
+                            "in",
+                            repr(self.filepath),
+                            "using",
+                            repr(header[key]),
+                            "not",
+                            repr(value),
+                            verbosity=70,
+                        )
                         continue
                     elif key in APPEND_KEYS:
                         header[key] += "\n" + value

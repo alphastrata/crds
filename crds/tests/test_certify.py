@@ -22,8 +22,10 @@ from crds.tests import test_config
 
 # ==================================================================================
 
+
 class TestCertifyScript(CertifyScript):
     """Subclass TestCertifyScript to better support doctesting..."""
+
     def __call__(self):
         try:
             old_config = test_config.setup()
@@ -31,7 +33,9 @@ class TestCertifyScript(CertifyScript):
         finally:
             test_config.cleanup(old_config)
 
+
 # ==================================================================================
+
 
 def certify_truncated_file():
     """
@@ -49,6 +53,7 @@ def certify_truncated_file():
     0
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
+
 
 def certify_bad_checksum():
     """
@@ -111,6 +116,7 @@ def certify_bad_checksum():
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
 
+
 def certify_good_checksum():
     """
     >>> TestCertifyScript("crds.certify data/s7g1700gl_dead_good_xsum.fits --run-fitsverify --comparison-context hst_0508.pmap")() # doctest: +ELLIPSIS
@@ -157,6 +163,7 @@ def certify_good_checksum():
     CRDS - INFO -  38 infos
     0
     """
+
 
 INTERPRET_FITSVERIFY = """
 Running fitsverify.
@@ -246,6 +253,7 @@ ASDF 8-bit integer pixels,  1 axes (2880),
 
 **** Verification found 0 warning(s) and 1 error(s). ****
 """
+
 
 def certify_interpret_fitsverify():
     """
@@ -351,6 +359,7 @@ def certify_interpret_fitsverify():
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
 
+
 def certify_dump_provenance_fits():
     """
     >>> TestCertifyScript("crds.certify data/s7g1700gl_dead.fits --dump-provenance --comparison-context hst.pmap")()
@@ -375,6 +384,7 @@ def certify_dump_provenance_fits():
     CRDS - INFO - 16 infos
     0
     """
+
 
 def certify_dump_provenance_generic():
     """
@@ -416,6 +426,7 @@ def certify_dump_provenance_generic():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_missing_keyword():
     """
     CRDS - INFO -  ########################################
@@ -428,6 +439,7 @@ def certify_missing_keyword():
     CRDS - INFO -  4 infos
     1
     """
+
 
 def certify_recursive():
     """
@@ -501,6 +513,7 @@ def certify_recursive():
     2
     """
 
+
 def certify_table_comparison_context():
     """
     >>> old_state = test_config.setup()
@@ -545,6 +558,7 @@ def certify_table_comparison_context():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_table_comparison_reference():
     """
     >>> TestCertifyScript("crds.certify data/y951738kl_hv.fits --comparison-reference data/y9j16159l_hv.fits --comparison-context hst_0857.pmap")() # doctest: +ELLIPSIS
@@ -584,6 +598,7 @@ def certify_table_comparison_reference():
     0
     """
 
+
 def certify_duplicate_sha1sum():
     """
     >>> TestCertifyScript("crds.certify data/s7g1700gl_dead.fits --check-sha1sums")() # doctest: +ELLIPSIS
@@ -599,6 +614,7 @@ def certify_duplicate_sha1sum():
     1
     """
 
+
 def certify_jwst_valid():
     """
     >> TestCertifyScript("crds.certify data/niriss_ref_photom.fits --comparison-context None")() # doctest: +ELLIPSIS
@@ -612,6 +628,7 @@ def certify_jwst_valid():
     CRDS - INFO - 4 infos
     0
     """
+
 
 def certify_jwst_missing_optional_parkey():
     """
@@ -631,6 +648,7 @@ def certify_jwst_missing_optional_parkey():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_jwst_invalid_asdf():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -648,6 +666,7 @@ def certify_jwst_invalid_asdf():
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
 
+
 def certify_jwst_invalid_json():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -662,6 +681,7 @@ def certify_jwst_invalid_json():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_jwst_invalid_yaml():
     """
@@ -681,12 +701,14 @@ def certify_jwst_invalid_yaml():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_test_roman_load_all_type_constraints():
     """
     >>> old_state = test_config.setup(url="https://roman-crds-serverless.stsci.edu", observatory="roman", cache=test_config.CRDS_TESTING_CACHE)
     >>> generic_tpn.load_all_type_constraints("roman")
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_test_jwst_load_all_type_constraints():
     """
@@ -695,12 +717,14 @@ def certify_test_jwst_load_all_type_constraints():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_test_hst_load_all_type_constraints():
     """
     >>> old_state = test_config.setup(url="https://hst-crds-serverless.stsci.edu", observatory="hst")
     >>> generic_tpn.load_all_type_constraints("hst")
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_validator_bad_presence_condition():
     """
@@ -712,6 +736,7 @@ def certify_validator_bad_presence_condition():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_JsonCertify_valid():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -720,6 +745,7 @@ def certify_JsonCertify_valid():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_YamlCertify_valid():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -727,6 +753,7 @@ def certify_YamlCertify_valid():
     CRDS - INFO -  Certifying 'data/valid.yaml' as 'YAML' relative to context 'jwst_0034.pmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_AsdfCertify_valid():
     """
@@ -740,6 +767,7 @@ def certify_AsdfCertify_valid():
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
 
+
 def certify_roman_valid_asdf():
     """
     Required Roman test: confirm that a valid asdf file is recognized as such.
@@ -748,6 +776,7 @@ def certify_roman_valid_asdf():
     CRDS - INFO -  Certifying 'data/roman_wfi16_f158_flat_small.asdf' as 'ASDF' relative to context 'roman_0003.pmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_roman_invalid_asdf_schema():
     """
@@ -761,6 +790,7 @@ def certify_roman_invalid_asdf_schema():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_roman_invalid_asdf_tpn():
     """
     Required Roman test: confirm that an asdf file that does not conform to its tpn definition
@@ -773,6 +803,7 @@ def certify_roman_invalid_asdf_tpn():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_roman_valid_spec_asdf():
     """
     Required Roman test: confirm that a valid spectroscopic asdf file is recognized as such.
@@ -781,6 +812,7 @@ def certify_roman_valid_spec_asdf():
     CRDS - INFO -  Certifying 'data/roman_wfi16_grism_flat_small.asdf' as 'ASDF' relative to context 'roman_0003.pmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_roman_invalid_spec_asdf_schema():
     """
@@ -793,6 +825,7 @@ def certify_roman_invalid_spec_asdf_schema():
     ...
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_roman_invalid_spec_asdf_tpn():
     """
@@ -807,6 +840,7 @@ def certify_roman_invalid_spec_asdf_tpn():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_AsdfCertify_valid_with_astropy_time():
     """
     >>> doctest.ELLIPSIS_MARKER = '-ignore-'
@@ -819,6 +853,7 @@ def certify_AsdfCertify_valid_with_astropy_time():
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
 
+
 def certify_FitsCertify_opaque_name():
     """
     >>> old_state = test_config.setup(url="https://hst-crds-serverless.stsci.edu", observatory="hst")
@@ -826,6 +861,7 @@ def certify_FitsCertify_opaque_name():
     CRDS - INFO -  Certifying 'data/opaque_fts.tmp' as 'FITS' relative to context 'hst.pmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 # CRDS is able to recognize ASDF files without the .asdf extension, but the cal code is not.
 # Leaving this test here in case jwst decides to change its mind someday.
@@ -842,6 +878,7 @@ def certify_AsdfCertify_opaque_name():
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
 
+
 def certify_rmap_compare():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -849,6 +886,7 @@ def certify_rmap_compare():
     CRDS - INFO -  Certifying 'jwst_miri_distortion_0025.rmap' as 'MAPPING' relative to context 'jwst_0357.pmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_roman_rmap_compare():
     """
@@ -878,6 +916,7 @@ def certify_jwst_bad_fits():
     >>> test_config.cleanup(old_state)
     """
 
+
 def certify_duplicate_rmap_case_error():
     """
     >>> old_state = test_config.setup(url="https://hst-crds-serverless.stsci.edu", observatory="hst")
@@ -889,6 +928,7 @@ def certify_duplicate_rmap_case_error():
     CRDS - INFO -  Checking diffs from 'hst_cos_tdstab.rmap' to 'hst_cos_tdstab_duplicate.rmap'
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_roman_duplicate_rmap_case_error():
     """
@@ -917,6 +957,7 @@ def checksum_duplicate_rmap_case_error():
     >>> test_config.cleanup(old_state)
     """
 
+
 def checksum_roman_duplicate_rmap_case_error():
     """
     Required Roman test: verify that the crds rmap checksum update tool does not silently drop
@@ -928,6 +969,7 @@ def checksum_roman_duplicate_rmap_case_error():
     CRDS - ERROR -  Duplicate entry at selector ('WFI01', 'F158') = UseAfter vs. UseAfter
     >>> test_config.cleanup(old_state)
     """
+
 
 def certify_roman_invalid_rmap_tpn():
     """
@@ -942,6 +984,7 @@ def certify_roman_invalid_rmap_tpn():
     CRDS - WARNING -  Rule change at ('data/roman_wfi_flat_0004_badtpn.rmap', ('WFI21', 'F158'), ('2020-01-01 00:00:00',)) added Match rule for 'roman_wfi_flat_0003.asdf'
     >>> test_config.cleanup(old_state)
     """
+
 
 def undefined_expr_identifiers():
     """Some TpnInfos include Python expressions either to make them apply conditionally or to
@@ -961,6 +1004,7 @@ def undefined_expr_identifiers():
     >>> validators.core.expr_identifiers("(True)")
     []
     """
+
 
 def load_nirspec_staturation_tpn_lines():
     """Print out the outcome of various .tpn directives like "replace" and
@@ -1026,6 +1070,7 @@ def load_nirspec_staturation_tpn_lines():
     >>> test_config.cleanup(old_state)
     """
 
+
 def load_nirspec_staturation_tpn():
     """Print out the outcome of various .tpn directives like "replace" and
     "include" and reuse of generic files as actual .tpn objects.
@@ -1088,6 +1133,7 @@ def load_nirspec_staturation_tpn():
     >>> test_config.cleanup(old_state)
     """
 
+
 def load_miri_mask_tpn_lines():
     """Print out the outcome of various .tpn directives like "replace" and
     "include" and reuse of generic files.
@@ -1132,6 +1178,7 @@ def load_miri_mask_tpn_lines():
     >>> test_config.cleanup(old_state)
     """
 
+
 def load_miri_mask_tpn():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -1174,6 +1221,7 @@ def load_miri_mask_tpn():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_acs_idctab_char_plus_column():
     """
     >>> TestCertifyScript("crds.certify data/acs_new_idc.fits --comparison-context hst_0508.pmap")()  # doctest: +ELLIPSIS
@@ -1197,6 +1245,7 @@ def dt_acs_idctab_char_plus_column():
     CRDS - INFO -  11 infos
     0
     """
+
 
 def test_certify_check_rmap_updates():
     """
@@ -1313,7 +1362,7 @@ def test_certify_check_rmap_updates():
     CRDS - DEBUG -  Modify found '1996-10-01 00:00:00' as primitive 's7g1700gl_dead_dup1.fits' replacing with 's7g1700gl_dead_dup2.fits'
     CRDS - ERROR -  ----------------------------------------
     Both 's7g1700gl_dead_dup2.fits' and 's7g1700gl_dead_dup1.fits' identically match case:
-     ((('DETECTOR', 'FUV'),), (('DATE-OBS', '1996-10-01'), ('TIME-OBS', '00:00:00'))) 
+     ((('DETECTOR', 'FUV'),), (('DATE-OBS', '1996-10-01'), ('TIME-OBS', '00:00:00')))
     Each reference would replace the other in the rmap.
     Either reference file matching parameters need correction
     or additional matching parameters should be added to the rmap
@@ -1341,7 +1390,7 @@ def test_certify_check_rmap_updates():
     CRDS - DEBUG -  Validating 'hst_cos_deadtab_0250.rmap' with parameters (('DETECTOR',), ('DATE-OBS', 'TIME-OBS'))
     CRDS - DEBUG -  Validating key ('FUV',)
     CRDS - DEBUG -  Checking 'DETECTOR' = 'FUV' against ('FUV', 'NUV')
-    CRDS - ERROR -  Match('DETECTOR',) : ('FUV',) : 
+    CRDS - ERROR -  Match('DETECTOR',) : ('FUV',) :
     ----------------------------------------
     Match case
     (('DETECTOR', 'FUV'),)
@@ -1359,7 +1408,7 @@ def test_certify_check_rmap_updates():
     CRDS - DEBUG -  Validating key '1996-10-01 00:00:00'
     CRDS - DEBUG -  Validating key ('NUV',)
     CRDS - DEBUG -  Checking 'DETECTOR' = 'NUV' against ('FUV', 'NUV')
-    CRDS - ERROR -  Match('DETECTOR',) : ('NUV',) : 
+    CRDS - ERROR -  Match('DETECTOR',) : ('NUV',) :
     ----------------------------------------
     Match case
     (('DETECTOR', 'NUV'),)
@@ -1379,6 +1428,7 @@ def test_certify_check_rmap_updates():
     3
     >>> test_config.cleanup(old_state)
     """
+
 
 def test_asdf_standard_requirement_fail():
     """
@@ -1401,6 +1451,7 @@ def test_asdf_standard_requirement_fail():
     >>> test_config.cleanup(old_state)
     """
 
+
 def test_asdf_standard_requirement_succeed():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -1415,6 +1466,7 @@ def test_asdf_standard_requirement_succeed():
     0
     >>> test_config.cleanup(old_state)
     """
+
 
 def test_asdf_library_version_fail():
     """
@@ -1433,6 +1485,7 @@ def test_asdf_library_version_fail():
     >>> test_config.cleanup(old_state)
     """
 
+
 def test_fits_asdf_extension_fail():
     """
     >>> old_state = test_config.setup(url="https://jwst-crds-serverless.stsci.edu", observatory="jwst")
@@ -1450,9 +1503,9 @@ def test_fits_asdf_extension_fail():
     >>> test_config.cleanup(old_state)
     """
 
+
 # ==================================================================================
 class TestCertify(test_config.CRDSTestCase):
-
     def setUp(self, *args, **keys):
         super(TestCertify, self).setUp(*args, **keys)
         self._old_debug = log.set_exception_trap(False)
@@ -1464,206 +1517,206 @@ class TestCertify(test_config.CRDSTestCase):
     # ------------------------------------------------------------------------------
 
     def test_validator_bad_presence(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H','C','Q', ('WFC','HRC','SBC'))
+        tinfo = generic_tpn.TpnInfo("DETECTOR", "H", "C", "Q", ("WFC", "HRC", "SBC"))
         assert_raises(ValueError, validators.validator, tinfo)
 
     def test_validator_bad_keytype(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','Q','C','R', ('WFC','HRC','SBC'))
+        tinfo = generic_tpn.TpnInfo("DETECTOR", "Q", "C", "R", ("WFC", "HRC", "SBC"))
         assert_raises(ValueError, validators.validator, tinfo)
 
     def test_character_validator_file_good(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H','C','R', ('WFC','HRC','SBC'))
+        tinfo = generic_tpn.TpnInfo("DETECTOR", "H", "C", "R", ("WFC", "HRC", "SBC"))
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.CharacterValidator))
         header = {"DETECTOR": "HRC"}
-        cval.check(self.data('acs_new_idc.fits'), header)
+        cval.check(self.data("acs_new_idc.fits"), header)
 
     def test_character_validator_bad(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H','C','R', ('WFC','HRC','SBC'))
+        tinfo = generic_tpn.TpnInfo("DETECTOR", "H", "C", "R", ("WFC", "HRC", "SBC"))
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.CharacterValidator))
-        header = {"DETECTOR" : "WFD" }
+        header = {"DETECTOR": "WFD"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_character_validator_missing_required(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H','C','R', ('WFC','HRC','SBC'))
+        tinfo = generic_tpn.TpnInfo("DETECTOR", "H", "C", "R", ("WFC", "HRC", "SBC"))
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.CharacterValidator))
-        header = {"DETECTOR" : "WFD" }
+        header = {"DETECTOR": "WFD"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_character_validator_optional_bad(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H','C','O', ('WFC','HRC','SBC'))
+        tinfo = generic_tpn.TpnInfo("DETECTOR", "H", "C", "O", ("WFC", "HRC", "SBC"))
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.CharacterValidator))
-        header = {"DETECTOR" : "WFD" }
+        header = {"DETECTOR": "WFD"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_character_validator_optional_missing(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H','C','O', ('WFC','HRC','SBC'))
+        tinfo = generic_tpn.TpnInfo("DETECTOR", "H", "C", "O", ("WFC", "HRC", "SBC"))
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.CharacterValidator))
-        header = {"DETECTR" : "WFC" }
+        header = {"DETECTR": "WFC"}
         cval.check("foo.fits", header)
 
     # ------------------------------------------------------------------------------
 
     def test_logical_validator_good(self):
-        tinfo = generic_tpn.TpnInfo('ROKIN','H','L','R',())
+        tinfo = generic_tpn.TpnInfo("ROKIN", "H", "L", "R", ())
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.LogicalValidator))
-        header= {"ROKIN": "F"}
+        header = {"ROKIN": "F"}
         cval.check("foo.fits", header)
-        header= {"ROKIN": "T"}
+        header = {"ROKIN": "T"}
         cval.check("foo.fits", header)
 
     def test_logical_validator_bad(self):
-        tinfo = generic_tpn.TpnInfo('ROKIN','H','L','R',())
+        tinfo = generic_tpn.TpnInfo("ROKIN", "H", "L", "R", ())
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.LogicalValidator))
-        header = {"ROKIN" : "True"}
+        header = {"ROKIN": "True"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
-        header = {"ROKIN" : "False"}
+        header = {"ROKIN": "False"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
-        header = {"ROKIN" : "1"}
+        header = {"ROKIN": "1"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
-        header = {"ROKIN" : "0"}
+        header = {"ROKIN": "0"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     # ------------------------------------------------------------------------------
 
     def test_integer_validator_bad_format(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ('FOO',))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("FOO",))
         assert_raises(ValueError, validators.validator, info)
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ('1.0','2.0'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("1.0", "2.0"))
         assert_raises(ValueError, validators.validator, info)
 
     def test_integer_validator_bad_float(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ('1','2'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("1", "2"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.IntValidator))
         header = {"READPATT": "1.9"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_integer_validator_bad_value(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ('1','2','3'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("1", "2", "3"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.IntValidator))
         header = {"READPATT": "4"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_integer_validator_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ('1','2','3'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("1", "2", "3"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.IntValidator))
         header = {"READPATT": "2"}
         cval.check("foo.fits", header)
 
     def test_integer_validator_range_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ("1:40",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("1:40",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.IntValidator))
         header = {"READPATT": "39"}
         cval.check("foo.fits", header)
 
     def test_integer_validator_range_bad(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ("1:40",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("1:40",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.IntValidator))
         header = {"READPATT": "41"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_integer_validator_range_boundary_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ("1:40",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("1:40",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.IntValidator))
         header = {"READPATT": "40"}
         cval.check("foo.fits", header)
 
     def test_integer_validator_range_format_bad(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ("1:40",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("1:40",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.IntValidator))
         header = {"READPATT": "40.3"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'I', 'R', ("x:40",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "I", "R", ("x:40",))
         assert_raises(ValueError, validators.validator, info)
 
     # ------------------------------------------------------------------------------
 
     def test_real_validator_bad_format(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ('FOO',))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("FOO",))
         assert_raises(ValueError, validators.validator, info)
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ('x.0','2.0'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("x.0", "2.0"))
         assert_raises(ValueError, validators.validator, info)
 
     def test_real_validator_bad_value(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ('1.1','2.2','3.3'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1.1", "2.2", "3.3"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "3.2"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_real_validator_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ('1.0','2.1','3.0'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1.0", "2.1", "3.0"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "2.1"}
         cval.check("foo.fits", header)
 
     def test_real_validator_range_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ("1.5:40.2",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1.5:40.2",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "40.1"}
         cval.check("foo.fits", header)
 
     def test_real_validator_range_bad(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ("1.5:40.2",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1.5:40.2",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "40.21"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_real_validator_range_boundary_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ("1.4:40.1",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1.4:40.1",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "40.1"}
         cval.check("foo.fits", header)
 
     def test_real_validator_range_format_bad(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ("1.5:40.2",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1.5:40.2",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "40.x"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ("1.x:40.2",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1.x:40.2",))
         assert_raises(ValueError, validators.validator, info)
 
     def test_real_validator_float_zero(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ('1','0.0'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1", "0.0"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "0.0001"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_real_validator_float_zero_zero(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ('1','0.0'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("1", "0.0"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "0.0003"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_real_validator_range_inf_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ("5.5:inf",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("5.5:inf",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "100000.0"}
         cval.check("foo.fits", header)
 
     def test_real_validator_range_inf_bad(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'R', 'R', ("5.5:inf",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "R", "R", ("5.5:inf",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.RealValidator))
         header = {"READPATT": "5.4"}
@@ -1672,64 +1725,64 @@ class TestCertify(test_config.CRDSTestCase):
     # ------------------------------------------------------------------------------
 
     def test_double_validator_bad_format(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ('FOO',))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("FOO",))
         assert_raises(ValueError, validators.validator, info)
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ('x.0','2.0'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("x.0", "2.0"))
         assert_raises(ValueError, validators.validator, info)
 
     def test_double_validator_bad_value(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ('1.1','2.2','3.3'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("1.1", "2.2", "3.3"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.DoubleValidator))
         header = {"READPATT": "3.2"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_double_validator_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ('1.0','2.1','3.0'))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("1.0", "2.1", "3.0"))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.DoubleValidator))
         header = {"READPATT": "2.1"}
         cval.check("foo.fits", header)
 
     def test_double_validator_range_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ("1.5:40.2",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("1.5:40.2",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.DoubleValidator))
         header = {"READPATT": "40.1"}
         cval.check("foo.fits", header)
 
     def test_double_validator_range_bad(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ("1.5:40.2",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("1.5:40.2",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.DoubleValidator))
         header = {"READPATT": "40.21"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
 
     def test_double_validator_range_boundary_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ("1.4:40.1",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("1.4:40.1",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.DoubleValidator))
         header = {"READPATT": "40.1"}
         cval.check("foo.fits", header)
 
     def test_double_validator_range_format_bad(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ("1.5:40.2",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("1.5:40.2",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.DoubleValidator))
         header = {"READPATT": "40.x"}
         assert_raises(ValueError, cval.check, "foo.fits", header)
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ("1.x:40.2",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("1.x:40.2",))
         assert_raises(ValueError, validators.validator, info)
 
     def test_double_validator_range_inf_good(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ("5.5:inf",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("5.5:inf",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.DoubleValidator))
         header = {"READPATT": "100000.0"}
         cval.check("foo.fits", header)
 
     def test_double_validator_range_inf_bad(self):
-        info = generic_tpn.TpnInfo('READPATT', 'H', 'D', 'R', ("5.5:inf",))
+        info = generic_tpn.TpnInfo("READPATT", "H", "D", "R", ("5.5:inf",))
         cval = validators.validator(info)
         assert_true(isinstance(cval, validators.core.DoubleValidator))
         header = {"READPATT": "5.4"}
@@ -1738,452 +1791,581 @@ class TestCertify(test_config.CRDSTestCase):
     # ------------------------------------------------------------------------------
 
     def test_expression_validator_passes(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','X','X','R', ('((DETECTOR==\'FOO\')and(SUBARRAY==\'BAR\'))',))
+        tinfo = generic_tpn.TpnInfo(
+            "DETECTOR", "X", "X", "R", ("((DETECTOR=='FOO')and(SUBARRAY=='BAR'))",)
+        )
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.ExpressionValidator))
-        header = { "DETECTOR":"FOO", "SUBARRAY":"BAR" }
+        header = {"DETECTOR": "FOO", "SUBARRAY": "BAR"}
         cval.check("foo.fits", header)
 
     def test_expression_validator_fails(self):
-        tinfo = generic_tpn.TpnInfo('DETECTOR','X','X','R', ('((DETECTOR=="FOO")and(SUBARRAY=="BAR"))',))
+        tinfo = generic_tpn.TpnInfo(
+            "DETECTOR", "X", "X", "R", ('((DETECTOR=="FOO")and(SUBARRAY=="BAR"))',)
+        )
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.ExpressionValidator))
-        header = { "DETECTOR":"FOO", "SUBARRAY":"BA" }
-        assert_raises(validators.core.RequiredConditionError, cval.check, "foo.fits", header)
+        header = {"DETECTOR": "FOO", "SUBARRAY": "BA"}
+        assert_raises(
+            validators.core.RequiredConditionError, cval.check, "foo.fits", header
+        )
 
     def test_expression_validator_bad_format(self):
         # typical subtle expression error, "=" vs. "=="
-        tinfo = generic_tpn.TpnInfo('DETECTOR','X','X','R', ('((DETECTOR="FOO")and(SUBARRAY=="BAR"))',))
+        tinfo = generic_tpn.TpnInfo(
+            "DETECTOR", "X", "X", "R", ('((DETECTOR="FOO")and(SUBARRAY=="BAR"))',)
+        )
         assert_raises(SyntaxError, validators.validator, tinfo)
 
     # ------------------------------------------------------------------------------
 
     def test_column_expression_validator_passes(self):
-        tinfo = generic_tpn.TpnInfo('DETCHIP', 'C', 'X', 'R', ('(VALUE%2==1)',))
+        tinfo = generic_tpn.TpnInfo("DETCHIP", "C", "X", "R", ("(VALUE%2==1)",))
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.core.ColumnExpressionValidator))
-        cval.check(self.data('acs_new_idc.fits'), {})
+        cval.check(self.data("acs_new_idc.fits"), {})
 
     def test_column_expression_validator_fails(self):
-        tinfo = generic_tpn.TpnInfo('DETCHIP', 'C', 'X', 'R', ('(VALUE%2==0)',))
+        tinfo = generic_tpn.TpnInfo("DETCHIP", "C", "X", "R", ("(VALUE%2==0)",))
         cval = validators.validator(tinfo)
-        assert_raises(exceptions.RequiredConditionError, cval.check, self.data('acs_new_idc.fits'), {})
+        assert_raises(
+            exceptions.RequiredConditionError,
+            cval.check,
+            self.data("acs_new_idc.fits"),
+            {},
+        )
 
     def test_column_expression_validator_header_variable(self):
-        tinfo = generic_tpn.TpnInfo('DETCHIP', 'C', 'X', 'R', ('(DETECTOR=="FOO")',))
+        tinfo = generic_tpn.TpnInfo("DETCHIP", "C", "X", "R", ('(DETECTOR=="FOO")',))
         cval = validators.validator(tinfo)
-        header = { "DETECTOR": "FOO" }
-        assert_raises(exceptions.RequiredConditionError, cval.check, self.data('acs_new_idc.fits'), header)
+        header = {"DETECTOR": "FOO"}
+        assert_raises(
+            exceptions.RequiredConditionError,
+            cval.check,
+            self.data("acs_new_idc.fits"),
+            header,
+        )
 
     # ------------------------------------------------------------------------------
 
     def test_synphot_graph_validator_passes(self):
-        tinfo = generic_tpn.TpnInfo('EXT1', 'D', 'X', 'R', ('&SYNPHOT_GRAPH',))
+        tinfo = generic_tpn.TpnInfo("EXT1", "D", "X", "R", ("&SYNPHOT_GRAPH",))
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.synphot.SynphotGraphValidator))
-        assert_true(cval.check(self.data('hst_synphot_tmg_connected.fits'), {}))
+        assert_true(cval.check(self.data("hst_synphot_tmg_connected.fits"), {}))
 
     def test_synphot_graph_validator_fails(self):
-        tinfo = generic_tpn.TpnInfo('EXT1', 'D', 'X', 'R', ('&SYNPHOT_GRAPH',))
+        tinfo = generic_tpn.TpnInfo("EXT1", "D", "X", "R", ("&SYNPHOT_GRAPH",))
         cval = validators.validator(tinfo)
-        assert_false(cval.check(self.data('hst_synphot_tmg_disconnected.fits'), {}))
+        assert_false(cval.check(self.data("hst_synphot_tmg_disconnected.fits"), {}))
 
     # ------------------------------------------------------------------------------
 
     def test_synphot_lookup_validator_passes(self):
-        tinfo = generic_tpn.TpnInfo('EXT1', 'D', 'X', 'R', ('&SYNPHOT_LOOKUP',))
+        tinfo = generic_tpn.TpnInfo("EXT1", "D", "X", "R", ("&SYNPHOT_LOOKUP",))
         cval = validators.validator(tinfo)
         assert_true(isinstance(cval, validators.synphot.SynphotLookupValidator))
-        assert_true(cval.check(self.data('hst_synphot_tmc_passes.fits'), {}))
+        assert_true(cval.check(self.data("hst_synphot_tmc_passes.fits"), {}))
 
     def test_synphot_lookup_validator_fails(self):
-        tinfo = generic_tpn.TpnInfo('EXT1', 'D', 'X', 'R', ('&SYNPHOT_LOOKUP',))
+        tinfo = generic_tpn.TpnInfo("EXT1", "D", "X", "R", ("&SYNPHOT_LOOKUP",))
         cval = validators.validator(tinfo)
-        assert_false(cval.check(self.data('hst_synphot_tmc_bad_filename.fits'), {}))
+        assert_false(cval.check(self.data("hst_synphot_tmc_bad_filename.fits"), {}))
 
     # ------------------------------------------------------------------------------
 
     def test_synphot_throughput_validator_passes(self):
-        tinfo = generic_tpn.TpnInfo('EXT1', 'D', 'X', 'R', ('&SYNPHOT_THROUGHPUT',))
+        tinfo = generic_tpn.TpnInfo("EXT1", "D", "X", "R", ("&SYNPHOT_THROUGHPUT",))
         cval = validators.validator(tinfo, context="hst_0787.pmap")
         assert_true(isinstance(cval, validators.synphot.SynphotThroughputValidator))
-        header = { "COMPNAME": "acs_f555w_hrc"}
-        assert_true(cval.check(self.data('acs_f555w_hrc_007_syn.fits'), header))
+        header = {"COMPNAME": "acs_f555w_hrc"}
+        assert_true(cval.check(self.data("acs_f555w_hrc_007_syn.fits"), header))
 
     def test_synphot_throughput_validator_fails(self):
-        tinfo = generic_tpn.TpnInfo('EXT1', 'D', 'X', 'R', ('&SYNPHOT_THROUGHPUT',))
+        tinfo = generic_tpn.TpnInfo("EXT1", "D", "X", "R", ("&SYNPHOT_THROUGHPUT",))
         cval = validators.validator(tinfo, context="hst_0787.pmap")
-        header = { "COMPNAME": "acs_f555w_hrc"}
-        assert_false(cval.check(self.data('acs_f555w_hrc_006_syn.fits'), header))
+        header = {"COMPNAME": "acs_f555w_hrc"}
+        assert_false(cval.check(self.data("acs_f555w_hrc_006_syn.fits"), header))
 
     # ------------------------------------------------------------------------------
 
     def test_synphot_thermal_validator_passes(self):
-        tinfo = generic_tpn.TpnInfo('EXT1', 'D', 'X', 'R', ('&SYNPHOT_THERMAL',))
+        tinfo = generic_tpn.TpnInfo("EXT1", "D", "X", "R", ("&SYNPHOT_THERMAL",))
         cval = validators.validator(tinfo, context="hst_0787.pmap")
         assert_true(isinstance(cval, validators.synphot.SynphotThermalValidator))
-        header = { "COMPNAME": "wfc3_ir_g141_src"}
-        assert_true(cval.check(self.data('wfc3_ir_g141_src_999_th.fits'), header))
+        header = {"COMPNAME": "wfc3_ir_g141_src"}
+        assert_true(cval.check(self.data("wfc3_ir_g141_src_999_th.fits"), header))
 
     def test_synphot_thermal_validator_fails(self):
-        tinfo = generic_tpn.TpnInfo('EXT1', 'D', 'X', 'R', ('&SYNPHOT_THERMAL',))
+        tinfo = generic_tpn.TpnInfo("EXT1", "D", "X", "R", ("&SYNPHOT_THERMAL",))
         cval = validators.validator(tinfo, context="hst_0787.pmap")
-        header = { "COMPNAME": "wfc3_ir_g141_src"}
-        assert_false(cval.check(self.data('wfc3_ir_g141_src_003_th.fits'), header))
+        header = {"COMPNAME": "wfc3_ir_g141_src"}
+        assert_false(cval.check(self.data("wfc3_ir_g141_src_003_th.fits"), header))
 
     # ------------------------------------------------------------------------------
 
     def test_conditionally_required_bad_format(self):
         # typical subtle expression error, "=" vs. "=="
-        tinfo = generic_tpn.TpnInfo('DETECTOR','X', 'X', '(SUBARRAY="BAR")', ("FOO","BAR","BAZ"))
+        tinfo = generic_tpn.TpnInfo(
+            "DETECTOR", "X", "X", '(SUBARRAY="BAR")', ("FOO", "BAR", "BAZ")
+        )
         assert_raises(SyntaxError, validators.validator, tinfo)
 
     def test_conditionally_required_good(self):
         # typical subtle expression error, "=" vs. "=="
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H', 'C', '(SUBARRAY=="BAR")', ("FOO","BAR","BAZ"))
+        tinfo = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", '(SUBARRAY=="BAR")', ("FOO", "BAR", "BAZ")
+        )
         cval = validators.validator(tinfo)
-        header = { "DETECTOR" : "FOO", "SUBARRAY":"BAR" }
+        header = {"DETECTOR": "FOO", "SUBARRAY": "BAR"}
         cval.check("foo.fits", header)
 
     def test_conditionally_required_bad(self):
         # typical subtle expression error, "=" vs. "=="
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H', 'C', '(SUBARRAY=="BAR")', ("FOO","BAR","BAZ"))
+        tinfo = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", '(SUBARRAY=="BAR")', ("FOO", "BAR", "BAZ")
+        )
         checker = validators.validator(tinfo)
-        header = { "DETECTOR" : "FRODO", "SUBARRAY":"BAR" }
+        header = {"DETECTOR": "FRODO", "SUBARRAY": "BAR"}
         assert_raises(ValueError, checker.check, "foo.fits", header)
 
     def test_conditionally_not_required(self):
         # typical subtle expression error, "=" vs. "=="
-        tinfo = generic_tpn.TpnInfo('DETECTOR','H', 'C', '(SUBARRAY=="BAR")', ("FOO","BAR","BAZ"))
+        tinfo = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", '(SUBARRAY=="BAR")', ("FOO", "BAR", "BAZ")
+        )
         checker = validators.validator(tinfo)
-        header = { "DETECTOR" : "FRODO", "SUBARRAY":"BAZ" }
+        header = {"DETECTOR": "FRODO", "SUBARRAY": "BAZ"}
         checker.check("foo.fits", header)
 
     def test_not_conditionally_required(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ("FOO","BAR","BAZ"))
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "R", ("FOO", "BAR", "BAZ"))
         checker = validators.validator(info)
         assert_true(not checker.conditionally_required)  #
 
     def test_conditional_warning_true_present(self):
-        info = generic_tpn.TpnInfo('PIXAR_SR', 'H', 'R', "(warning(not(('MRS')in(EXP_TYPE))))", ())
+        info = generic_tpn.TpnInfo(
+            "PIXAR_SR", "H", "R", "(warning(not(('MRS')in(EXP_TYPE))))", ()
+        )
         checker = validators.validator(info)
         assert_true(checker.conditionally_required)
-        header = {"EXP_TYPE":"MIR_LRS-FIXEDSLIT", "PIXAR_SR":"999.0"}
-        assert_true(checker.is_applicable(header)=='W')  #
+        header = {"EXP_TYPE": "MIR_LRS-FIXEDSLIT", "PIXAR_SR": "999.0"}
+        assert_true(checker.is_applicable(header) == "W")  #
         checker.handle_missing(header)
 
     def test_conditional_warning_true_absent(self):
-        info = generic_tpn.TpnInfo('PIXAR_SR', 'H', 'R', "(warning(not(('MRS')in(EXP_TYPE))))", ())
+        info = generic_tpn.TpnInfo(
+            "PIXAR_SR", "H", "R", "(warning(not(('MRS')in(EXP_TYPE))))", ()
+        )
         checker = validators.validator(info)
         assert_true(checker.conditionally_required)
-        header = {"EXP_TYPE":"MIR_LRS-FIXEDSLIT", "PIXAR_SR":"999.0"}
-        assert_true(checker.is_applicable(header)=='W')  #
+        header = {"EXP_TYPE": "MIR_LRS-FIXEDSLIT", "PIXAR_SR": "999.0"}
+        assert_true(checker.is_applicable(header) == "W")  #
         checker.handle_missing(header)
 
     def test_conditional_warning_false_present(self):
-        info = generic_tpn.TpnInfo('PIXAR_SR', 'H', 'R', "(warning(not(('MRS')in(EXP_TYPE))))", ())
+        info = generic_tpn.TpnInfo(
+            "PIXAR_SR", "H", "R", "(warning(not(('MRS')in(EXP_TYPE))))", ()
+        )
         checker = validators.validator(info)
         assert_true(checker.conditionally_required)
-        header = {"EXP_TYPE":"MIR_FLAT-MRS", "PIXAR_SR":"999.0"}
-        assert_true(checker.is_applicable(header)==False)  #
+        header = {"EXP_TYPE": "MIR_FLAT-MRS", "PIXAR_SR": "999.0"}
+        assert_true(checker.is_applicable(header) == False)  #
         checker.handle_missing(header)
 
     def test_conditional_warning_false_absent(self):
-        info = generic_tpn.TpnInfo('PIXAR_SR', 'H', 'R', "(warning(not(('MRS')in(EXP_TYPE))))", ())
+        info = generic_tpn.TpnInfo(
+            "PIXAR_SR", "H", "R", "(warning(not(('MRS')in(EXP_TYPE))))", ()
+        )
         checker = validators.validator(info)
         assert_true(checker.conditionally_required)
-        header = {"EXP_TYPE":"MIR_FLAT-MRS"}
-        assert_true(checker.is_applicable(header)==False)  #
+        header = {"EXP_TYPE": "MIR_FLAT-MRS"}
+        assert_true(checker.is_applicable(header) == False)  #
         checker.handle_missing(header)
 
     def test_conditional_optional_true_present(self):
-        info = generic_tpn.TpnInfo('PIXAR_SR', 'H', 'R', "(optional(not(('MRS')in(EXP_TYPE))))", ())
+        info = generic_tpn.TpnInfo(
+            "PIXAR_SR", "H", "R", "(optional(not(('MRS')in(EXP_TYPE))))", ()
+        )
         checker = validators.validator(info)
         assert_true(checker.conditionally_required)
-        header = {"EXP_TYPE":"MIR_LRS-FIXEDSLIT", "PIXAR_SR":"999.0"}
-        assert_true(checker.is_applicable(header)=='O')  #
+        header = {"EXP_TYPE": "MIR_LRS-FIXEDSLIT", "PIXAR_SR": "999.0"}
+        assert_true(checker.is_applicable(header) == "O")  #
         checker.handle_missing(header)
 
     def test_conditional_optional_true_absent(self):
-        info = generic_tpn.TpnInfo('PIXAR_SR', 'H', 'R', "(optional(not(('MRS')in(EXP_TYPE))))", ())
+        info = generic_tpn.TpnInfo(
+            "PIXAR_SR", "H", "R", "(optional(not(('MRS')in(EXP_TYPE))))", ()
+        )
         checker = validators.validator(info)
         assert_true(checker.conditionally_required)
-        header = {"EXP_TYPE":"MIR_LRS-FIXEDSLIT"}
-        assert_true(checker.is_applicable(header)=='O')  #
+        header = {"EXP_TYPE": "MIR_LRS-FIXEDSLIT"}
+        assert_true(checker.is_applicable(header) == "O")  #
         checker.handle_missing(header)
 
     def test_conditional_optional_false_present(self):
-        info = generic_tpn.TpnInfo('PIXAR_SR', 'H', 'R', "(optional(not(('MRS')in(EXP_TYPE))))", ())
+        info = generic_tpn.TpnInfo(
+            "PIXAR_SR", "H", "R", "(optional(not(('MRS')in(EXP_TYPE))))", ()
+        )
         checker = validators.validator(info)
         assert_true(checker.conditionally_required)
-        header = {"EXP_TYPE":"MIR_FLAT-MRS", "PIXAR_SR":"999.0"}
-        assert_true(checker.is_applicable(header)==False)  #
+        header = {"EXP_TYPE": "MIR_FLAT-MRS", "PIXAR_SR": "999.0"}
+        assert_true(checker.is_applicable(header) == False)  #
         checker.handle_missing(header)
 
     def test_conditional_optional_false_absent(self):
-        info = generic_tpn.TpnInfo('PIXAR_SR', 'H', 'R', "(optional(not(('MRS')in(EXP_TYPE))))", ())
+        info = generic_tpn.TpnInfo(
+            "PIXAR_SR", "H", "R", "(optional(not(('MRS')in(EXP_TYPE))))", ()
+        )
         checker = validators.validator(info)
         assert_true(checker.conditionally_required)
-        header = {"EXP_TYPE":"MIR_FLAT-MRS"}
-        assert_true(checker.is_applicable(header)==False)  #
+        header = {"EXP_TYPE": "MIR_FLAT-MRS"}
+        assert_true(checker.is_applicable(header) == False)  #
         checker.handle_missing(header)
 
     def test_tpn_bad_presence(self):
         try:
-            generic_tpn.TpnInfo('DETECTOR','H', 'C', 'Q', ("FOO","BAR","BAZ"))
+            generic_tpn.TpnInfo("DETECTOR", "H", "C", "Q", ("FOO", "BAR", "BAZ"))
         except ValueError as exc:
-            assert_true("presence" in str(exc), "Wrong exception for test_tpn_bad_presence")
+            assert_true(
+                "presence" in str(exc), "Wrong exception for test_tpn_bad_presence"
+            )
 
     def test_tpn_bad_group_keytype(self):
-        info = generic_tpn.TpnInfo('DETECTOR','G', 'C', 'R', ("FOO","BAR","BAZ"))
+        info = generic_tpn.TpnInfo("DETECTOR", "G", "C", "R", ("FOO", "BAR", "BAZ"))
         checker = validators.validator(info)
         warns = log.warnings()
-        checker.check("test.fits", {"DETECTOR":"FOO"})
+        checker.check("test.fits", {"DETECTOR": "FOO"})
         new_warns = log.warnings()
-        assert_true(new_warns - warns >= 1, "No warning issued for unsupported group .tpn constraint type.")
+        assert_true(
+            new_warns - warns >= 1,
+            "No warning issued for unsupported group .tpn constraint type.",
+        )
 
     def test_tpn_repr(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ("FOO","BAR","BAZ"))
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "R", ("FOO", "BAR", "BAZ"))
         repr(validators.validator(info))
 
     def test_tpn_check_value_method_not_implemented(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ("FOO","BAR","BAZ"))
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "R", ("FOO", "BAR", "BAZ"))
         checker = validators.core.Validator(info)
-        assert_raises(NotImplementedError, checker.check, "test.fits", header={"DETECTOR":"FOO"})
+        assert_raises(
+            NotImplementedError, checker.check, "test.fits", header={"DETECTOR": "FOO"}
+        )
 
     def test_tpn_handle_missing(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'W', ("FOO","BAR","BAZ"))
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "W", ("FOO", "BAR", "BAZ"))
         checker = validators.validator(info)
-        assert_true(checker.handle_missing(header={"READPATT":"FOO"}) == "UNDEFINED")
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'S', ("FOO","BAR","BAZ"))
+        assert_true(checker.handle_missing(header={"READPATT": "FOO"}) == "UNDEFINED")
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "S", ("FOO", "BAR", "BAZ"))
         checker = validators.validator(info)
-        assert_true(checker.handle_missing(header={"READPATT":"FOO"}) == "UNDEFINED")
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'F', ("FOO","BAR","BAZ"))
+        assert_true(checker.handle_missing(header={"READPATT": "FOO"}) == "UNDEFINED")
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "F", ("FOO", "BAR", "BAZ"))
         checker = validators.validator(info)
-        assert_true(checker.handle_missing(header={"READPATT":"FOO"}) == "UNDEFINED")
+        assert_true(checker.handle_missing(header={"READPATT": "FOO"}) == "UNDEFINED")
 
     def test_tpn_handle_missing_conditional(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', "(READPATT=='FOO')", ("FOO","BAR","BAZ"))
+        info = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", "(READPATT=='FOO')", ("FOO", "BAR", "BAZ")
+        )
         checker = validators.validator(info)
-        assert_raises(exceptions.MissingKeywordError, checker.handle_missing, header={"READPATT":"FOO"})
-        assert_true(checker.handle_missing(header={"READPATT":"BAR"}) == "UNDEFINED")
-
+        assert_raises(
+            exceptions.MissingKeywordError,
+            checker.handle_missing,
+            header={"READPATT": "FOO"},
+        )
+        assert_true(checker.handle_missing(header={"READPATT": "BAR"}) == "UNDEFINED")
 
     def test_missing_column_validator(self):
-        info = generic_tpn.TpnInfo('FOO','C', 'C', 'R', ("X","Y","Z"))
+        info = generic_tpn.TpnInfo("FOO", "C", "C", "R", ("X", "Y", "Z"))
         checker = validators.validator(info)
-        assert_raises(exceptions.MissingKeywordError, checker.check, self.data("v8q14451j_idc.fits"),
-                      header={"DETECTOR":"IRRELEVANT"})
+        assert_raises(
+            exceptions.MissingKeywordError,
+            checker.check,
+            self.data("v8q14451j_idc.fits"),
+            header={"DETECTOR": "IRRELEVANT"},
+        )
 
     def test_tpn_excluded_keyword(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'E', ())
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "E", ())
         checker = validators.validator(info)
-        assert_raises(exceptions.IllegalKeywordError, checker.check, "test.fits", {"DETECTOR":"SHOULDNT_DEFINE"})
+        assert_raises(
+            exceptions.IllegalKeywordError,
+            checker.check,
+            "test.fits",
+            {"DETECTOR": "SHOULDNT_DEFINE"},
+        )
 
     def test_tpn_not_value(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('SUBARRAY','H', 'C', 'R', ["NOT_GENERIC"])
+        info = generic_tpn.TpnInfo("SUBARRAY", "H", "C", "R", ["NOT_GENERIC"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"SUBARRAY":"GENERIC"})
+        assert_raises(ValueError, checker.check, "test.fits", {"SUBARRAY": "GENERIC"})
 
     def test_tpn_or_bar_value(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ["THIS","THAT","OTHER"])
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "R", ["THIS", "THAT", "OTHER"])
         checker = validators.validator(info)
-        checker.check("test.fits", {"DETECTOR":"THAT|THIS"})
+        checker.check("test.fits", {"DETECTOR": "THAT|THIS"})
 
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ["THAT","OTHER"])
+        info = generic_tpn.TpnInfo("DETECTOR", "H", "C", "R", ["THAT", "OTHER"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"DETECTOR":"THAT|THIS"})
+        assert_raises(ValueError, checker.check, "test.fits", {"DETECTOR": "THAT|THIS"})
 
     def test_tpn_esoteric_value(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ["([abc]+)","BETWEEN_300_400","#OTHER#"])
+        info = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", "R", ["([abc]+)", "BETWEEN_300_400", "#OTHER#"]
+        )
         checker = validators.validator(info)
-        checker.check("test.fits", {"DETECTOR":"([abc]+)"})
+        checker.check("test.fits", {"DETECTOR": "([abc]+)"})
         assert_raises(ValueError, checker.check, "test.fits", {"DETECTOR": "([def]+)"})
 
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ["{.*1234}","BETWEEN_300_400","#OTHER#"])
+        info = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", "R", ["{.*1234}", "BETWEEN_300_400", "#OTHER#"]
+        )
         checker = validators.validator(info)
-        checker.check("test.fits", {"DETECTOR":"{.*1234}"})
+        checker.check("test.fits", {"DETECTOR": "{.*1234}"})
 
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ["(THIS)","BETWEEN_300_400","#OTHER#"])
+        info = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", "R", ["(THIS)", "BETWEEN_300_400", "#OTHER#"]
+        )
         checker = validators.validator(info)
-        checker.check("test.fits", {"DETECTOR":"BETWEEN_300_400"})
+        checker.check("test.fits", {"DETECTOR": "BETWEEN_300_400"})
 
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ["# >1 and <37 #","BETWEEN_300_400","#OTHER#"])
+        info = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", "R", ["# >1 and <37 #", "BETWEEN_300_400", "#OTHER#"]
+        )
         checker = validators.validator(info)
-        checker.check("test.fits", {"DETECTOR":"# >1 and <37 #"})
+        checker.check("test.fits", {"DETECTOR": "# >1 and <37 #"})
 
         # This demos synatax/check for "NOT FOO" in rmap match tuples
-        info = generic_tpn.TpnInfo('DETECTOR','H', 'C', 'R', ["NOT_FOO","BETWEEN_300_400","#OTHER#"])
+        info = generic_tpn.TpnInfo(
+            "DETECTOR", "H", "C", "R", ["NOT_FOO", "BETWEEN_300_400", "#OTHER#"]
+        )
         checker = validators.validator(info)
-        checker.check("test.fits", {"DETECTOR":"NOT_FOO"})
+        checker.check("test.fits", {"DETECTOR": "NOT_FOO"})
 
     def test_tpn_pedigree_missing(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(exceptions.MissingKeywordError,
-            checker.check, "test.fits", {"DETECTOR":"This is a test"})
+        assert_raises(
+            exceptions.MissingKeywordError,
+            checker.check,
+            "test.fits",
+            {"DETECTOR": "This is a test"},
+        )
 
     def test_tpn_pedigree_dummy(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        checker.check("test.fits", {"PEDIGREE":"DUMMY"})
+        checker.check("test.fits", {"PEDIGREE": "DUMMY"})
 
     def test_tpn_pedigree_ground(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        checker.check("test.fits", {"PEDIGREE":"GROUND"})
+        checker.check("test.fits", {"PEDIGREE": "GROUND"})
 
     def test_tpn_pedigree_simulation(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        checker.check("test.fits", {"PEDIGREE":"SIMULATION"})
+        checker.check("test.fits", {"PEDIGREE": "SIMULATION"})
 
     def test_tpn_pedigree_bad_leading(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE":"xDUMMY"})
+        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE": "xDUMMY"})
 
     def test_tpn_pedigree_bad_trailing(self):
         # typical subtle expression error, "=" vs. "=="
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE":"DUMMYxyz"})
+        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE": "DUMMYxyz"})
 
     def test_tpn_pedigree_inflight_no_date(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE":"INFLIGHT"})
+        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE": "INFLIGHT"})
 
     def test_tpn_pedigree_equal_start_stop(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        checker.check("test.fits", {"PEDIGREE":"INFLIGHT 02/01/2017 02/01/2017"})
+        checker.check("test.fits", {"PEDIGREE": "INFLIGHT 02/01/2017 02/01/2017"})
 
     def test_tpn_pedigree_bad_datetime_order(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE":"INFLIGHT 2017-01-02 2017-01-01"})
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"PEDIGREE": "INFLIGHT 2017-01-02 2017-01-01"},
+        )
 
     def test_tpn_pedigree_good_datetime_slash(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        checker.check("test.fits", {"PEDIGREE":"INFLIGHT 02/01/2017 03/01/2017"})
+        checker.check("test.fits", {"PEDIGREE": "INFLIGHT 02/01/2017 03/01/2017"})
 
     def test_tpn_pedigree_bad_datetime_slash(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE":"INFLIGHT 02/25/2017 03/01/2017"})
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"PEDIGREE": "INFLIGHT 02/25/2017 03/01/2017"},
+        )
 
     def test_tpn_pedigree_good_datetime_dash(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        checker.check("test.fits", {"PEDIGREE":"INFLIGHT 2017-01-01 2017-01-02"})
+        checker.check("test.fits", {"PEDIGREE": "INFLIGHT 2017-01-01 2017-01-02"})
 
     def test_tpn_pedigree_bad_datetime_dash(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE":"INFLIGHT 2017-01-01 01-02-2017"})
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"PEDIGREE": "INFLIGHT 2017-01-01 01-02-2017"},
+        )
 
     def test_tpn_pedigree_bad_datetime_dash_dash(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE":"INFLIGHT 2017-01-01 - 2017-01-02"})
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"PEDIGREE": "INFLIGHT 2017-01-01 - 2017-01-02"},
+        )
 
     def test_tpn_pedigree_bad_datetime_format_1(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check, "test.fits",
-                      {"PEDIGREE":"INFLIGHT 2017-01-01 - 2017-01-02 -"})
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"PEDIGREE": "INFLIGHT 2017-01-01 - 2017-01-02 -"},
+        )
 
     def test_tpn_pedigree_bad_datetime_format_2(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check,
-                      "test.fits", {"PEDIGREE":"INFLIGHT 2017-01-01 - 2017/01/02"})
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"PEDIGREE": "INFLIGHT 2017-01-01 - 2017/01/02"},
+        )
 
     def test_tpn_pedigree_bad_datetime_format_3(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(ValueError, checker.check,
-                      "test.fits", {"PEDIGREE":"INFLIGHT 2017-01-01T00:00:00 2017-01-02"})
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"PEDIGREE": "INFLIGHT 2017-01-01T00:00:00 2017-01-02"},
+        )
 
     def test_tpn_jwstpedigree_dashdate(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&JWSTPEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&JWSTPEDIGREE"])
         checker = validators.validator(info)
-        checker.check(
-            "test.fits", {"PEDIGREE":"INFLIGHT 2017-01-01 2017-01-02"})
+        checker.check("test.fits", {"PEDIGREE": "INFLIGHT 2017-01-01 2017-01-02"})
 
     def test_tpn_jwstpedigree_ground_dates(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&JWSTPEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&JWSTPEDIGREE"])
         checker = validators.validator(info)
         assert_raises(
-            ValueError, checker.check, "test.fits",
-            {"PEDIGREE":"GROUND 2018-01-01 2018-01-25"})
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"PEDIGREE": "GROUND 2018-01-01 2018-01-25"},
+        )
 
     def test_tpn_jwstpedigree_nodate_format_3(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&JWSTPEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&JWSTPEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(
-            ValueError, checker.check, "test.fits", {"PEDIGREE":"INFLIGHT"})
+        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE": "INFLIGHT"})
 
     def test_tpn_jwstpedigree_missing_format_3(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&JWSTPEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&JWSTPEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(
-            exceptions.MissingKeywordError, checker.check, "test.fits", {})
+        assert_raises(exceptions.MissingKeywordError, checker.check, "test.fits", {})
 
     def test_tpn_jwstpedigree_no_model_3(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','H', 'C', 'R', ["&JWSTPEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "H", "C", "R", ["&JWSTPEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(
-            ValueError, checker.check, "test.fits", {"PEDIGREE":"MODEL"})
+        assert_raises(ValueError, checker.check, "test.fits", {"PEDIGREE": "MODEL"})
 
     def test_tpn_pedigree_missing_column(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','C', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "C", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
-        assert_raises(exceptions.MissingKeywordError, checker.check_column, "data/x2i1559gl_wcp.fits", {})
+        assert_raises(
+            exceptions.MissingKeywordError,
+            checker.check_column,
+            "data/x2i1559gl_wcp.fits",
+            {},
+        )
 
     def test_tpn_pedigree_ok_column(self):
-        info = generic_tpn.TpnInfo('PEDIGREE','C', 'C', 'R', ["&PEDIGREE"])
+        info = generic_tpn.TpnInfo("PEDIGREE", "C", "C", "R", ["&PEDIGREE"])
         checker = validators.validator(info)
         header = data_file.get_header(self.data("16j16005o_apd.fits"))
         checker.check_column("data/16j16005o_apd.fits", header)
 
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
 
     def test_sybdate_validator(self):
-        tinfo = generic_tpn.TpnInfo('USEAFTER','H','C','R',('&SYBDATE',))
+        tinfo = generic_tpn.TpnInfo("USEAFTER", "H", "C", "R", ("&SYBDATE",))
         cval = validators.validator(tinfo)
-        assert_true(isinstance(cval,validators.core.SybdateValidator))
+        assert_true(isinstance(cval, validators.core.SybdateValidator))
         header = data_file.get_header(self.data("acs_new_idc.fits"))
-        cval.check(self.data('acs_new_idc.fits'), header)
+        cval.check(self.data("acs_new_idc.fits"), header)
 
     def test_slashdate_validator(self):
-        tinfo = generic_tpn.TpnInfo('USEAFTER','H','C','R',('&SLASHDATE',))
+        tinfo = generic_tpn.TpnInfo("USEAFTER", "H", "C", "R", ("&SLASHDATE",))
         checker = validators.validator(tinfo)
-        checker.check("test.fits", {"USEAFTER":"25/12/2016"})
-        assert_raises(ValueError, checker.check, "test.fits", {"USEAFTER":"2017-12-25"})
+        checker.check("test.fits", {"USEAFTER": "25/12/2016"})
+        assert_raises(
+            ValueError, checker.check, "test.fits", {"USEAFTER": "2017-12-25"}
+        )
 
     def test_Anydate_validator(self):
-        tinfo = generic_tpn.TpnInfo('USEAFTER','H','C','R',('&ANYDATE',))
+        tinfo = generic_tpn.TpnInfo("USEAFTER", "H", "C", "R", ("&ANYDATE",))
         checker = validators.validator(tinfo)
-        checker.check("test.fits", {"USEAFTER":"25/12/2016"})
-        checker.check("test.fits", {"USEAFTER":"Mar 21 2001 12:00:00 am"})
-        assert_raises(ValueError, checker.check, "test.fits", {"USEAFTER":"2017-01-01T00:00:00.000"})
-        assert_raises(ValueError, checker.check, "test.fits", {"USEAFTER":"12-25-2017"})
-        assert_raises(ValueError, checker.check, "test.fits", {"USEAFTER":"Mxx 21 2001 01:00:00 PM"})
-        assert_raises(ValueError, checker.check, "test.fits", {"USEAFTER":"35/12/20117"})
+        checker.check("test.fits", {"USEAFTER": "25/12/2016"})
+        checker.check("test.fits", {"USEAFTER": "Mar 21 2001 12:00:00 am"})
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"USEAFTER": "2017-01-01T00:00:00.000"},
+        )
+        assert_raises(
+            ValueError, checker.check, "test.fits", {"USEAFTER": "12-25-2017"}
+        )
+        assert_raises(
+            ValueError,
+            checker.check,
+            "test.fits",
+            {"USEAFTER": "Mxx 21 2001 01:00:00 PM"},
+        )
+        assert_raises(
+            ValueError, checker.check, "test.fits", {"USEAFTER": "35/12/20117"}
+        )
 
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
 
     def certify_files(self, *args, **keys):
         keys = dict(keys)
@@ -2191,25 +2373,39 @@ class TestCertify(test_config.CRDSTestCase):
         return certify.certify_files(*args, **keys)
 
     def certify_rmap_missing_parkey(self):
-        self.certify_files([self.data("hst_missing_parkey.rmap")], "hst.pmap", observatory="hst")
+        self.certify_files(
+            [self.data("hst_missing_parkey.rmap")], "hst.pmap", observatory="hst"
+        )
 
     def certify_no_corresponding_rmap(self):
-        self.certify_files([self.data("acs_new_idc.fits")], "hst.pmap", observatory="hst")
+        self.certify_files(
+            [self.data("acs_new_idc.fits")], "hst.pmap", observatory="hst"
+        )
 
     def certify_missing_provenance(self):
-        self.certify_files([self.data("acs_new_idc.fits")], "hst.pmap", observatory="hst",
-                              dum_provenance=True, provenance=["GAIN"])
+        self.certify_files(
+            [self.data("acs_new_idc.fits")],
+            "hst.pmap",
+            observatory="hst",
+            dum_provenance=True,
+            provenance=["GAIN"],
+        )
 
-# ------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------
 
     def test_check_ambiguous_match(self):
-        assert_raises(exceptions.AmbiguousMatchError, certify.certify_file,
-        self.data("hst_acs_darkfile.rmap"), "hst.pmap", observatory="hst")
+        assert_raises(
+            exceptions.AmbiguousMatchError,
+            certify.certify_file,
+            self.data("hst_acs_darkfile.rmap"),
+            "hst.pmap",
+            observatory="hst",
+        )
 
     def test_check_dduplicates(self):
         self.certify_files([self.data("hst.pmap")], "hst.pmap", observatory="hst")
         self.certify_files([self.data("hst_acs.imap")], "hst.pmap", observatory="hst")
-    
+
     def test_check_dup_selector_entry(self):
         """Should return:
         CRDS - ERROR -  Duplicate entry at selector Match(('FUV',)) '1996-10-01 00:00:00' = 's7g1700gl_dead_dup2.fits' vs. 's7g1700gl_dead_dup1.fits'
@@ -2221,24 +2417,44 @@ class TestCertify(test_config.CRDSTestCase):
     def test_check_comment(self):
         self.certify_files([self.data("hst.pmap")], "hst.pmap", observatory="hst")
         self.certify_files([self.data("hst_acs.imap")], "hst.pmap", observatory="hst")
-        self.certify_files([self.data("hst_acs_darkfile_comment.rmap")], "hst.pmap", observatory="hst")
+        self.certify_files(
+            [self.data("hst_acs_darkfile_comment.rmap")], "hst.pmap", observatory="hst"
+        )
 
     def test_table_mode_checks_identical(self):
-        self.certify_files([self.data("v8q14451j_idc.fits")], "hst.pmap", observatory="hst",
-                              compare_old_reference=True)
+        self.certify_files(
+            [self.data("v8q14451j_idc.fits")],
+            "hst.pmap",
+            observatory="hst",
+            compare_old_reference=True,
+        )
 
     def test_table_mode_checks_missing_modes(self):
-        self.certify_files([self.data("v8q1445xx_idc.fits")], "hst.pmap", observatory="hst",
-                              compare_old_reference=True)
+        self.certify_files(
+            [self.data("v8q1445xx_idc.fits")],
+            "hst.pmap",
+            observatory="hst",
+            compare_old_reference=True,
+        )
 
     def test_UnknownCertifier_missing(self):
         # log.set_exception_trap("test")
-        assert_raises(FileNotFoundError, certify.certify_file,
-            self.data("non-existent-file.txt"), "jwst.pmap", observatory="jwst")
+        assert_raises(
+            FileNotFoundError,
+            certify.certify_file,
+            self.data("non-existent-file.txt"),
+            "jwst.pmap",
+            observatory="jwst",
+        )
 
     def test_FitsCertify_bad_value(self):
-        assert_raises(ValueError, certify.certify_file,
-            self.data("s7g1700gm_dead_broken.fits"), "hst.pmap", observatory="hst")
+        assert_raises(
+            ValueError,
+            certify.certify_file,
+            self.data("s7g1700gm_dead_broken.fits"),
+            "hst.pmap",
+            observatory="hst",
+        )
 
     # ------------------------------------------------------------------------------
 
@@ -2254,39 +2470,62 @@ class TestCertify(test_config.CRDSTestCase):
     #     script()
 
     def test_certify_dont_recurse_mappings(self):
-        script = certify.CertifyScript("crds.certify crds://hst_0317.pmap --dont-recurse-mappings")
+        script = certify.CertifyScript(
+            "crds.certify crds://hst_0317.pmap --dont-recurse-mappings"
+        )
         errors = script()
 
     def test_certify_kernel_unity_validator_good(self):
-        header = {'SCI_ARRAY': utils.Struct({'COLUMN_NAMES': None,
-                                'DATA': np.array([[ 0.        ,  0.0276    ,  0.        ],
-                                               [ 0.0316    ,  0.88160002,  0.0316    ],
-                                               [ 0.        ,  0.0276    ,  0.        ]], dtype='float32'),
-                                'DATA_TYPE': 'float32',
-                                'EXTENSION': 1,
-                                'KIND': 'IMAGE',
-                                'SHAPE': (3, 3)})
+        header = {
+            "SCI_ARRAY": utils.Struct(
+                {
+                    "COLUMN_NAMES": None,
+                    "DATA": np.array(
+                        [
+                            [0.0, 0.0276, 0.0],
+                            [0.0316, 0.88160002, 0.0316],
+                            [0.0, 0.0276, 0.0],
+                        ],
+                        dtype="float32",
+                    ),
+                    "DATA_TYPE": "float32",
+                    "EXTENSION": 1,
+                    "KIND": "IMAGE",
+                    "SHAPE": (3, 3),
                 }
-        info = generic_tpn.TpnInfo('SCI','D','X','R',('&KernelUnity',))
+            )
+        }
+        info = generic_tpn.TpnInfo("SCI", "D", "X", "R", ("&KernelUnity",))
         checker = validators.core.KernelunityValidator(info)
         checker.check("test.fits", header)
 
     def test_certify_kernel_unity_validator_bad(self):
-        header = {'SCI_ARRAY': utils.Struct({'COLUMN_NAMES': None,
-                                'DATA': np.array([[ 0.        ,  0.0276    ,  0.        ],
-                                               [ 0.0316    ,  0.88160002 + 1e-6,  0.0316    ],
-                                               [ 0.        ,  0.0276    ,  0.        ]], dtype='float32'),
-                                'DATA_TYPE': 'float32',
-                                'EXTENSION': 1,
-                                'KIND': 'IMAGE',
-                                'SHAPE': (3, 3)})
+        header = {
+            "SCI_ARRAY": utils.Struct(
+                {
+                    "COLUMN_NAMES": None,
+                    "DATA": np.array(
+                        [
+                            [0.0, 0.0276, 0.0],
+                            [0.0316, 0.88160002 + 1e-6, 0.0316],
+                            [0.0, 0.0276, 0.0],
+                        ],
+                        dtype="float32",
+                    ),
+                    "DATA_TYPE": "float32",
+                    "EXTENSION": 1,
+                    "KIND": "IMAGE",
+                    "SHAPE": (3, 3),
                 }
-        info = generic_tpn.TpnInfo('SCI','D','X','R',('&KernelUnity',))
+            )
+        }
+        info = generic_tpn.TpnInfo("SCI", "D", "X", "R", ("&KernelUnity",))
         checker = validators.core.KernelunityValidator(info)
         assert_raises(exceptions.BadKernelSumError, checker.check, "test.fits", header)
 
 
 # ==================================================================================
+
 
 def main():
     """Run module tests,  for now just doctests only."""
@@ -2299,7 +2538,9 @@ def main():
     unittest.TextTestRunner().run(suite)
 
     from crds.tests import test_certify, tstmod
+
     return tstmod(test_certify)
+
 
 if __name__ == "__main__":
     print(main())

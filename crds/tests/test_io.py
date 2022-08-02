@@ -16,6 +16,7 @@ from crds.tests import test_config
 
 # ==================================================================================
 
+
 def dt_get_fits_type():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -23,6 +24,7 @@ def dt_get_fits_type():
     'fits'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_fits_type_opaque():
     """
@@ -32,6 +34,7 @@ def dt_get_fits_type_opaque():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_get_asdf_type():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -39,6 +42,7 @@ def dt_get_asdf_type():
     'asdf'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_asdf_type_opaque():
     """
@@ -48,6 +52,7 @@ def dt_get_asdf_type_opaque():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_get_geis_type():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -55,6 +60,7 @@ def dt_get_geis_type():
     'geis'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_geis_type_opaque():
     """
@@ -64,6 +70,7 @@ def dt_get_geis_type_opaque():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_get_json_type():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -71,6 +78,7 @@ def dt_get_json_type():
     'json'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_json_type_opaque():
     """
@@ -80,6 +88,7 @@ def dt_get_json_type_opaque():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_get_yaml_type():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -88,6 +97,7 @@ def dt_get_yaml_type():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_get_yaml_type_opaque():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -95,6 +105,7 @@ def dt_get_yaml_type_opaque():
     'yaml'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_fits_table():
     """
@@ -127,6 +138,7 @@ def dt_fits_table():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_csv_table():
     """
     ----------------------------------------------------------------------------------
@@ -155,7 +167,9 @@ def dt_csv_table():
     >>> test_config.cleanup(old_state)
     """
 
+
 # ==================================================================================
+
 
 def dt_asdf_history_no_entries_description():
     """
@@ -166,6 +180,7 @@ def dt_asdf_history_no_entries_description():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_asdf_history_no_entries_list():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -175,6 +190,7 @@ def dt_asdf_history_no_entries_list():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_asdf_history_with_entries():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -183,6 +199,7 @@ def dt_asdf_history_with_entries():
     2018-04-17 20:18:32 :: New version created from CV3 with updated file structure
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_array_properties_hdu_name():
     """
@@ -210,6 +227,7 @@ def dt_get_array_properties_hdu_name():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_get_array_properties_extension_number1():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -235,6 +253,7 @@ def dt_get_array_properties_extension_number1():
      'SHAPE': (4,)}
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_array_properties_extension_number2():
     """
@@ -262,6 +281,7 @@ def dt_get_array_properties_extension_number2():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_get_array_properties_extension_number1():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -287,6 +307,7 @@ def dt_get_array_properties_extension_number1():
      'SHAPE': (4,)}
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_get_array_properties_extension_number2():
     """
@@ -363,6 +384,7 @@ def dt_get_array_properties_extension_number3():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_get_array_properties_extension_number3():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -412,12 +434,16 @@ def dt_get_array_properties_extension_number3():
     >>> test_config.cleanup(old_state)
     """
 
+
 # ==================================================================================
+
 
 def main():
     """Run module tests,  for now just doctests only."""
     from crds.tests import test_io, tstmod
+
     return tstmod(test_io)
+
 
 if __name__ == "__main__":
     print(main())

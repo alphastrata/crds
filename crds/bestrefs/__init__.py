@@ -5,4 +5,4 @@ from .headers import *
 
 __all__ = [
     "BestrefsScript",
-    ]
+]

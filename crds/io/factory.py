@@ -1,9 +1,9 @@
-'''
+"""
 This module defines top level functions for operating on files,  either related to
 determining fundamental properties of a file (get_filetype, get_observatory) or
 related to instantiating a specialized file handler object (file_factory) appropriate
 for the given observatory and file format.
-'''
+"""
 
 import os
 
@@ -22,6 +22,7 @@ from crds.core import config, utils, constants
 
 # ============================================================================
 
+
 def file_factory(filepath, original_name=None, observatory=None):
     """Based on parameters,  construct a file object of the appropriate
     class.  Unspecified parameters determined from `filepath` as possible.
@@ -35,26 +36,33 @@ def file_factory(filepath, original_name=None, observatory=None):
     filetype = get_filetype(filepath, original_name)
     if filetype == "asdf":
         from crds.io import asdf
+
         file_class = asdf.AsdfFile
     elif filetype == "json":
         from crds.io import json
+
         file_class = json.JsonFile
     elif filetype == "yaml":
         from crds.io import yaml
+
         file_class = yaml.YamlFile
     elif filetype == "geis":
         from crds.io import geis
+
         file_class = geis.GeisFile
     elif filetype == "fits":
         from crds.io import fits
+
         file_class = fits.FitsFile
     else:
-        raise RuntimeError("Unknown file type for " + repr(filepath) )
+        raise RuntimeError("Unknown file type for " + repr(filepath))
     if observatory is None:
-        observatory = get_observatory(filepath, original_name) # slow?
+        observatory = get_observatory(filepath, original_name)  # slow?
     return file_class(filepath, original_name, observatory)
 
+
 # ----------------------------------------------------------------------------------------------
+
 
 @utils.gc_collected
 def get_observatory(filepath, original_name=None):
@@ -77,6 +85,7 @@ def get_observatory(filepath, original_name=None):
     elif original_name.endswith(".asdf"):
         try:
             import asdf
+
             with asdf.open(filepath) as handle:
                 observatory = handle["meta"]["telescope"]
         except KeyError:
@@ -85,7 +94,9 @@ def get_observatory(filepath, original_name=None):
         return "jwst"
     return observatory.lower()
 
+
 # ----------------------------------------------------------------------------------------------
+
 
 def get_filetype(filepath, original_name=None):
     """Determine file type from `original_name` if possible, otherwise attempt to
@@ -100,25 +111,26 @@ def get_filetype(filepath, original_name=None):
         return filetype
 
     with open(filepath, "rb") as handle:
-        first_5 = str(handle.read(5).decode('utf-8'))
+        first_5 = str(handle.read(5).decode("utf-8"))
         if first_5 == "#ASDF":
             return "asdf"
         elif first_5 == "SIMPL":
-            first_81 = first_5 + handle.read(76).decode('utf-8')
-            if first_81[-1] == '\n':
-                all_chars = first_81 + handle.read().decode('utf-8')
+            first_81 = first_5 + handle.read(76).decode("utf-8")
+            if first_81[-1] == "\n":
+                all_chars = first_81 + handle.read().decode("utf-8")
                 lines = all_chars.splitlines()
-                lengths = { len(line) for line in lines }
+                lengths = {len(line) for line in lines}
                 if len(lengths) == 1 and 80 in lengths:
-                    return 'geis'
+                    return "geis"
                 else:
-                    return 'fits'
+                    return "fits"
             else:
                 return "fits"
 
     try:
         with open(filepath) as handle:
             import json
+
             json.load(handle)
             return "json"
     except Exception:
@@ -127,6 +139,7 @@ def get_filetype(filepath, original_name=None):
     try:
         with open(filepath) as handle:
             import yaml
+
             yaml.safe_load(handle)
             return "yaml"
     except Exception:
@@ -134,7 +147,9 @@ def get_filetype(filepath, original_name=None):
 
     return "unknown"
 
+
 # ----------------------------------------------------------------------------------------------
+
 
 def is_dataset(name):
     """Returns True IFF `name` is plausible as a dataset.   Not a guarantee."""

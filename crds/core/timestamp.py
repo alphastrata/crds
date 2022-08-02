@@ -11,11 +11,13 @@ from . import config, exceptions, log
 
 # =======================================================================
 
+
 def reformat_date(date, sep=" "):
     """Reformat datestring `d` in any recognized format in CRDS standard form.
     Also handles datetime objects and astropy Time."""
     parsed = parse_date(date)
     return format_date(parsed, sep=sep)
+
 
 def format_date(date, sep=" "):
     """Format a datestring `d` in CRDS standard form.  Also handles datetime
@@ -28,9 +30,13 @@ def format_date(date, sep=" "):
         date = parse_date(date)
     return date.isoformat(sep)
 
-T_SEPARATED_DATE_RE = re.compile(r"^\d\d\d\d[-/]\d\d[-/]\d\dT\d\d(:\d\d){1,2}(\.\d{1,6})?$")
+
+T_SEPARATED_DATE_RE = re.compile(
+    r"^\d\d\d\d[-/]\d\d[-/]\d\dT\d\d(:\d\d){1,2}(\.\d{1,6})?$"
+)
 ALPHABETICAL_RE = re.compile(r"[A-Za-z]{3,10}")
 ASTROPY_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
 
 def parse_date(date):
     """Parse any date-time string into a datetime object.  Also
@@ -81,7 +87,8 @@ def parse_date(date):
 
     if "UNDEFINED" in date:
         raise exceptions.InvalidDatetimeError(
-            "One or more required date/time values is UNDEFINED")
+            "One or more required date/time values is UNDEFINED"
+        )
 
     if date.endswith(" UT"):  # Dec 01 1993 00:00:00 UT
         date = date[:-3]
@@ -94,21 +101,37 @@ def parse_date(date):
     else:
         return parse_numerical_date(date)
 
+
 def now(sep=" "):
     """Returns the timestamp for the current time."""
     return format_date(datetime.datetime.now(), sep)
 
-MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
-          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+MONTHS = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+]
+
 
 def month_num(month, initial_date=None):
     """Convert a month name to a month number."""
     try:
-        return  MONTHS.index(month[:3].capitalize()) + 1
+        return MONTHS.index(month[:3].capitalize()) + 1
     except ValueError as exc:
         raise ValueError(
-            "Invalid month value " + repr(month) + " in base date " +
-            repr(initial_date)) from exc
+            "Invalid month value " + repr(month) + " in base date " + repr(initial_date)
+        ) from exc
+
 
 def parse_alphabetical_date(date):
     """Parse date/time strings with alphabetical months into datetime's.
@@ -141,12 +164,12 @@ def parse_alphabetical_date(date):
     date = date.replace("/", " ")
 
     try:
-        month, day, year, time = date.split()    # 'Feb 08 2006 01:02AM'
+        month, day, year, time = date.split()  # 'Feb 08 2006 01:02AM'
     except ValueError:
-        month, day, year = date.split()          # 'Feb 08 2006'
+        month, day, year = date.split()  # 'Feb 08 2006'
         time = "00:00AM"
 
-    if day.endswith(","):     #
+    if day.endswith(","):  #
         day = day[:-1]
 
     try:
@@ -161,8 +184,8 @@ def parse_alphabetical_date(date):
 
     ihour, iminute, isecond, imicrosecond = parse_time(time)
 
-    return datetime.datetime(iyear, imonth, iday, ihour, iminute, isecond,
-                             imicrosecond)
+    return datetime.datetime(iyear, imonth, iday, ihour, iminute, isecond, imicrosecond)
+
 
 def parse_time(time):
     """Parse a time string into (hour, minute, second, microsecond),
@@ -206,8 +229,8 @@ def parse_time(time):
     ihour = int(hour)
     iminute = int(minute)
     second = float(second)
-    isecond = int(second)   # int rejects float strs
-    imicrosecond = int((second-isecond) * 10**6)
+    isecond = int(second)  # int rejects float strs
+    imicrosecond = int((second - isecond) * 10 ** 6)
     if ampm == "PM":
         if ihour < 12:
             ihour += 12
@@ -216,11 +239,13 @@ def parse_time(time):
             ihour -= 12
     return ihour, iminute, isecond, imicrosecond
 
+
 MONTH_DAY_YEAR_RE = re.compile(r"^\d\d/\d\d/\d\d\d\d$")
 YEAR_MONTH_DAY_RE = re.compile(r"^\d\d\d\d/\d\d/\d\d$")
 NINETEEN_HUNDREDS_RE = re.compile(r"^\d\d/\d\d/9\d$")
 TWENTY_FIRST_CENT_RE = re.compile(r"^\d\d/\d\d/[0-3]\d$")
 DATE_COLON_TIME_RE = re.compile(r"^\d\d\d\d\d\d\d\d:\d\d\d\d\d\d$")
+
 
 def parse_numerical_date(dstr):
     """Parse a datetime string with the month expressed as a number in various
@@ -250,7 +275,7 @@ def parse_numerical_date(dstr):
     >>> parse_date("19970114:053714")
     datetime.datetime(1997, 1, 14, 5, 37, 14)
     """
-    dstr = dstr.replace("-","/")
+    dstr = dstr.replace("-", "/")
     parts = dstr.split()
     date = parts[0]
     if len(parts) == 1:
@@ -281,12 +306,17 @@ def parse_numerical_date(dstr):
     else:
         raise ValueError("Unknown numerical date format: " + repr(dstr))
 
-    imonth, iday, iyear, = int(month), int(day), int(year)
+    imonth, iday, iyear, = (
+        int(month),
+        int(day),
+        int(year),
+    )
 
-    return datetime.datetime(iyear, imonth, iday, ihour, iminute, isecond,
-                             imicrosecond)
+    return datetime.datetime(iyear, imonth, iday, ihour, iminute, isecond, imicrosecond)
+
 
 # ============================================================================
+
 
 class DateParser:
     """Abstract baseclass for defining date parsers."""
@@ -303,10 +333,15 @@ class DateParser:
         match = cls.format.match(datestr)
         if not match:
             raise ValueError(
-                "Invalid " + repr(cls.__name__) + " format " + repr(datestr) +
-                " should be " + repr(cls.should_be)
+                "Invalid "
+                + repr(cls.__name__)
+                + " format "
+                + repr(datestr)
+                + " should be "
+                + repr(cls.should_be)
             )
         return datetime.datetime(**cls._get_date_dict(match))
+
 
 class Slashdate(DateParser):
     """
@@ -318,14 +353,18 @@ class Slashdate(DateParser):
     ...
     ValueError: Invalid 'Slashdate' format '25 / 12 x 2014'
     """
+
     format = re.compile(r"(?P<day>\d\d)\s*/\s*(?P<month>\d\d)\s*/\s*(?P<year>\d\d\d\d)")
     should_be = "DD/MM/YYYY"
 
     @classmethod
     def _get_date_dict(cls, match):
-        return dict(month=int(match.group("month")),
-                    day=int(match.group("day")),
-                    year=int(match.group("year")))
+        return dict(
+            month=int(match.group("month")),
+            day=int(match.group("day")),
+            year=int(match.group("year")),
+        )
+
 
 class Dashdate(DateParser):
     """Originally Slashdate supported HST PEDIGREE dates, later extended to JWST PEDIGREE dates.
@@ -338,14 +377,18 @@ class Dashdate(DateParser):
     ...
     ValueError: Invalid 'Ddate' format '25 / 12 x 2014'
     """
+
     format = re.compile(r"(?P<year>\d\d\d\d)\-(?P<month>\d\d)\-(?P<day>\d\d)")
     should_be = "YYYY-MM-DD"
 
     @classmethod
     def _get_date_dict(cls, match):
-        return dict(month=int(match.group("month")),
-                    day=int(match.group("day")),
-                    year=int(match.group("year")))
+        return dict(
+            month=int(match.group("month")),
+            day=int(match.group("day")),
+            year=int(match.group("year")),
+        )
+
 
 class Sybdate(DateParser):
     """
@@ -369,17 +412,19 @@ class Sybdate(DateParser):
     ...
     ValueError: Invalid month value 'Mxx'
     """
-    format = re.compile(
-        r"(?P<month>[A-Za-z]{1,10})\s+" + \
-            r"(?P<day>\d{1,2}),?\s+" + \
-            r"(?P<year>\d{1,4})" + \
-            r"(\s+(?P<hour>\d{1,2}):" + \
-            r"(?P<minute>\d{1,2}):" + \
-            r"(?P<second>\d{1,2})\s*" + \
-            r"(?P<meridian>am|pm|AM|PM)?" + \
-            r")?")
 
-    should_be ="Mar 21 2001 12:00:00 am"
+    format = re.compile(
+        r"(?P<month>[A-Za-z]{1,10})\s+"
+        + r"(?P<day>\d{1,2}),?\s+"
+        + r"(?P<year>\d{1,4})"
+        + r"(\s+(?P<hour>\d{1,2}):"
+        + r"(?P<minute>\d{1,2}):"
+        + r"(?P<second>\d{1,2})\s*"
+        + r"(?P<meridian>am|pm|AM|PM)?"
+        + r")?"
+    )
+
+    should_be = "Mar 21 2001 12:00:00 am"
 
     @classmethod
     def _get_date_dict(cls, match):
@@ -387,8 +432,7 @@ class Sybdate(DateParser):
         try:
             items["month"] = month_num(match.group("month"))
         except IndexError as exc:
-            raise ValueError(
-                "Illegal month", repr(match.group("month"))) from exc
+            raise ValueError("Illegal month", repr(match.group("month"))) from exc
         if items["meridian"]:
             hour = int(items["hour"])
             if items["meridian"].lower() == "pm":
@@ -400,6 +444,7 @@ class Sybdate(DateParser):
             items["hour"] = str(hour)
             del items["meridian"]
         return dict([(name, int(x)) for (name, x) in items.items() if x])
+
 
 class Jwstdate(DateParser):
     """
@@ -414,13 +459,15 @@ class Jwstdate(DateParser):
     ...
     ValueError: Invalid 'Jwstdate' format '2001-03-21 12:00:00'
     """
+
     format = re.compile(
-        r"^(?P<year>\d\d\d\d)\-" + \
-            r"(?P<month>\d\d)\-" + \
-            r"(?P<day>\d\d)(T" + \
-            r"(?P<hour>\d\d):" + \
-            r"(?P<minute>\d\d):" + \
-            r"(?P<second>\d\d))?$")
+        r"^(?P<year>\d\d\d\d)\-"
+        + r"(?P<month>\d\d)\-"
+        + r"(?P<day>\d\d)(T"
+        + r"(?P<hour>\d\d):"
+        + r"(?P<minute>\d\d):"
+        + r"(?P<second>\d\d))?$"
+    )
 
     should_be = "2018-12-22T00:00:00"
 
@@ -428,6 +475,7 @@ class Jwstdate(DateParser):
     def _get_date_dict(cls, match):
         items = match.groupdict()
         return dict([(name, int(x)) for (name, x) in items.items() if x])
+
 
 class Anydate(DateParser):
     """
@@ -462,13 +510,13 @@ class Anydate(DateParser):
             raise ValueError("Invalid Anydate format " + repr(datestr)) from exc
 
 
-#class Shortdate(DateParser):
+# class Shortdate(DateParser):
 #    pass
 #
-#class DashDate(DateParser):
+# class DashDate(DateParser):
 #    pass
 #
-#class CdbsDate(DateParser):
+# class CdbsDate(DateParser):
 #    pass
 
 # ============================================================================
@@ -477,6 +525,7 @@ DATETIME_RE_STR = r"^(\d\d\d\d\-\d\d\-\d\d(\s+|T)\d\d:\d\d:\d\d)$"
 DATETIME_RE = re.compile(DATETIME_RE_STR)
 DATE_RE_STR = r"^\d\d\d\d\-\d\d\-\d\d$"
 TIME_RE_STR = r"^\d\d:\d\d:\d\d$"
+
 
 def is_datetime(datetime_str):
     """Raise an assertion error if `datetime_str` doesn't look like a CRDS date.
@@ -499,8 +548,9 @@ def is_datetime(datetime_str):
     ...
     AssertionError: Invalid date/time.  Should be YYYY-MM-DD HH:MM:SS
     """
-    assert DATETIME_RE.match(datetime_str), \
-        "Invalid date/time.  Should be YYYY-MM-DD HH:MM:SS"
+    assert DATETIME_RE.match(
+        datetime_str
+    ), "Invalid date/time.  Should be YYYY-MM-DD HH:MM:SS"
     try:
         parse_date(datetime_str)
     except ValueError as exc:
@@ -514,17 +564,29 @@ def reformat_useafter(filename, header):
     DATE-OBS and TIME-OBS.   Honor the ALLOW_BAD_USEAFTER to provide a safe default
     for early junk USEAFTER values;  1900-01-01T00:00:00.
     """
-    useafter = str(header.get("USEAFTER", header.get("META.USEAFTER", header.get("ROMAN.META.USEAFTER", "UNDEFINED"))))
+    useafter = str(
+        header.get(
+            "USEAFTER",
+            header.get("META.USEAFTER", header.get("ROMAN.META.USEAFTER", "UNDEFINED")),
+        )
+    )
     try:
         return reformat_date(useafter)
     except Exception as exc:
         if config.ALLOW_BAD_USEAFTER:
-            log.warning("Can't parse USEAFTER =", repr(useafter),
-                        "for", repr(filename), "faking as '1900-01-01T00:00:00'")
+            log.warning(
+                "Can't parse USEAFTER =",
+                repr(useafter),
+                "for",
+                repr(filename),
+                "faking as '1900-01-01T00:00:00'",
+            )
             return reformat_date("1900-01-01T00:00:00")
         else:
             raise exceptions.InvalidUseAfterFormat(
-                "Bad USEAFTER time format =", repr(useafter)) from exc
+                "Bad USEAFTER time format =", repr(useafter)
+            ) from exc
+
 
 def get_slash_date(datestr):
     """Return the datetime object corresponding to `datestr` which must
@@ -532,19 +594,24 @@ def get_slash_date(datestr):
     """
     return Slashdate.get_datetime(datestr)
 
+
 def get_dash_date(datestr):
     """Return the datetime object corresponding to `datestr` which must
     be in YYYY-MM-DD format.
     """
     return Dashdate.get_datetime(datestr)
 
+
 # ============================================================================
+
 
 def test():
     """Run module doctests."""
     import doctest
     from crds.core import timestamp
+
     return doctest.testmod(timestamp)
+
 
 if __name__ == "__main__":
     print(test())

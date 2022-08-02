@@ -21,17 +21,25 @@ def precondition_header(rmap, header):
         return header
 '''
 
+
 def fallback_header_wfpc2_flatfile_v1(rmap, header):
     """Compute a fallback header for WFPC2 BIASFILE."""
     filter1 = header["FILTER1"]
     filter2 = header["FILTER2"]
-    log.verbose("Computing fallback header wfpc2 ", rmap.filekind,
-                "swapping filter1 was" , filter1, "filter2 was", filter2)
+    log.verbose(
+        "Computing fallback header wfpc2 ",
+        rmap.filekind,
+        "swapping filter1 was",
+        filter1,
+        "filter2 was",
+        filter2,
+    )
     header["FILTER1"] = filter2
     header["FILTER2"] = filter1
     return header
 
-'''
+
+"""
          if lrfwave > 3000 and lrfwave <= 4200:
             filename = "M3C10045U.R4H"
          elif lrfwave > 4200 and lrfwave <= 5800:
@@ -40,35 +48,47 @@ def fallback_header_wfpc2_flatfile_v1(rmap, header):
             filename = "M3C1004NU.R4H"
          elif lrfwave > 7600 and lrfwave <= 10000:
             filename = "M3C10052U.R4H"
-'''
+"""
+
 
 def wfpc2_flatfile_filter(kmap):
     log.info("Hacking WFPC2 Flatfile.")
     # :  ('MODE', 'FILTER1', 'FILTER2', 'IMAGETYP', 'FILTNAM1', 'FILTNAM2', 'LRFWAVE'), ('DATE-OBS', 'TIME-OBS')),
-    kmap[('*',    '*',       '*',       'EXT',       'FR*',     '*',      '# >3000 and <=4200 #')] = \
-           [rmap.Filemap(date='1990-01-01 00:00:00', file='m3c10045u.r4h', comment='')]
-    kmap[('*',    '*',       '*',       'EXT',       '*',     'FR*',      '# >3000 and <=4200 #')] = \
-           [rmap.Filemap(date='1990-01-01 00:00:00', file='m3c10045u.r4h', comment='')]
+    kmap[("*", "*", "*", "EXT", "FR*", "*", "# >3000 and <=4200 #")] = [
+        rmap.Filemap(date="1990-01-01 00:00:00", file="m3c10045u.r4h", comment="")
+    ]
+    kmap[("*", "*", "*", "EXT", "*", "FR*", "# >3000 and <=4200 #")] = [
+        rmap.Filemap(date="1990-01-01 00:00:00", file="m3c10045u.r4h", comment="")
+    ]
 
-    kmap[('*',    '*',       '*',       'EXT',       'FR*',     '*',      '# >4200 and <=5800 #')] = \
-           [rmap.Filemap(date='1990-01-01 00:00:00', file='m3c1004fu.r4h', comment='')]
-    kmap[('*',    '*',       '*',       'EXT',       '*',     'FR*',      '# >4200 and <=5800 #')] = \
-           [rmap.Filemap(date='1990-01-01 00:00:00', file='m3c1004fu.r4h', comment='')]
+    kmap[("*", "*", "*", "EXT", "FR*", "*", "# >4200 and <=5800 #")] = [
+        rmap.Filemap(date="1990-01-01 00:00:00", file="m3c1004fu.r4h", comment="")
+    ]
+    kmap[("*", "*", "*", "EXT", "*", "FR*", "# >4200 and <=5800 #")] = [
+        rmap.Filemap(date="1990-01-01 00:00:00", file="m3c1004fu.r4h", comment="")
+    ]
 
-    kmap[('*',    '*',       '*',       'EXT',       'FR*',     '*',      '# >5800 and <=7600 #')] = \
-           [rmap.Filemap(date='1990-01-01 00:00:00', file='m3c1004nu.r4h', comment='')]
-    kmap[('*',    '*',       '*',       'EXT',       '*',     'FR*',      '# >5800 and <=7600 #')] = \
-           [rmap.Filemap(date='1990-01-01 00:00:00', file='m3c1004nu.r4h', comment='')]
+    kmap[("*", "*", "*", "EXT", "FR*", "*", "# >5800 and <=7600 #")] = [
+        rmap.Filemap(date="1990-01-01 00:00:00", file="m3c1004nu.r4h", comment="")
+    ]
+    kmap[("*", "*", "*", "EXT", "*", "FR*", "# >5800 and <=7600 #")] = [
+        rmap.Filemap(date="1990-01-01 00:00:00", file="m3c1004nu.r4h", comment="")
+    ]
 
-    kmap[('*',    '*',       '*',       'EXT',       'FR*',     '*',      '# >7600 and <=10000 #')] = \
-           [rmap.Filemap(date='1990-01-01 00:00:00', file='m3c10052u.r4h', comment='')]
-    kmap[('*',    '*',       '*',       'EXT',       '*',     'FR*',      '# >7600 and <=10000 #')] = \
-           [rmap.Filemap(date='1990-01-01 00:00:00', file='m3c10052u.r4h', comment='')]
+    kmap[("*", "*", "*", "EXT", "FR*", "*", "# >7600 and <=10000 #")] = [
+        rmap.Filemap(date="1990-01-01 00:00:00", file="m3c10052u.r4h", comment="")
+    ]
+    kmap[("*", "*", "*", "EXT", "*", "FR*", "# >7600 and <=10000 #")] = [
+        rmap.Filemap(date="1990-01-01 00:00:00", file="m3c10052u.r4h", comment="")
+    ]
 
     header_additions = [
-        ("hooks", {
-            "fallback_header" : "fallback_header_wfpc2_flatfile_v1",
-        }),
+        (
+            "hooks",
+            {
+                "fallback_header": "fallback_header_wfpc2_flatfile_v1",
+            },
+        ),
     ]
 
     return kmap, header_additions

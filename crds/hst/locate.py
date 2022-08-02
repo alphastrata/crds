@@ -29,7 +29,14 @@ from crds.io import abstract
 # This block imports functions and globals defined in other modules to become
 # part of the locator interface.
 
-from crds.hst import TYPES, INSTRUMENTS, FILEKINDS, EXTENSIONS, INSTRUMENT_FIXERS, TYPE_FIXERS
+from crds.hst import (
+    TYPES,
+    INSTRUMENTS,
+    FILEKINDS,
+    EXTENSIONS,
+    INSTRUMENT_FIXERS,
+    TYPE_FIXERS,
+)
 
 get_row_keys_by_instrument = TYPES.get_row_keys_by_instrument
 get_item = TYPES.get_item
@@ -40,42 +47,52 @@ get_all_tpninfos = TYPES.get_all_tpninfos
 # =======================================================================
 HERE = os.path.dirname(__file__) or "."
 
+
 def tpn_path(tpn_file):
     return os.path.join(HERE, "tpns", tpn_file)
+
 
 def get_extra_tpninfos(refpath):
     return []
 
+
 def project_check(refpath, rmap):
     pass
+
 
 # =======================================================================
 
 # When loading headers,  make sure each keyword in a tuple is represented with
 # the same value enabling any form to be used.
 CROSS_STRAPPED_KEYWORDS = {
-       # "META.INSTRUMENT.NAME" : ["INSTRUME", "INSTRUMENT", "META.INSTRUMENT.TYPE",],
-    }
+    # "META.INSTRUMENT.NAME" : ["INSTRUME", "INSTRUMENT", "META.INSTRUMENT.TYPE",],
+}
+
 
 @utils.cached
 def get_static_pairs():
     return abstract.equivalence_dict_to_pairs(CROSS_STRAPPED_KEYWORDS)
 
+
 def get_cross_strapped_pairs(header):
     """Return the list of keyword pairs where each pair describes synonyms for the same
     piece of data.
     """
-    return  get_static_pairs()
+    return get_static_pairs()
+
 
 # =======================================================================
+
 
 def header_to_reftypes(header, context="hst-operational"):
     """Based on `header` return the default list of appropriate reference type names."""
     return []  # translates to everything.
 
+
 def header_to_pipelines(header, context="hst-operational"):
     """Based on `header` return the default list of appropriate reference type names."""
     raise NotImplementedError("HST has not defined header_to_pipelines().")
+
 
 def get_exptypes(instrument=None):
     """Return the list of EXP_TYPE values for instrument,  or for all
@@ -85,6 +102,7 @@ def get_exptypes(instrument=None):
 
 
 # =======================================================================
+
 
 def match_context_key(key):
     """Set the case of a context key (instrument or type) appropriately
@@ -98,7 +116,9 @@ def match_context_key(key):
     else:
         return None
 
+
 # =======================================================================
+
 
 def reference_keys_to_dataset_keys(rmapping, header):
     """Given a header dictionary for a reference file,  map the header back to
@@ -123,13 +143,17 @@ def reference_keys_to_dataset_keys(rmapping, header):
 
     return result
 
+
 # =======================================================================
+
 
 def condition_matching_header(rmapping, header):
     """Condition the matching header values to the normalized form of the .rmap"""
     return utils.condition_header(header)
 
+
 # =======================================================================
+
 
 def get_file_properties(filename):
     """Figure out (instrument, filekind) based on `filename` which
@@ -160,11 +184,14 @@ def get_file_properties(filename):
             result = properties_inside_mapping(filename)
         except Exception:
             result = get_reference_properties(filename)[2:4]
-    assert result[0] in INSTRUMENTS+[""], "Bad instrument " + \
-        repr(result[0]) + " in filename " + repr(filename)
-    assert result[1] in FILEKINDS+[""], "Bad filekind " + \
-        repr(result[1]) + " in filename " + repr(filename)
+    assert result[0] in INSTRUMENTS + [""], (
+        "Bad instrument " + repr(result[0]) + " in filename " + repr(filename)
+    )
+    assert result[1] in FILEKINDS + [""], (
+        "Bad filekind " + repr(result[1]) + " in filename " + repr(filename)
+    )
     return result
+
 
 def decompose_newstyle_name(filename):
     """
@@ -212,13 +239,14 @@ def decompose_newstyle_name(filename):
         serial = list_get(parts, 3, "")
 
     assert observatory == "hst"
-    assert instrument in INSTRUMENTS+[""], "Invalid instrument " + repr(instrument)
-    assert filekind in FILEKINDS+[""], "Invalid filekind " + repr(filekind)
+    assert instrument in INSTRUMENTS + [""], "Invalid instrument " + repr(instrument)
+    assert filekind in FILEKINDS + [""], "Invalid filekind " + repr(filekind)
     # assert re.fullmatch(r"\d*", serial), "Invalid id field " + repr(id)
 
     # extension may vary for upload temporary files.
 
     return path, observatory, instrument, filekind, serial, ext
+
 
 def properties_inside_mapping(filename):
     """Load `filename`s mapping header to discover and return (instrument, filekind).
@@ -246,6 +274,7 @@ def properties_inside_mapping(filename):
         result = loaded.instrument, loaded.filekind
     return result
 
+
 def _get_fields(filename):
     """Break CRDS-style filename down into: path, underscore-separated-parts, extension."""
     path = os.path.dirname(filename)
@@ -254,6 +283,7 @@ def _get_fields(filename):
     parts = name.split("_")
     return path, parts, ext
 
+
 def list_get(the_list, index, default):
     """Fetch the `index` item from `the_list`, or return `default` on IndexError.  Like dict.get()."""
     try:
@@ -261,20 +291,20 @@ def list_get(the_list, index, default):
     except IndexError:
         return default
 
+
 CDBS_DIRS_TO_INSTR = {
-   "/jref/":"acs",
-   "/oref/":"stis",
-   "/iref/":"wfc3",
-   "/lref/":"cos",
-   "/nref/":"nicmos",
-
-   "/upsf/":"wfpc2",
-   "/uref/":"wfpc2",
-   "/uref_linux/":"wfpc2",
-
-   "/yref/" : "fos",
-   "/zref/" : "hrs",
+    "/jref/": "acs",
+    "/oref/": "stis",
+    "/iref/": "wfc3",
+    "/lref/": "cos",
+    "/nref/": "nicmos",
+    "/upsf/": "wfpc2",
+    "/uref/": "wfpc2",
+    "/uref_linux/": "wfpc2",
+    "/yref/": "fos",
+    "/zref/": "hrs",
 }
+
 
 def check_naming_consistency(checked_instrument=None, exhaustive_mapping_check=False):
     """Dev function to compare the properties returned by name decomposition
@@ -296,7 +326,14 @@ def check_naming_consistency(checked_instrument=None, exhaustive_mapping_check=F
     for ref in rmap.list_references("*", observatory="hst", full_path=True):
         with log.error_on_exception("Failed processing:", repr(ref)):
 
-            _path, _observ, instrument, filekind, _serial, _ext = ref_properties_from_cdbs_path(ref)
+            (
+                _path,
+                _observ,
+                instrument,
+                filekind,
+                _serial,
+                _ext,
+            ) = ref_properties_from_cdbs_path(ref)
 
             if checked_instrument is not None and instrument != checked_instrument:
                 continue
@@ -309,15 +346,36 @@ def check_naming_consistency(checked_instrument=None, exhaustive_mapping_check=F
 
             log.verbose("Processing:", instrument, filekind, ref)
 
-            _path2, _observ2, instrument2, filekind2, _serial2, _ext2 = ref_properties_from_header(ref)
+            (
+                _path2,
+                _observ2,
+                instrument2,
+                filekind2,
+                _serial2,
+                _ext2,
+            ) = ref_properties_from_header(ref)
             if instrument != instrument2:
-                log.error("Inconsistent instruments", repr(instrument), "vs.", repr(instrument2),
-                          "for", repr(ref))
+                log.error(
+                    "Inconsistent instruments",
+                    repr(instrument),
+                    "vs.",
+                    repr(instrument2),
+                    "for",
+                    repr(ref),
+                )
             if filekind != filekind2:
-                log.error("Inconsistent filekinds", repr(filekind), "vs.", repr(filekind2),
-                          "for", repr(ref))
+                log.error(
+                    "Inconsistent filekinds",
+                    repr(filekind),
+                    "vs.",
+                    repr(filekind2),
+                    "for",
+                    repr(ref),
+                )
 
-            for pmap_name in reversed(sorted(rmap.list_mappings("*.pmap", observatory="hst"))):
+            for pmap_name in reversed(
+                sorted(rmap.list_mappings("*.pmap", observatory="hst"))
+            ):
 
                 r = certify.certify.find_governing_rmap(pmap_name, ref)
 
@@ -325,17 +383,49 @@ def check_naming_consistency(checked_instrument=None, exhaustive_mapping_check=F
                     continue
 
                 if r.instrument != instrument:
-                    log.error("Rmap instrument", repr(r.instrument),
-                              "inconsistent with name derived instrument", repr(instrument), "for", repr(ref), "in", repr(pmap_name))
+                    log.error(
+                        "Rmap instrument",
+                        repr(r.instrument),
+                        "inconsistent with name derived instrument",
+                        repr(instrument),
+                        "for",
+                        repr(ref),
+                        "in",
+                        repr(pmap_name),
+                    )
                 if r.filekind != filekind:
-                    log.error("Rmap filekind", repr(r.filekind),
-                              "inconsistent with name derived filekind", repr(filekind), "for", repr(ref), "in", repr(pmap_name))
+                    log.error(
+                        "Rmap filekind",
+                        repr(r.filekind),
+                        "inconsistent with name derived filekind",
+                        repr(filekind),
+                        "for",
+                        repr(ref),
+                        "in",
+                        repr(pmap_name),
+                    )
                 if r.instrument != instrument2:
-                    log.error("Rmap instrument", repr(r.instrument),
-                              "inconsistent with content derived instrument", repr(instrument2), "for", repr(ref), "in", repr(pmap_name))
+                    log.error(
+                        "Rmap instrument",
+                        repr(r.instrument),
+                        "inconsistent with content derived instrument",
+                        repr(instrument2),
+                        "for",
+                        repr(ref),
+                        "in",
+                        repr(pmap_name),
+                    )
                 if r.filekind != filekind2:
-                    log.error("Rmap filekind", repr(r.filekind),
-                              "inconsistent with content derived filekind", repr(filekind2), "for", repr(ref), "in", repr(pmap_name))
+                    log.error(
+                        "Rmap filekind",
+                        repr(r.filekind),
+                        "inconsistent with content derived filekind",
+                        repr(filekind2),
+                        "for",
+                        repr(ref),
+                        "in",
+                        repr(pmap_name),
+                    )
 
                 if not exhaustive_mapping_check:
                     break
@@ -343,33 +433,36 @@ def check_naming_consistency(checked_instrument=None, exhaustive_mapping_check=F
             else:
                 log.error("Orphan reference", repr(ref), "not found under any context.")
 
+
 def get_reference_properties(filename):
     """Figure out FITS (instrument, filekind, serial) based on `filename`."""
     # try:
     #     return decompose_synphot_name(filename)
     # except AssertionError:
     #    pass
-    try:   # Hopefully it's a nice new standard filename, easy
+    try:  # Hopefully it's a nice new standard filename, easy
         return decompose_newstyle_name(filename)
     except AssertionError:  # cryptic legacy paths & names, i.e. reality
         pass
-    try:   # or maybe a recognizable HST legacy path/filename, fast
+    try:  # or maybe a recognizable HST legacy path/filename, fast
         return ref_properties_from_cdbs_path(filename)
     except Exception:
         pass
     # If not, dig inside the FITS file, slow
     return ref_properties_from_header(filename)
 
+
 GEIS_EXT_TO_SUFFIX = {
-    "r0" : "msk",     # Static mask
-    "r1" : "a2d",     # A-to-D lookup tables
-    "r2" : "bas",     # Bias
-    "r3" : "drk",     # Preflash
-    "r4" : "flt",     # Superpurge
-    "r5" : "shd",     # Shutter Shading Reference
-    "r6" : "flt",     # Flat field
-    "r7" : "w4t",     # wf4tfile
+    "r0": "msk",  # Static mask
+    "r1": "a2d",  # A-to-D lookup tables
+    "r2": "bas",  # Bias
+    "r3": "drk",  # Preflash
+    "r4": "flt",  # Superpurge
+    "r5": "shd",  # Shutter Shading Reference
+    "r6": "flt",  # Flat field
+    "r7": "w4t",  # wf4tfile
 }
+
 
 def ref_properties_from_cdbs_path(filename):
     """Based on a HST CDBS `filename`,  return
@@ -396,7 +489,7 @@ def ref_properties_from_cdbs_path(filename):
             filekind = "tmctab"
         else:
             assert False, "Uknown synphot filetype for: " + repr(filename)
-        suffix = filename.split("_")[-1][:-len(".fits")]
+        suffix = filename.split("_")[-1][: -len(".fits")]
     elif extension == ".fits":
         suffix = fields[1]
     else:
@@ -406,6 +499,7 @@ def ref_properties_from_cdbs_path(filename):
     except KeyError:
         assert False, "Couldn't map extension/suffix " + repr(suffix) + " to filekind."
     return path, "hst", instrument, filekind, serial, extension
+
 
 def instrument_from_refname(filename):
     """Based on `filename` rather than it's contents,  determine the associated
@@ -422,7 +516,7 @@ def instrument_from_refname(filename):
     ...
     AssertionError: Cannot determine instrument for filename 'foobar.fits'
     """
-    try:   # Hopefully it's a nice new standard filename, easy
+    try:  # Hopefully it's a nice new standard filename, easy
         return decompose_newstyle_name(filename)[2]
     except AssertionError:  # cryptic legacy paths & names, i.e. reality
         try:
@@ -431,7 +525,10 @@ def instrument_from_refname(filename):
                 instrument = "synphot"
             return instrument
         except Exception:
-            assert False, "Cannot determine instrument for filename '{}'".format(filename)
+            assert False, "Cannot determine instrument for filename '{}'".format(
+                filename
+            )
+
 
 def ref_properties_from_header(filename):
     """Look inside FITS `filename` header to determine:
@@ -449,55 +546,61 @@ def ref_properties_from_header(filename):
             instrument = "synphot"
         instrument = INSTRUMENT_FIXERS.get(instrument, instrument)
     except KeyError as exc:
-        raise CrdsNamingError("Can't determine instrument for",
-                              repr(os.path.basename(filename)) + ".",
-                              "CAL references must define INSTRUME,",
-                              "SYNPHOT references define DBTABLE.") from exc
+        raise CrdsNamingError(
+            "Can't determine instrument for",
+            repr(os.path.basename(filename)) + ".",
+            "CAL references must define INSTRUME,",
+            "SYNPHOT references define DBTABLE.",
+        ) from exc
     try:
-        filetype = header.get(
-            "FILETYPE", header.get(
-                "DBTABLE", header.get("CDBSFILE")))
+        filetype = header.get("FILETYPE", header.get("DBTABLE", header.get("CDBSFILE")))
         if filetype is None:
             raise KeyError
         else:
             filetype = filetype.lower()
     except KeyError:
-        observatory = header.get(
-            "TELESCOP", header.get(
-                "TELESCOPE", None))
+        observatory = header.get("TELESCOP", header.get("TELESCOPE", None))
         if observatory is not None and observatory.upper() != "HST":
             raise CrdsNamingError(
                 "CRDS is configured for 'HST' but file",
                 repr(os.path.basename(filename)),
-                "is for the", repr(observatory),
-                "telescope.  Reconfigure CRDS_PATH or CRDS_SEVER_URL.")
+                "is for the",
+                repr(observatory),
+                "telescope.  Reconfigure CRDS_PATH or CRDS_SEVER_URL.",
+            )
         else:
             raise CrdsNamingError(
-                "Can't determine HST file type for", repr(os.path.basename(filename)) + ".",
-                "Check FILETYPE, CDBSFILE, DBTABLE, TELESCOP, and/or TELESCOPE.")
+                "Can't determine HST file type for",
+                repr(os.path.basename(filename)) + ".",
+                "Check FILETYPE, CDBSFILE, DBTABLE, TELESCOP, and/or TELESCOPE.",
+            )
     filetype = TYPE_FIXERS.get((instrument, filetype), filetype)
     try:
         filekind = TYPES.filetype_to_filekind(instrument, filetype)
     except KeyError:
-        raise CrdsNamingError(f"Invalid FILETYPE (or CDBSFILE) of '{filetype}' for instrument '{instrument}'.")
+        raise CrdsNamingError(
+            f"Invalid FILETYPE (or CDBSFILE) of '{filetype}' for instrument '{instrument}'."
+        )
     return path, "hst", instrument, filekind, serial, ext
 
+
 # ============================================================================
+
 
 def generate_unique_name(filename, now=None):
 
     """Given an arbitrarily named filename (which must correctly define it's format, e.g. .fits)
-    generate and return a unique enhanced CDBS-style name which incorporates a timestamp,
-    and instrument id character, and a filetype suffix.
+        generate and return a unique enhanced CDBS-style name which incorporates a timestamp,
+        and instrument id character, and a filetype suffix.
 
-Character 1   : Year [z=2015, 0=2016, 1= 2017, etc.]
-Character 2   : Month [1-9, a-c]
-Character 3   : Day [1-9, a-s(28), t(29), u(30), v(31)]
-Character 4-5: UT Hour [00 - 23]
-Character 6-7: UT Minute [00 - 59]
-Character 8   : UT Seconds [0-9, a-t (~2 second intervals)]
-Character 9   : Instrument Designation [j=ACS, i=WFC3, o=STIS, l=COS,
-u=WFPC2, n=NICMOS, m=SYNPHOT]
+    Character 1   : Year [z=2015, 0=2016, 1= 2017, etc.]
+    Character 2   : Month [1-9, a-c]
+    Character 3   : Day [1-9, a-s(28), t(29), u(30), v(31)]
+    Character 4-5: UT Hour [00 - 23]
+    Character 6-7: UT Minute [00 - 59]
+    Character 8   : UT Seconds [0-9, a-t (~2 second intervals)]
+    Character 9   : Instrument Designation [j=ACS, i=WFC3, o=STIS, l=COS,
+    u=WFPC2, n=NICMOS, m=SYNPHOT]
     """
     path, _obs, instr, filekind, _serial, ext = get_reference_properties(filename)
 
@@ -505,21 +608,22 @@ u=WFPC2, n=NICMOS, m=SYNPHOT]
 
     return os.path.join(path, name)
 
+
 def generate_unique_name_core(instr, filekind, extension, now=None):
     """Given an arbitrarily named filename (which must correctly define it's format, e.g. .fits)
-    generate and return a unique enhanced CDBS-style name which incorporates a timestamp,
-    and instrument id character, and a filetype suffix.
+        generate and return a unique enhanced CDBS-style name which incorporates a timestamp,
+        and instrument id character, and a filetype suffix.
 
-Character 1   : Year [z=2015, 0=2016, 1= 2017, etc.]
-Character 2   : Month [1-9, a-c]
-Character 3   : Day [1-9, a-s(28), t(29), u(30), v(31)]
-Character 4-5: UT Hour [00 - 23]
-Character 6-7: UT Minute [00 - 59]
-Character 8   : UT Seconds [0-9, a-t (~2 second intervals)]
-Character 9   : Instrument Designation [j=ACS, i=WFC3, o=STIS, l=COS,
-u=WFPC2, n=NICMOS, m=MULTI, m=SYNPHOT]
+    Character 1   : Year [z=2015, 0=2016, 1= 2017, etc.]
+    Character 2   : Month [1-9, a-c]
+    Character 3   : Day [1-9, a-s(28), t(29), u(30), v(31)]
+    Character 4-5: UT Hour [00 - 23]
+    Character 6-7: UT Minute [00 - 59]
+    Character 8   : UT Seconds [0-9, a-t (~2 second intervals)]
+    Character 9   : Instrument Designation [j=ACS, i=WFC3, o=STIS, l=COS,
+    u=WFPC2, n=NICMOS, m=MULTI, m=SYNPHOT]
     """
-    if now is None:   # delay to ensure timestamp is unique.
+    if now is None:  # delay to ensure timestamp is unique.
         time.sleep(2)
 
     timeid = generate_timestamp(now)
@@ -529,6 +633,7 @@ u=WFPC2, n=NICMOS, m=MULTI, m=SYNPHOT]
 
     return timeid + instr_char + suffix + extension
 
+
 def generate_timestamp(now=None):
 
     """Generate an enhanced CDBS-style uniqname."""
@@ -537,45 +642,49 @@ def generate_timestamp(now=None):
         now = datetime.datetime.utcnow()
 
     if now.year < 2016:
-        year = chr(now.year - 2015 + ord('z'))
+        year = chr(now.year - 2015 + ord("z"))
     elif 2016 <= now.year <= 2025:
-        year = chr(now.year - 2016 + ord('0'))
+        year = chr(now.year - 2016 + ord("0"))
     else:
         raise RuntimeError("Unique names are not defined for 2026 and beyond.")
 
     if 1 <= now.month <= 9:
-        month = chr(now.month - 1 + ord('1'))
+        month = chr(now.month - 1 + ord("1"))
     elif 10 <= now.month <= 12:
-        month = chr(now.month - 10 + ord('a'))
+        month = chr(now.month - 10 + ord("a"))
 
     if 1 <= now.day <= 9:
-        day = chr(now.day - 1 + ord('1'))
+        day = chr(now.day - 1 + ord("1"))
     elif 10 <= now.day <= 31:
-        day = chr(now.day - 10 + ord('a'))
+        day = chr(now.day - 10 + ord("a"))
 
     hour = "%02d" % now.hour
     minute = "%02d" % now.minute
 
     hsecs = now.second // 2
     if 0 <= hsecs <= 9:
-        second = chr(hsecs + ord('0'))
+        second = chr(hsecs + ord("0"))
     elif 10 <= hsecs <= 59:
-        second = chr(hsecs - 10 + ord('a'))
+        second = chr(hsecs - 10 + ord("a"))
 
     return "".join([year, month, day, hour, minute, second])
+
 
 # ============================================================================
 
 # HST FITS headers have filenames adorned with environment prefixes for each
 # instrument.
 
+
 def get_env_prefix(instrument):
     """Return the environment variable prefix (IRAF prefix) for `instrument`."""
     return siname.add_IRAF_prefix(instrument.upper())
 
+
 def filekind_to_keyword(filekind):
     """Return the FITS keyword at which a reference should be recorded."""
     return filekind.upper()
+
 
 def locate_file(refname, mode=None):
     """Given a valid reffilename in CDBS or CRDS format,  return a cache path for the file.
@@ -587,55 +696,79 @@ def locate_file(refname, mode=None):
     except Exception:
         instrument = get_reference_properties(refname)[1]
     rootdir = locate_dir(instrument, mode)
-    return  os.path.join(rootdir, os.path.basename(refname))
+    return os.path.join(rootdir, os.path.basename(refname))
+
 
 def locate_dir(instrument, mode=None):
     """Locate the instrument specific directory for a reference file."""
-    if mode is  None:
+    if mode is None:
         mode = config.get_crds_ref_subdir_mode(observatory="hst")
     else:
         config.check_crds_ref_subdir_mode(mode)
     crds_refpath = config.get_crds_refpath("hst")
     prefix = get_env_prefix(instrument)
-    if mode == "legacy":   # Locate cached files at the appropriate CDBS-style  iref$ locations
+    if (
+        mode == "legacy"
+    ):  # Locate cached files at the appropriate CDBS-style  iref$ locations
         try:
             rootdir = os.environ[prefix]
         except KeyError:
             try:
                 rootdir = os.environ[prefix[:-1]]
             except KeyError:
-                raise KeyError("Reference location not defined for " + repr(instrument) +
-                               ".  Did you configure " + repr(prefix) + "?")
-    elif mode == "instrument" and instrument != "synphot":   # use simple names inside CRDS cache.
+                raise KeyError(
+                    "Reference location not defined for "
+                    + repr(instrument)
+                    + ".  Did you configure "
+                    + repr(prefix)
+                    + "?"
+                )
+    elif (
+        mode == "instrument" and instrument != "synphot"
+    ):  # use simple names inside CRDS cache.
         rootdir = os.path.join(crds_refpath, instrument)
         refdir = os.path.join(crds_refpath, prefix[:-1])
         if not os.path.exists(refdir):
-            if config.writable_cache_or_verbose("Skipping making instrument directory link for", repr(instrument)):
-                log.verbose("Creating legacy cache link", repr(refdir), "-->", repr(rootdir))
-                with log.verbose_warning_on_exception("Failed creating legacy symlink:", refdir, "-->", rootdir):
+            if config.writable_cache_or_verbose(
+                "Skipping making instrument directory link for", repr(instrument)
+            ):
+                log.verbose(
+                    "Creating legacy cache link", repr(refdir), "-->", repr(rootdir)
+                )
+                with log.verbose_warning_on_exception(
+                    "Failed creating legacy symlink:", refdir, "-->", rootdir
+                ):
                     utils.ensure_dir_exists(rootdir + "/locate_dir.fits")
                     os.symlink(rootdir, refdir)
     elif mode == "instrument" and instrument == "synphot":
         rootdir = os.path.join(crds_refpath, instrument)
-    elif mode == "flat":    # use original flat cache structure,  all instruments in same directory.
+    elif (
+        mode == "flat"
+    ):  # use original flat cache structure,  all instruments in same directory.
         rootdir = crds_refpath
     else:
         raise ValueError("Unhandled reference file location mode " + repr(mode))
     return rootdir
 
+
 # ============================================================================
+
 
 def fits_to_parkeys(header):
     """Map a FITS header onto rmap parkeys appropriate for this observatory."""
     return dict(header)
 
+
 # =======================================================================
+
 
 def test():
     """Run the module doctests."""
     import doctest
     from crds.hst import locate
+
     return doctest.testmod(locate)
+
 
 # =======================================================================
 

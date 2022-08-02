@@ -3,7 +3,7 @@
 #  XXXX lots of bogus pylint warnings here,  verify before removing imports.
 
 import sys
-import os   # False pylint warning unused import,  verify before removing.
+import os  # False pylint warning unused import,  verify before removing.
 import os.path
 import shutil  # False pylint warning unused import,  verify before removing.
 import stat
@@ -36,20 +36,26 @@ from .constants import ALL_OBSERVATORIES, INSTRUMENT_KEYWORDS
 
 # ===================================================================
 
+
 def deprecate(deprecated, after_date, alternative):
     """Issue a standard deprecation warning for `deprecated` feature
     (e.g. function name) to be removed `after_date` with suggested
     `alternative` feature as the replacement functionality.
     """
-    message = f"Feature {deprecated} has been deprecated " \
-              f"and will be removed sometime after {after_date}. " \
-              f"Feature {alternative} provides alternative functionality."
+    message = (
+        f"Feature {deprecated} has been deprecated "
+        f"and will be removed sometime after {after_date}. "
+        f"Feature {alternative} provides alternative functionality."
+    )
     warnings.warn(message, DeprecationWarning)
+
 
 # ===================================================================
 
+
 class Struct(dict):
     """A dictionary which supports dotted access to members."""
+
     def __getattr__(self, name):
         try:
             return self[name]
@@ -59,7 +65,9 @@ class Struct(dict):
     def __setattr__(self, name, val):
         self[name] = val
 
+
 # ===================================================================
+
 
 def combine_dicts(*post_dicts, **post_vars):
     """Combine positional parameters (dictionaries) and individual
@@ -71,7 +79,9 @@ def combine_dicts(*post_dicts, **post_vars):
     vars.update(post_vars)
     return vars
 
+
 # ===================================================================
+
 
 def trace_compare(self, other, show_equal=False):
     """Recursively compare object `self` to `other` printing differences
@@ -84,7 +94,7 @@ def trace_compare(self, other, show_equal=False):
         except KeyError:
             print(key, "not present in other")
             continue
-        equal = (value == ovalue)
+        equal = value == ovalue
         if show_equal or not equal:
             print(key, equal, value, ovalue)
         if hasattr(value, "_trace_compare"):
@@ -95,7 +105,9 @@ def trace_compare(self, other, show_equal=False):
         except KeyError:
             print(key, "value not present in self")
 
+
 # ===================================================================
+
 
 def flatten(sequence):
     """Given a sequence possibly containing nested lists or tuples,
@@ -113,23 +125,35 @@ def flatten(sequence):
         flattened.extend(elem)
     return flattened
 
+
 # ===================================================================
+
 
 def traced(func):
     """Issue a verbose message showing parameters and possibly return val."""
+
     @functools.wraps(func)
     def func2(*args, **keys):
         "Decoration wrapper for @trace."
-        log.verbose("trace:", func.__name__, args if args else "", keys if keys else "", verbosity=55)
+        log.verbose(
+            "trace:",
+            func.__name__,
+            args if args else "",
+            keys if keys else "",
+            verbosity=55,
+        )
         result = func(*args, **keys)
         log.verbose("trace result:", func.__name__, ":", result, verbosity=55)
         return result
+
     func2.__name__ = func.__name__ + " [traced]"
     func2.__doc__ = func.__doc__
     func2._traced = True
     return func2
 
+
 # ===================================================================
+
 
 def gc_collected(func):
     """Run Python's gc.collect() before and after the decorated function.
@@ -140,6 +164,7 @@ def gc_collected(func):
     examining arrays,  may easily exhaust memory,  sometimes leading to
     silent OS or shell level crashes with no traceback.
     """
+
     @functools.wraps(func)
     def func2(*args, **keys):
         "Decoration wrapper for @gc_collected."
@@ -152,12 +177,15 @@ def gc_collected(func):
             if config.EXPLICIT_GARBAGE_COLLECTION:
                 gc.collect()
         return result
+
     func2.__name__ = func.__name__ + " [gc_collected]"
     func2.__doc__ = func.__doc__
     func2._gc_collected = True
     return func2
 
+
 # ===================================================================
+
 
 def cached(func):
     """The cached decorator embeds a dictionary in a function wrapper to
@@ -224,6 +252,7 @@ def cached(func):
     """
     return CachedFunction(func)
 
+
 class xcached:
     """Caching decorator which supports auxilliary caching parameters.
 
@@ -246,6 +275,7 @@ class xcached:
     >>> sum.readonly(2,2,3)
     6
     """
+
     def __init__(self, *args, **keys):
         """Stash the decorator parameters"""
         self.args = args
@@ -259,6 +289,7 @@ class xcached:
         cached.__name__ = cached.uncached.__name__ + " [xcached]"
         cached.__doc__ = cached.uncached.__doc__
         return cached
+
 
 class CachedFunction:
     """Class to support the @cached function decorator.   Called at runtime
@@ -278,8 +309,10 @@ class CachedFunction:
 
     def cache_key(self, *args, **keys):
         """Compute the cache key for the given parameters."""
-        args = tuple([ a for (i, a) in enumerate(args) if i not in self.omit_from_key])
-        keys = tuple([item for item in keys.items() if item[0] not in self.omit_from_key])
+        args = tuple([a for (i, a) in enumerate(args) if i not in self.omit_from_key])
+        keys = tuple(
+            [item for item in keys.items() if item[0] not in self.omit_from_key]
+        )
         return args + keys
 
     def _readonly(self, *args, **keys):
@@ -289,7 +322,9 @@ class CachedFunction:
             log.verbose("Cached call", self.uncached.__name__, repr(key), verbosity=80)
             return key, self.cache[key]
         else:
-            log.verbose("Uncached call", self.uncached.__name__, repr(key), verbosity=80)
+            log.verbose(
+                "Uncached call", self.uncached.__name__, repr(key), verbosity=80
+            )
             return key, self.uncached(*args, **keys)
 
     def readonly(self, *args, **keys):
@@ -308,21 +343,25 @@ class CachedFunction:
         return result
 
     def __get__(self, obj, objtype):
-        '''Support instance methods.'''
+        """Support instance methods."""
         return functools.partial(self.__call__, obj)
 
+
 def clear_function_caches():
-    "Clear all the caches created using @utils.cached or @utils.xcached."""
+    "Clear all the caches created using @utils.cached or @utils.xcached." ""
     for cache_func in CachedFunction.cache_set:
         log.verbose("Clearing cache for", repr(cache_func.uncached), verbosity=80)
         cache_func.cache = dict()
+
 
 def list_cached_functions():
     """List all the functions supporting caching under @utils.cached or @utils.xcached."""
     for cache_func in sorted(CachedFunction.cache_set):
         print(repr(cache_func.uncached))
 
+
 # ===================================================================
+
 
 def capture_output(func):
     """Decorate a function with @capture_output to define a CapturedFunction()
@@ -362,6 +401,7 @@ def capture_output(func):
     True
 
     """
+
     class CapturedFunction:
         """Closure on `func` which supports various forms of output capture."""
 
@@ -373,7 +413,7 @@ def capture_output(func):
             sys.stdout.flush()
             sys.stderr.flush()
             oldout, olderr = sys.stdout, sys.stderr
-            if sys.version_info < (3,0,0):
+            if sys.version_info < (3, 0, 0):
                 out = io.BytesIO()
             else:
                 out = io.TextIOWrapper(io.BytesIO())
@@ -404,21 +444,30 @@ def capture_output(func):
 
     return CapturedFunction()
 
+
 # ===================================================================
+
 
 def compare_dicts(dict1, dict2):
     """Compare two dictionaries and return a dictionary of added, deleted, and replaced items."""
     if not isinstance(dict1, dict) or not isinstance(dict2, dict):
         return (dict1, dict2)
-    deleted = { key: dict1[key] for key in dict1 if key not in dict2 }
-    added = { key: dict2[key] for key in dict2 if key not in dict1 }
-    replaced = { key: compare_dicts(dict1[key], dict2[key]) for key in dict1 if key in dict2 and dict1[key] != dict2[key] }
+    deleted = {key: dict1[key] for key in dict1 if key not in dict2}
+    added = {key: dict2[key] for key in dict2 if key not in dict1}
+    replaced = {
+        key: compare_dicts(dict1[key], dict2[key])
+        for key in dict1
+        if key in dict2 and dict1[key] != dict2[key]
+    }
     return dict(deleted=deleted, added=added, replaced=replaced)
+
 
 # ===================================================================
 
+
 class TimingStats:
     """Track and compute counts and counts per second."""
+
     def __init__(self, output=None):
         self.counts = Counter()
         self.started = None
@@ -479,36 +528,57 @@ class TimingStats:
         """
         stat, stat_per_sec = self.raw_status(name)
         if total is not None:
-            self.msg(intro, "[",
-                     human_format_number(stat), "/",
-                     human_format_number(total), name, "]",
-                     "[",
-                     human_format_number(stat_per_sec), name + "-per-second ]")
+            self.msg(
+                intro,
+                "[",
+                human_format_number(stat),
+                "/",
+                human_format_number(total),
+                name,
+                "]",
+                "[",
+                human_format_number(stat_per_sec),
+                name + "-per-second ]",
+            )
         else:
-            self.msg(intro,
-                     "[", human_format_number(stat), name, "]",
-                     "[", human_format_number(stat_per_sec), name + "-per-second ]")
+            self.msg(
+                intro,
+                "[",
+                human_format_number(stat),
+                name,
+                "]",
+                "[",
+                human_format_number(stat_per_sec),
+                name + "-per-second ]",
+            )
 
     def msg(self, *args):
         """Format (*args, **keys) using log.format() and call output()."""
         self.output(*args, eol="")
 
+
 # ===================================================================
+
 
 def total_size(filepaths):
     """Return the total size of all files in `filepaths` as an integer."""
     return sum([os.stat(filename).st_size for filename in filepaths])
 
+
 # ===================================================================
+
 
 def file_size(filepath):
     """Return the size of `filepath` as an integer."""
     return os.stat(filepath).st_size
 
+
 # ===================================================================
+
 
 def elapsed_time(func):
     """Decorator to report on elapsed time for a function call."""
+
     def elapsed_wrapper(*args, **keys):
         stats = TimingStats()
         stats.start()
@@ -517,11 +587,14 @@ def elapsed_time(func):
         stats.msg("Timing for", repr(func.__name__))
         stats.report()
         return result
+
     elapsed_wrapper.__name__ = func.__name__ + "[elapsed_time]"
     elapsed_wrapper.__doc__ = func.__doc__
     return elapsed_wrapper
 
+
 # ===================================================================
+
 
 def human_format_number(number):
     """Reformat `number` by switching to engineering units and dropping to two fractional digits,
@@ -529,10 +602,10 @@ def human_format_number(number):
     """
     convert = [
         (1e12, "T"),
-        (1e9 , "G"),
-        (1e6 , "M"),
-        (1e3 , "K"),
-        ]
+        (1e9, "G"),
+        (1e6, "M"),
+        (1e3, "K"),
+    ]
     for limit, sym in convert:
         if isinstance(number, (float, int)) and number > limit:
             number /= limit
@@ -546,7 +619,9 @@ def human_format_number(number):
         numstr = "{:0.1f} {}".format(number, sym)
     return "{!s:>7}".format(numstr)
 
+
 # ===================================================================
+
 
 def invert_dict(dictionary):
     """Return the functional inverse of a dictionary,  raising an exception
@@ -556,13 +631,20 @@ def invert_dict(dictionary):
     inverse = {}
     for key, value in dictionary.items():
         if value in inverse and inverse[value] != key:
-            raise ValueError("Undefined inverse because of duplicates for " +
-                             repr(value) + " of " + repr(key) + " vs. " +
-                             repr(inverse[value]))
+            raise ValueError(
+                "Undefined inverse because of duplicates for "
+                + repr(value)
+                + " of "
+                + repr(key)
+                + " vs. "
+                + repr(inverse[value])
+            )
         inverse[value] = key
     return inverse
 
+
 # ===================================================================
+
 
 def evalfile(fname):
     """Evaluate and return the contents of file `fname`,  restricting
@@ -572,6 +654,7 @@ def evalfile(fname):
         contents = sourcefile.read()
     return ast.literal_eval(contents)
 
+
 # ===================================================================
 
 UMASK = 0o002
@@ -580,6 +663,7 @@ with log.verbose_warning_on_exception("Failed determining UMASK"):
     os.umask(UMASK)
 
 DEFAULT_DIR_PERMS = ~UMASK & 0o777
+
 
 def create_path(path, mode=DEFAULT_DIR_PERMS):
     """Recursively traverses directory path creating directories as
@@ -599,8 +683,10 @@ def create_path(path, mode=DEFAULT_DIR_PERMS):
             log.verbose("Creating", repr(subdir), "with permissions %o" % mode)
             os.mkdir(subdir, mode)
             with log.verbose_warning_on_exception(
-                    "Failed chmod'ing new directory", repr(subdir), "to %o." % mode):
+                "Failed chmod'ing new directory", repr(subdir), "to %o." % mode
+            ):
                 os.chmod(subdir, mode)
+
 
 def ensure_dir_exists(fullpath, mode=DEFAULT_DIR_PERMS):
     """Creates dirs from `fullpath` if they don't already exist.  fullpath
@@ -608,7 +694,9 @@ def ensure_dir_exists(fullpath, mode=DEFAULT_DIR_PERMS):
     """
     create_path(os.path.dirname(fullpath), mode)
 
+
 # ===================================================================
+
 
 def is_writable(filepath, no_exist=True):
     """Interpret the mode bits of `filepath` in terms of the current user and it's groups,
@@ -616,21 +704,35 @@ def is_writable(filepath, no_exist=True):
 
     If `filepath` doesn't exist,  return `no_exist` if the directory is writable.
     """
-    if not os.path.exists(filepath):   # If file doesn't exist,  make sure directory is writable.
-        return no_exist and len(os.path.dirname(filepath)) and is_writable(os.path.dirname(filepath))
+    if not os.path.exists(
+        filepath
+    ):  # If file doesn't exist,  make sure directory is writable.
+        return (
+            no_exist
+            and len(os.path.dirname(filepath))
+            and is_writable(os.path.dirname(filepath))
+        )
     stats = os.stat(filepath)
     user_writeable = bool(stats.st_mode & stat.S_IWUSR)
-    user_id = os.geteuid() if 'windows' not in platform.system().lower() else stats.st_uid
-    effective_user_matches =  bool(stats.st_uid == user_id)
+    user_id = (
+        os.geteuid() if "windows" not in platform.system().lower() else stats.st_uid
+    )
+    effective_user_matches = bool(stats.st_uid == user_id)
     group_writeable = bool(stats.st_mode & stat.S_IWGRP)
-    group_id = os.getgroups() if 'windows' not in platform.system().lower() else [stats.st_gid]
+    group_id = (
+        os.getgroups() if "windows" not in platform.system().lower() else [stats.st_gid]
+    )
     group_matches = bool(stats.st_gid in group_id)
     other_writeable = bool(stats.st_mode & stat.S_IWOTH)
-    return bool((user_writeable and effective_user_matches) or
-                (group_writeable and group_matches) or
-                (other_writeable))
+    return bool(
+        (user_writeable and effective_user_matches)
+        or (group_writeable and group_matches)
+        or (other_writeable)
+    )
+
 
 # ===================================================================
+
 
 def remove(rmpath, observatory):
     """Wipe out directory at 'rmpath' somewhere in cache for `observatory`."""
@@ -643,22 +745,38 @@ def remove(rmpath, observatory):
             abs_references = os.path.abspath(config.get_crds_refpath(observatory))
             abs_mappings = os.path.abspath(config.get_crds_mappath(observatory))
             abs_pickles = os.path.abspath(config.get_crds_picklepath(observatory))
-            assert abs_path.startswith((abs_cache, abs_config, abs_root_config,
-                                        abs_references, abs_mappings, abs_pickles)), \
-                "remove() only works on files in CRDS cache. not: " + repr(rmpath)
+            assert abs_path.startswith(
+                (
+                    abs_cache,
+                    abs_config,
+                    abs_root_config,
+                    abs_references,
+                    abs_mappings,
+                    abs_pickles,
+                )
+            ), "remove() only works on files in CRDS cache. not: " + repr(rmpath)
             log.verbose("CACHE removing:", repr(rmpath))
             if os.path.isfile(rmpath):
                 os.remove(rmpath)
             else:
                 pysh.sh("rm -rf ${rmpath}", raise_on_error=True)
 
+
 # ===================================================================
+
 
 def _no_message(*args):
     """Do nothing message handler."""
 
-def copytree(src, dst, symlinks=False, fnc_directory=_no_message,
-             fnc_file=_no_message, fnc_symlink=_no_message):
+
+def copytree(
+    src,
+    dst,
+    symlinks=False,
+    fnc_directory=_no_message,
+    fnc_file=_no_message,
+    fnc_symlink=_no_message,
+):
     """Derived from shutil.copytree() example with added function hooks called
     on a per-directory, per-file, and per-symlink basis with (src, dest)
     parameters.  Removes exception trapping since partial copies are useless
@@ -680,7 +798,9 @@ def copytree(src, dst, symlinks=False, fnc_directory=_no_message,
             fnc_file("Coping", log.srepr(srcname), "to", log.srepr(dstname))
             shutil.copy(srcname, dstname)
 
+
 # ===================================================================
+
 
 def get_s3_uri_content(s3_uri, mode="text"):
     """Perform a direct read of an AWS S3 URI using the AWS SDK.
@@ -696,6 +816,7 @@ def get_s3_uri_content(s3_uri, mode="text"):
 def _get_s3_uri_content(s3_uri, mode):
     bucket_name, key = s3_uri.replace("s3://", "").split("/", 1)
     import boto3
+
     s3 = boto3.resource("s3")
     obj = s3.Object(bucket_name, key)
     binary = obj.get()["Body"].read()
@@ -715,6 +836,7 @@ def get_url_content(url, mode="text"):
 
 def _get_url_content(url, mode):
     import requests
+
     r = requests.get(url)
     r.raise_for_status()
     if mode == "text":
@@ -733,11 +855,13 @@ def get_uri_content(uri, mode="text"):
     elif uri.startswith(("http://", "https://")):
         return get_url_content(uri, mode)
     else:
-        mode = "r" if (mode=="text") else "rb"
+        mode = "r" if (mode == "text") else "rb"
         with open(uri, mode) as file:
             return file.read()
 
+
 # ===================================================================
+
 
 def checksum(pathname):
     """Return the CRDS hexdigest for file at `pathname`.   See also
@@ -752,6 +876,7 @@ def checksum(pathname):
             size += len(block)
             xsum.update(block)
     return xsum.hexdigest()
+
 
 def copy_and_checksum(source, destination):
     """Copy file from `source` path to `destination` path computing
@@ -774,6 +899,7 @@ def copy_and_checksum(source, destination):
                 xsum.update(block)
     return xsum.hexdigest()
 
+
 def str_checksum(data):
     """Return the CRDS hexdigest for small strings.   Likewise,  must
     match checksum() and copy_and_checksum() above.
@@ -788,7 +914,9 @@ def str_checksum(data):
     xsum.update(data)
     return xsum.hexdigest()
 
+
 # ===================================================================
+
 
 def get_file_properties(observatory, filename):
     """Return instrument,filekind fields associated with filename."""
@@ -796,7 +924,10 @@ def get_file_properties(observatory, filename):
     try:
         return get_locator_module(observatory).get_file_properties(path)
     except Exception as exc:
-        raise exceptions.FilePropertiesError(f"Failed to determine '{observatory}' instrument or reftype for '{filename}' : '{str(exc)}'") from exc
+        raise exceptions.FilePropertiesError(
+            f"Failed to determine '{observatory}' instrument or reftype for '{filename}' : '{str(exc)}'"
+        ) from exc
+
 
 def get_instruments_filekinds(observatory, filepaths):
     """Given a list of filepaths return the mapping of instruments and
@@ -806,7 +937,11 @@ def get_instruments_filekinds(observatory, filepaths):
     for filepath in filepaths:
         instrument, filekind = get_file_properties(observatory, filepath)
         itmapping[instrument] |= set([filekind])
-    return { instr : sorted([filekind for filekind in itmapping[instr]]) for instr in  itmapping}
+    return {
+        instr: sorted([filekind for filekind in itmapping[instr]])
+        for instr in itmapping
+    }
+
 
 def organize_files(observatory, files):
     """Given and `observatory` name and list of `files`, return a dictionary
@@ -818,12 +953,14 @@ def organize_files(observatory, files):
     organized = defaultdict(list)
     for file_ in files:
         instrument, filekind = get_file_properties(observatory, file_)
-        organized[(instrument,filekind)].append(file_)
+        organized[(instrument, filekind)].append(file_)
     return dict(organized)
+
 
 # ===================================================================
 
 MODULE_PATH_RE = re.compile(r"^crds(_server)?(\.\w{1,64}){0,10}$")
+
 
 @cached
 def get_object(*args):
@@ -837,8 +974,9 @@ def get_object(*args):
     >>> rmap = get_object("crds","rmap")
     """
     dotted_name = ".".join(args)
-    assert MODULE_PATH_RE.match(dotted_name), \
-        "Invalid dotted name for get_object() : " + repr(dotted_name)
+    assert MODULE_PATH_RE.match(
+        dotted_name
+    ), "Invalid dotted name for get_object() : " + repr(dotted_name)
     parts = dotted_name.split(".")
     pkgpath = ".".join(parts[:-1])
     cls = parts[-1]
@@ -848,15 +986,27 @@ def get_object(*args):
         exec(import_cmd, namespace, namespace)
         return namespace[cls]
 
+
 # ==============================================================================
 
-DONT_CARE_RE = re.compile(r"^" + r"|".join([
-    # "-999","-999\.0",
-    # "4294966297.0",
-    r"-2147483648.0",
-    r"\(\)","N/A","NOT APPLICABLE", "NOT_APPLICABLE"]) + "$")
+DONT_CARE_RE = re.compile(
+    r"^"
+    + r"|".join(
+        [
+            # "-999","-999\.0",
+            # "4294966297.0",
+            r"-2147483648.0",
+            r"\(\)",
+            "N/A",
+            "NOT APPLICABLE",
+            "NOT_APPLICABLE",
+        ]
+    )
+    + "$"
+)
 
 NUMBER_RE = re.compile(r"^([-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?|[+-]?[0-9]+\.)$")
+
 
 def condition_value(value):
     """Condition `value`,  ostensibly taken from a FITS header or CDBS
@@ -924,17 +1074,19 @@ def condition_value(value):
         value = "F"
     return value
 
+
 def condition_header(header, needed_keys=None):
     """Return a dictionary of all `needed_keys` from `header` after passing
     their values through the CRDS value conditioner.
     """
-    header = { key.upper():val for (key, val) in header.items() }
+    header = {key.upper(): val for (key, val) in header.items()}
     if not needed_keys:
         needed_keys = header.keys()
     else:
-        needed_keys = [ key.upper() for key in needed_keys ]
-    conditioned = { key:condition_value(header[key]) for key in needed_keys }
+        needed_keys = [key.upper() for key in needed_keys]
+    conditioned = {key: condition_value(header[key]) for key in needed_keys}
     return conditioned
+
 
 def _eval_keys(keys):
     """Return the replacement mapping from rmap-visible parkeys to eval-able keys.
@@ -950,6 +1102,7 @@ def _eval_keys(keys):
             evalable_map[key] = replacement
     return evalable_map
 
+
 def condition_header_keys(header):
     """Convert a matching parameter header into the form which supports eval(), ie.
     JWST-style header keys.   Nominally for JWST data model style keys.
@@ -962,8 +1115,9 @@ def condition_header_keys(header):
     header = dict(header)
     evalable_map = _eval_keys(header.keys())
     if evalable_map:
-        header.update({ evalable_map[key] : header[key] for key in evalable_map })
+        header.update({evalable_map[key]: header[key] for key in evalable_map})
     return header
+
 
 def condition_source_code_keys(code, parkeys):
     """Convert source code expressed in terms of parkeys into source code which works
@@ -977,6 +1131,7 @@ def condition_source_code_keys(code, parkeys):
     for key, replacement in evalable_map.items():
         code = code.replace(key, replacement)
     return code
+
 
 # ==============================================================================
 
@@ -994,14 +1149,20 @@ def observatory_instrument_tuples():
             tuples.append((obs, instr))
     return tuples
 
+
 def file_to_observatory(filename):
     """Return the observatory corresponding to reference, mapping, or dataset `filename`."""
     basename = os.path.basename(filename).lower()
     for obs in ALL_OBSERVATORIES:
-        if basename.startswith(obs + "_") or (("_" + obs + ".") in basename) or (basename == obs + ".pmap"):
+        if (
+            basename.startswith(obs + "_")
+            or (("_" + obs + ".") in basename)
+            or (basename == obs + ".pmap")
+        ):
             return obs
     else:
         return instrument_to_observatory(file_to_instrument(filename))
+
 
 @cached
 def instrument_to_observatory(instrument):
@@ -1025,25 +1186,30 @@ def instrument_to_observatory(instrument):
     else:
         raise ValueError("Unknown instrument " + repr(instrument))
 
+
 @cached
 def get_locator_module(observatory):
     """Return the observatory specific module for handling naming, file location, etc."""
     return get_object("crds." + observatory + ".locate")
+
 
 @cached
 def get_observatory_package(observatory):
     """Return the base observatory package."""
     return get_object("crds." + observatory)
 
+
 def file_to_locator(filename):
     """Given reference or dataset `filename`,  return the associated observatory locator module."""
     return instrument_to_locator(file_to_instrument(filename))
+
 
 def instrument_to_locator(instrument):
     """Given an instrument,  return the locator module associated with the
     observatory associated with the instrument.
     """
     return get_locator_module(instrument_to_observatory(instrument))
+
 
 def file_to_instrument(filename):
     """Given reference or dataset `filename`,  return the associated instrument.
@@ -1054,8 +1220,12 @@ def file_to_instrument(filename):
         if ("_" + instr + "_" in basename) or basename.startswith(instr + "_"):
             return instr.upper()
     from crds import data_file
-    header = data_file.get_unconditioned_header(filename, needed_keys=tuple(INSTRUMENT_KEYWORDS))
+
+    header = data_file.get_unconditioned_header(
+        filename, needed_keys=tuple(INSTRUMENT_KEYWORDS)
+    )
     return header_to_instrument(header)
+
 
 def header_to_instrument(header, default=None):
     """Given reference or dataset `header`, return the associated instrument.
@@ -1069,16 +1239,18 @@ def header_to_instrument(header, default=None):
     >>> header_to_instrument({"FOO":"MIRI"}, default="UNDEFINED")
     'UNDEFINED'
     """
-    val = get_any_of(header,  INSTRUMENT_KEYWORDS, default)
+    val = get_any_of(header, INSTRUMENT_KEYWORDS, default)
     val = fix_instrument(val)
     if val is None:
         raise KeyError("No instrument keyword defined in header.")
     else:
         return val.upper()
 
+
 def fix_instrument(instr):
-    """"Apply instrument fixers to `instr` to replace obsolete synonyms with standard version."""
+    """ "Apply instrument fixers to `instr` to replace obsolete synonyms with standard version."""
     return get_all_instrument_fixers().get(instr, instr)
+
 
 @cached
 def get_all_instrument_fixers():
@@ -1092,12 +1264,14 @@ def get_all_instrument_fixers():
             obs_fixers = obs_pkg.INSTRUMENT_FIXERS
         except AttributeError:
             continue
-        assert not (set(all_fixers.keys()) & set(obs_fixers.keys())), \
-            "Two observatories are using the same instrument fixer."
+        assert not (
+            set(all_fixers.keys()) & set(obs_fixers.keys())
+        ), "Two observatories are using the same instrument fixer."
         all_fixers.update(obs_fixers)
     return all_fixers
 
-def get_any_of(getter,  possible_keys,  default=None):
+
+def get_any_of(getter, possible_keys, default=None):
     """Search for the value of any of `possible_keys` in `dictionary`,  returning `default` if none are found.
 
     >>> get_any_of( {"A":1},  ["C","D","A"], "UNDEFINED")
@@ -1114,6 +1288,7 @@ def get_any_of(getter,  possible_keys,  default=None):
     else:
         return default
 
+
 def header_to_observatory(header):
     """Given reference or dataset `header`,  return the associated observatory.
 
@@ -1124,11 +1299,13 @@ def header_to_observatory(header):
     observ = instrument_to_observatory(instr)
     return observ
 
+
 def header_to_locator(header):
     """Given reference or dataset `header` dict,  return the observatory's locator module."""
     instr = header_to_instrument(header)
     locator = instrument_to_locator(instr)
     return locator
+
 
 def get_reference_paths(observatory):
     """Return the list of subdirectories involved with storing references of all instruments."""
@@ -1136,7 +1313,9 @@ def get_reference_paths(observatory):
     locate = get_locator_module(observatory)
     return sorted({locate.locate_dir(instrument) for instrument in pkg.INSTRUMENTS})
 
+
 # ===================================================================
+
 
 def param_combinations(key_values):
     """Recursively combine the value lists that appear in a keyword values dict
@@ -1170,6 +1349,7 @@ def param_combinations(key_values):
     else:
         return [{}]
 
+
 def write_combs_json(outpath, combs):
     """Write out a list of header dictionaries in JSON format
     suitable for CRDS bestrefs --load-pickles,  inventing "case"
@@ -1177,8 +1357,9 @@ def write_combs_json(outpath, combs):
     """
     with open(outpath, "w+") as outfile:
         for i, comb in enumerate(combs):
-            case = { "CASE_" + str(i) : comb }
+            case = {"CASE_" + str(i): comb}
             outfile.write(json.dumps(case) + "\n")
+
 
 def yaml_pars_to_json_bestrefs(yaml_filename, json_filename=None):
     """Given an input file describing parameter values that need
@@ -1194,6 +1375,7 @@ def yaml_pars_to_json_bestrefs(yaml_filename, json_filename=None):
         BRIGHT2, BRIGHT1,RAPID]
     """
     import yaml
+
     if json_filename is None:
         json_filename = os.path.splitext(yaml_filename)[0] + ".json"
     with open(yaml_filename) as yaml_file:
@@ -1201,7 +1383,9 @@ def yaml_pars_to_json_bestrefs(yaml_filename, json_filename=None):
     combs = param_combinations(pars)
     write_combs_json(json_filename, combs)
 
+
 # ===================================================================
+
 
 def fix_json_strings(source_json):
     """Squash unicode in nested json object `source_json`."""
@@ -1221,10 +1405,12 @@ def fix_json_strings(source_json):
         result = source_json
     return result
 
+
 # These functions should actually be general,  working on both references and
 # dataset files.
 reference_to_instrument = file_to_instrument
 reference_to_locator = file_to_locator
+
 
 def get_observatory_plugin(plugin_name, observatory=None):
     """Get the mission-specific plugin object `plugin_name` which is typically a
@@ -1238,15 +1424,19 @@ def get_observatory_plugin(plugin_name, observatory=None):
     """
     if observatory is None:
         from crds.client import api
+
         observatory = api.get_default_observatory()
     locator = get_locator_module(observatory)
     return get_object(f"crds.{observatory}.locate.{plugin_name}")
+
 
 def test():
     """Run doctests."""
     import doctest
     from crds.core import utils
+
     return doctest.testmod(utils)
+
 
 if __name__ == "__main__":
     print(test())

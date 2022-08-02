@@ -61,6 +61,7 @@ from crds.tests import test_config
 
 from crds.diff import DiffScript
 
+
 def dt_diff_pmap_diffs():
     """
     Compute diffs for two .pmap's:
@@ -80,6 +81,7 @@ def dt_diff_pmap_diffs():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_diff_imap_diffs():
     """
     Compute diffs for two .imap's:
@@ -97,6 +99,7 @@ def dt_diff_imap_diffs():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_diff_rmap_diffs():
     """
@@ -119,6 +122,7 @@ def dt_diff_rmap_diffs():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_diff_fits_diff():
     """
@@ -150,6 +154,7 @@ def dt_diff_fits_diff():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_diff_asdf():
     """
@@ -197,6 +202,7 @@ def dt_diff_asdf():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_diff_rmap_primitive_diffs():
     """
     Compute primitive diffs for two .rmap's:
@@ -242,6 +248,7 @@ def dt_diff_rmap_primitive_diffs():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_diff_file_reversions():
     """
     Compute diffs checking for reversions: (invert file order to simulate reverse filename progression)
@@ -271,6 +278,7 @@ def dt_diff_file_reversions():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_diff_row_change():
     """
@@ -318,6 +326,7 @@ def dt_diff_row_change():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_diff_rmap_primitive_diffs():
     """
     Compute primitive diffs for two .rmap's:
@@ -363,6 +372,7 @@ def dt_diff_rmap_primitive_diffs():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_diff_file_reversions():
     """
     Compute diffs checking for reversions: (invert file order to simulate reverse filename progression)
@@ -391,6 +401,7 @@ def dt_diff_file_reversions():
     2
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_diff_row_change():
     """
@@ -436,6 +447,7 @@ def dt_diff_row_change():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_diff_print_affected_modes():
     """
@@ -446,6 +458,7 @@ def dt_diff_print_affected_modes():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_diff_print_all_new_files():
     """
@@ -538,6 +551,7 @@ def dt_diff_print_all_new_files():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_diff_print_new_files():
     """
     >>> old_state = test_config.setup()
@@ -550,6 +564,7 @@ def dt_diff_print_new_files():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_diff_print_affected_types():
     """
     >>> old_state = test_config.setup()
@@ -559,6 +574,7 @@ def dt_diff_print_affected_types():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_diff_print_affected_instruments():
     """
     >>> old_state = test_config.setup()
@@ -567,6 +583,7 @@ def dt_diff_print_affected_instruments():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_diff_recurse_added_deleted_na():
     """
@@ -610,6 +627,7 @@ def dt_diff_recurse_added_deleted_na():
     >>> test_config.cleanup(old_state)
     """
 
+
 def main():
     """Run module tests,  for now just doctests only.
 
@@ -619,7 +637,9 @@ def main():
     things go wrong.
     """
     from crds.tests import test_diff, tstmod
+
     return tstmod(test_diff)
+
 
 if __name__ == "__main__":
     print(main())

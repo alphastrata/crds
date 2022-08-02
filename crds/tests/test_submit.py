@@ -9,10 +9,10 @@ import mock
 # To run:
 #   nosetests -v unit_tests.py
 
-TEMPFILES = ['ipppssoot_ccd.fits', 'opppssoot_bia.fits']
+TEMPFILES = ["ipppssoot_ccd.fits", "opppssoot_bia.fits"]
 
 # Mocked urllib.request to .../redcat_description.yml:
-FORM_DESCRIPTION_YML = '''\
+FORM_DESCRIPTION_YML = """\
 - {help_text: 'Who are you?', key: deliverer, label: Name of deliverer, required: true,
   type: CharField}
 - {help_text: Comma-delimited list (optional), key: other_email, label: Other e-mail
@@ -119,21 +119,23 @@ FORM_DESCRIPTION_YML = '''\
   required: true, type: CharField}
 - {key: additional_considerations, label: Additional considerations, required: false,
   type: CharField}
-'''
+"""
+
 
 def touch(path):
-    with open(path, 'a'):
+    with open(path, "a"):
         os.utime(path, None)
+
 
 class TestSubmission(object):
     @classmethod
-    @mock.patch('crds.submit.rc_submit.urllib.request.urlopen', autospec=True)
+    @mock.patch("crds.submit.rc_submit.urllib.request.urlopen", autospec=True)
     def setup_class(cls, urlopen):
-        '''This method is run once for each class before any tests are run.'''
+        """This method is run once for each class before any tests are run."""
         cls.old_state = test_config.setup()
 
         # Create a temporary directory:
-        cls.tmpdir = tempfile.mkdtemp(prefix='tmp_rc_submit_')
+        cls.tmpdir = tempfile.mkdtemp(prefix="tmp_rc_submit_")
 
         # Create empty test files in the temporary directory:
         cls.tempfiles = [os.path.join(cls.tmpdir, x) for x in TEMPFILES]
@@ -141,80 +143,82 @@ class TestSubmission(object):
             touch(filename)
 
         # Create a file handle to use as a mockup of the urllib.request object:
-        cls.mockup_form = os.path.join(cls.tmpdir, 'mocked_redcat_description.yml')
-        with open(cls.mockup_form, 'w') as f:
+        cls.mockup_form = os.path.join(cls.tmpdir, "mocked_redcat_description.yml")
+        with open(cls.mockup_form, "w") as f:
             f.write(FORM_DESCRIPTION_YML)
         urlopen.return_value = open(cls.mockup_form)
 
         # Instantiate the Submission object used in these tests:
-        cls.s = Submission('hst', 'dev', context='hst_0723.pmap')
+        cls.s = Submission("hst", "dev", context="hst_0723.pmap")
 
     @classmethod
     def teardown_class(cls):
-        '''This method is run once for each class after all tests are run.'''
+        """This method is run once for each class after all tests are run."""
         # Remove temporary directory and all files contained therein:
         shutil.rmtree(cls.tmpdir)
         test_config.cleanup(cls.old_state)
 
     @raises(KeyError)
     def test_badkey(self):
-        self.s['bad_key'] = 'some value'
+        self.s["bad_key"] = "some value"
 
     def test_goodvalue_char(self):
-        self.s['file_type'] = 'bias'
+        self.s["file_type"] = "bias"
 
-    def test_goodvalue_bool(self, key='history_updated'):
+    def test_goodvalue_bool(self, key="history_updated"):
         self.s[key] = True
         assert_is(self.s[key], True)
         self.s[key] = False
         assert_is(self.s[key], False)
 
-    def test_goodvalue_trinary(self, key='compliance_verified'):
+    def test_goodvalue_trinary(self, key="compliance_verified"):
         # Set with Booleans:
         self.s[key] = True
-        assert_equals(self.s[key], 'Yes')
+        assert_equals(self.s[key], "Yes")
         self.s[key] = False
-        assert_equals(self.s[key], 'No')
+        assert_equals(self.s[key], "No")
 
         # Set with strings:
-        self.s[key] = 'Yes'
-        assert_equals(self.s[key], 'Yes')
-        self.s[key] = 'yes'  # Handle different case
-        assert_equals(self.s[key], 'Yes')
-        self.s[key] = 'No'
-        assert_equals(self.s[key], 'No')
-        self.s[key] = 'n/a'  # Handle different case
-        assert_equals(self.s[key], 'N/A')
+        self.s[key] = "Yes"
+        assert_equals(self.s[key], "Yes")
+        self.s[key] = "yes"  # Handle different case
+        assert_equals(self.s[key], "Yes")
+        self.s[key] = "No"
+        assert_equals(self.s[key], "No")
+        self.s[key] = "n/a"  # Handle different case
+        assert_equals(self.s[key], "N/A")
 
     @raises(ValueError)
     def test_badtype(self):
-        self.s['calpipe_version'] = 123  # Expects a str
+        self.s["calpipe_version"] = 123  # Expects a str
 
     @raises(ValueError)
-    def test_badvalue_trinary(self, key='compliance_verified'):
-        self.s[key] = 'bad value'
+    def test_badvalue_trinary(self, key="compliance_verified"):
+        self.s[key] = "bad value"
 
     @raises(ValueError)
     def test_badvalue_choices(self):
-        self.s['change_level'] = 'bad choice'
+        self.s["change_level"] = "bad choice"
 
     @raises(ValueError)
     def test_emptyvalue_char(self):
-        self.s['file_type'] = ''
+        self.s["file_type"] = ""
 
     @raises(ValueError)
-    def test_emptyvalue_char(self, key='file_type'):
-        self.s[key] = ''  # Required field
+    def test_emptyvalue_char(self, key="file_type"):
+        self.s[key] = ""  # Required field
 
     def test_emptyvalue_optional(self):
-        self.s['additional_considerations'] = ''  # Optional field
+        self.s["additional_considerations"] = ""  # Optional field
 
-    def test_resetfield(self, key='deliverer'):
-        new_value = 'Wombat'
+    def test_resetfield(self, key="deliverer"):
+        new_value = "Wombat"
         self.s[key] = new_value
         assert_equals(self.s[key], new_value)
         del self.s[key]
-        assert_not_equals(self.s[key], new_value)  # Also assumes KeyError is not thrown!
+        assert_not_equals(
+            self.s[key], new_value
+        )  # Also assumes KeyError is not thrown!
 
     def test_addfiles(self):
         for filename in self.tempfiles:
@@ -222,19 +226,19 @@ class TestSubmission(object):
 
     @raises(FileNotFoundError)
     def test_addbadfile(self):
-        self.s.add_file(os.path.join(self.tmpdir, 'missing_file.fits'))
+        self.s.add_file(os.path.join(self.tmpdir, "missing_file.fits"))
 
     def test_rmfile(self):
         for filename in self.tempfiles:
             self.s.add_file(filename)
         self.s.remove_file(list(self.tempfiles)[0])
-        assert_equals( len(self.s.files), len(self.tempfiles)-1 )
+        assert_equals(len(self.s.files), len(self.tempfiles) - 1)
 
     @raises(KeyError)
     def test_rmbadfile(self):
         for filename in self.tempfiles:
             self.s.add_file(filename)
-        self.s.remove_file('bad_filename.fits')
+        self.s.remove_file("bad_filename.fits")
 
     def test_yaml(self):
         assert_true(self.s.yaml)
@@ -243,7 +247,7 @@ class TestSubmission(object):
         self.s.help()  # Prints stuff
 
     @raises(ValueError)
-    def test_validate_emptykey(self, key='file_type'):
+    def test_validate_emptykey(self, key="file_type"):
         del self.s[key]  # Resets to empty str
         self.s.validate()
 
@@ -253,56 +257,82 @@ class TestSubmission(object):
             self.s.remove_file(filename)
 
         # Do something here to pass field validation checks:
-        self.s['file_type']           = 'value'
-        self.s['correctness_testing'] = 'value'
-        self.s['deliverer']           = 'value'
-        self.s['description']         = 'value'
-        self.s['calpipe_version']     = 'value'
-        self.s['modes_affected']      = 'value'
-        self.s['instrument']          = 'stis'  # Only works for HST
+        self.s["file_type"] = "value"
+        self.s["correctness_testing"] = "value"
+        self.s["deliverer"] = "value"
+        self.s["description"] = "value"
+        self.s["calpipe_version"] = "value"
+        self.s["modes_affected"] = "value"
+        self.s["instrument"] = "stis"  # Only works for HST
 
         self.s.validate()
 
     def test_validate(self):
         self.s.add_file(list(self.tempfiles)[0])
         # Do something here to pass field validation checks:
-        self.s['file_type']           = 'value'
-        self.s['correctness_testing'] = 'value'
-        self.s['deliverer']           = 'value'
-        self.s['description']         = 'Dash-es under_scores, commas, periods. 1234567890 += fwd/slash.'
-        self.s['calpipe_version']     = 'value'
-        self.s['modes_affected']      = 'value'
-        self.s['instrument']          = 'stis'  # Only works for HST
+        self.s["file_type"] = "value"
+        self.s["correctness_testing"] = "value"
+        self.s["deliverer"] = "value"
+        self.s[
+            "description"
+        ] = "Dash-es under_scores, commas, periods. 1234567890 += fwd/slash."
+        self.s["calpipe_version"] = "value"
+        self.s["modes_affected"] = "value"
+        self.s["instrument"] = "stis"  # Only works for HST
 
         self.s.validate()
 
     @raises(ValueError)
     def test_invalid_description(self):
-        some_invalid_chars = ['!', '@', '$', '%', '^', '*', '(', ')', '~', '`', '"', '?', '|', '{', '}', '[', ']', ':', ';', '<', '>']
+        some_invalid_chars = [
+            "!",
+            "@",
+            "$",
+            "%",
+            "^",
+            "*",
+            "(",
+            ")",
+            "~",
+            "`",
+            '"',
+            "?",
+            "|",
+            "{",
+            "}",
+            "[",
+            "]",
+            ":",
+            ";",
+            "<",
+            ">",
+        ]
         # Do something here to pass field validation checks:
-        self.s['file_type']           = 'value'
-        self.s['correctness_testing'] = 'value'
-        self.s['deliverer']           = 'value'
-        self.s['calpipe_version']     = 'value'
-        self.s['modes_affected']      = 'value'
-        self.s['instrument']          = 'stis'  # Only works for HST
+        self.s["file_type"] = "value"
+        self.s["correctness_testing"] = "value"
+        self.s["deliverer"] = "value"
+        self.s["calpipe_version"] = "value"
+        self.s["modes_affected"] = "value"
+        self.s["instrument"] = "stis"  # Only works for HST
         for bad in some_invalid_chars:
-            self.s['description'] = f'This desc is invalid because it contains a {bad} char.'
+            self.s[
+                "description"
+            ] = f"This desc is invalid because it contains a {bad} char."
             self.s.validate()
-    
+
     @raises(ValueError)
     def test_multiple_invalid_chars(self):
-        self.s['file_type']           = 'value'
-        self.s['correctness_testing'] = 'value'
-        self.s['deliverer']           = 'value'
-        self.s['calpipe_version']     = 'value'
-        self.s['modes_affected']      = 'value'
-        self.s['instrument']          = 'stis'  # Only works for HST
+        self.s["file_type"] = "value"
+        self.s["correctness_testing"] = "value"
+        self.s["deliverer"] = "value"
+        self.s["calpipe_version"] = "value"
+        self.s["modes_affected"] = "value"
+        self.s["instrument"] = "stis"  # Only works for HST
         invalid_strings = [
-          "This %RFD is invalid",
-          "This <RFD> is still invalid",
-          "This {RFD is $invalid."
+            "This %RFD is invalid",
+            "This <RFD> is still invalid",
+            "This {RFD is $invalid.",
         ]
         for bad in invalid_strings:
-            self.s['description'] = bad
+            self.s["description"] = bad
             self.s.validate()

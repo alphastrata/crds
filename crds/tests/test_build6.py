@@ -6,6 +6,7 @@ from crds.misc.query_affected import QueryAffectedDatasetsScript
 
 from crds.tests import test_config
 
+
 def dt_get_context_history():
     """
     Test the web service which gets the context history from the JWST server for
@@ -27,6 +28,7 @@ def dt_get_context_history():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_query_affected_datasets_list():
     """
@@ -54,7 +56,6 @@ def dt_query_affected_datasets_list():
     """
 
 
-
 def main():
     """Run module tests,  for now just doctests only.
 
@@ -64,7 +65,9 @@ def main():
     things go wrong.
     """
     from crds.tests import test_build6, tstmod
+
     return tstmod(test_build6)
+
 
 if __name__ == "__main__":
     print(main())

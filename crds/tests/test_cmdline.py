@@ -8,6 +8,7 @@ from crds import tests
 from crds.tests import test_config
 from crds.list import ListScript
 
+
 def dt_dataset():
     """
     command line parameter checking filter for dataset files  plausibility only.
@@ -25,6 +26,7 @@ def dt_dataset():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_mapping():
     """
     command line parameter checking filter for mapping files.
@@ -41,6 +43,7 @@ def dt_mapping():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_context_spec():
     """
@@ -63,6 +66,7 @@ def dt_context_spec():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_observatory():
     """
     >>> old_state = test_config.setup()
@@ -81,6 +85,7 @@ def dt_observatory():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_process_key():
     """
     >>> old_state = test_config.setup()
@@ -98,6 +103,7 @@ def dt_process_key():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_user_name():
     """
@@ -123,6 +129,7 @@ def dt_user_name():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_observatories_obs_pkg():
     """
@@ -152,6 +159,7 @@ def dt_observatories_obs_pkg():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_print_help():
     """
     >>> old_state = test_config.setup()
@@ -161,12 +169,14 @@ def dt_print_help():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_require_server_connnection():
     """
     >>> old_state = test_config.setup()
     >>> Script("cmdline.Script").require_server_connection()
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_no_files_in_class():
     """
@@ -176,7 +186,8 @@ def dt_no_files_in_class():
     ...
     NotImplementedError: Class must implement list of `self.args.files` raw file paths.
     >>> test_config.cleanup(old_state)
-   """
+    """
+
 
 def dt_get_files():
     """
@@ -191,6 +202,7 @@ def dt_get_files():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_resolve_context():
     """
@@ -236,6 +248,7 @@ def dt_categorize_files():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_dump_files():
     """
     >>> old_state = test_config.setup()
@@ -246,6 +259,7 @@ def dt_dump_files():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_sync_files():
     """
     >>> old_state = test_config.setup()
@@ -255,6 +269,7 @@ def dt_sync_files():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_are_all_mappings():
     """
     >>> old_state = test_config.setup()
@@ -263,7 +278,6 @@ def dt_are_all_mappings():
 
     >>> test_config.cleanup(old_state)
     """
-
 
 
 class TestCmdline(test_config.CRDSTestCase):
@@ -283,7 +297,7 @@ class TestCmdline(test_config.CRDSTestCase):
     def test_file_outside_cache_pathless(self):
         s = Script("cmdline.Script")
         path = s.locate_file_outside_cache("hst_0001.pmap")
-        assert path.endswith('./hst_0001.pmap'), path
+        assert path.endswith("./hst_0001.pmap"), path
 
     def test_file_outside_cache_uri(self):
         """Explicit crds:// notation for files inside cache."""
@@ -304,6 +318,7 @@ class TestCmdline(test_config.CRDSTestCase):
     def test_dump_mappings(self):
         s = Script("cmdline.Script --ignore-cache")
         s.dump_mappings(["hst_acs.imap"])
+
 
 class TestContextsScript(test_config.CRDSTestCase):
     script_class = ContextsScript
@@ -345,6 +360,7 @@ class TestContextsScript(test_config.CRDSTestCase):
         mappings = sorted(list(set(s.get_context_mappings())))
         assert len(mappings) == 116, log.format(len(mappings), mappings)
 
+
 def main():
     """Run module tests,  for now just doctests only.
 
@@ -354,15 +370,18 @@ def main():
     things go wrong.
     """
     import unittest
+
     suite = unittest.TestLoader().loadTestsFromTestCase(TestCmdline)
     unittest.TextTestRunner().run(suite)
 
     suite = unittest.TestLoader().loadTestsFromTestCase(TestContextsScript)
     unittest.TextTestRunner().run(suite)
 
-    if sys.version_info >= (3,0,0):
+    if sys.version_info >= (3, 0, 0):
         from crds.tests import tstmod, test_cmdline
+
         return tstmod(test_cmdline)
+
 
 if __name__ == "__main__":
     print(main())

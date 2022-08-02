@@ -18,6 +18,7 @@ class SynphotGraphValidator(Validator):
     """
     Custom validations for synphot graph table (tmgtab) files.
     """
+
     def check_header(self, filename, header):
         with data_file.fits_open(filename) as hdul:
             result = self._check_connectivity(hdul)
@@ -49,7 +50,9 @@ class SynphotGraphValidator(Validator):
             visited = set(np.where(selected)[0])
 
             for outnode in np.unique(graph[selected]["OUTNODE"]):
-                visited.update(_get_visited_indexes(graph, outnode, seen_nodes=seen_nodes))
+                visited.update(
+                    _get_visited_indexes(graph, outnode, seen_nodes=seen_nodes)
+                )
 
             return visited
 
@@ -61,7 +64,7 @@ class SynphotGraphValidator(Validator):
             missing_indexes = set(range(len(graph))) - visited_indexes
             log.error(
                 "TMG contains disconnected rows at indexes:",
-                ", ".join(str(i) for i in missing_indexes)
+                ", ".join(str(i) for i in missing_indexes),
             )
             result = False
 
@@ -75,9 +78,7 @@ class SynphotGraphValidator(Validator):
         graph = hdul[-1].data
         result = True
         if not (graph["INNODE"] < graph["OUTNODE"]).all():
-            log.error(
-                "TMG contains rows with INNODE >= OUTNODE."
-            )
+            log.error("TMG contains rows with INNODE >= OUTNODE.")
             result = False
 
         return result
@@ -88,6 +89,7 @@ class SynphotLookupValidator(Validator):
     Custom validations for synphot throughput component lookup
     table (tmctab) and thermal component lookup (tmctab) files.
     """
+
     def check_header(self, filename, header):
         with data_file.fits_open(filename) as hdul:
             return self._check_filenames(hdul)
@@ -102,15 +104,27 @@ class SynphotLookupValidator(Validator):
         for i, row in enumerate(hdul[-1].data):
             expected_path_prefix = utils.get_path_prefix(row["COMPNAME"])
             if row["FILENAME"].split("$")[0] + "$" != expected_path_prefix:
-                log.error("Malformed FILENAME value at index", i, "(missing or invalid path prefix)")
+                log.error(
+                    "Malformed FILENAME value at index",
+                    i,
+                    "(missing or invalid path prefix)",
+                )
                 result = False
 
             param_keyword = utils.get_parametrization_keyword(row["COMPNAME"])
             if param_keyword is None and row["FILENAME"].endswith("]"):
-                log.error("Malformed FILENAME value at index", i, "(should not be parametrized)")
+                log.error(
+                    "Malformed FILENAME value at index",
+                    i,
+                    "(should not be parametrized)",
+                )
                 result = False
-            elif param_keyword is not None and not row["FILENAME"].lower().endswith("[{}]".format(param_keyword)):
-                log.error("Malformed FILENAME value at index", i, "(should be parametrized)")
+            elif param_keyword is not None and not row["FILENAME"].lower().endswith(
+                "[{}]".format(param_keyword)
+            ):
+                log.error(
+                    "Malformed FILENAME value at index", i, "(should be parametrized)"
+                )
                 result = False
 
         return result
@@ -120,14 +134,21 @@ class SynphotThroughputValidator(Validator):
     """
     Custom validations for synphot component throughput table (thruput) files.
     """
+
     def check_header(self, filename, header):
         with data_file.fits_open(filename) as hdul:
             result = self._check_throughput_first_and_last(hdul)
             result = self._check_parametrization(hdul) and result
-            result = _check_component_filename(
-                self.context, utils.THROUGHPUT_REFTYPE, utils.THROUGHPUT_FILENAME_SUFFIX,
-                filename, header
-            ) and result
+            result = (
+                _check_component_filename(
+                    self.context,
+                    utils.THROUGHPUT_REFTYPE,
+                    utils.THROUGHPUT_FILENAME_SUFFIX,
+                    filename,
+                    header,
+                )
+                and result
+            )
             return result
 
     def _check_throughput_first_and_last(self, hdul):
@@ -138,9 +159,13 @@ class SynphotThroughputValidator(Validator):
         for column_name in hdul[-1].data.names:
             if column_name == "THROUGHPUT" or column_name.startswith("MJD#"):
                 if not (hdul[-1].data[column_name][0] == 0.0):
-                    log.warning("First value of column '{}' is not 0.0".format(column_name))
+                    log.warning(
+                        "First value of column '{}' is not 0.0".format(column_name)
+                    )
                 if not (hdul[-1].data[column_name][-1] == 0.0):
-                    log.warning("Last value of column '{}' is not 0.0".format(column_name))
+                    log.warning(
+                        "Last value of column '{}' is not 0.0".format(column_name)
+                    )
 
         return True
 
@@ -153,7 +178,9 @@ class SynphotThroughputValidator(Validator):
 
         column_prefix = utils.get_parametrization_keyword(component)
         if column_prefix is not None:
-            column_count = len([n for n in hdul[-1].data.names if n.lower().startswith(column_prefix)])
+            column_count = len(
+                [n for n in hdul[-1].data.names if n.lower().startswith(column_prefix)]
+            )
             if column_count < 2:
                 template = "Table is parametrized by {}, but includes only {} columns with that prefix."
                 log.error(template.format(column_prefix, column_count))
@@ -166,10 +193,14 @@ class SynphotThermalValidator(Validator):
     """
     Custom validations for synphot component thermal table (thermal) files.
     """
+
     def check_header(self, filename, header):
         return _check_component_filename(
-            self.context, utils.THERMAL_REFTYPE, utils.THERMAL_FILENAME_SUFFIX,
-            filename, header
+            self.context,
+            utils.THERMAL_REFTYPE,
+            utils.THERMAL_FILENAME_SUFFIX,
+            filename,
+            header,
         )
 
 
@@ -211,7 +242,9 @@ def _check_component_filename(context, reftype, suffix, filename, header):
                 return False
         else:
             log.warning(
-                "No previous file exists for COMPNAME '{}', skipping version check".format(compname)
+                "No previous file exists for COMPNAME '{}', skipping version check".format(
+                    compname
+                )
             )
 
     return True

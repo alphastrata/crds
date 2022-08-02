@@ -19,19 +19,22 @@ from crds import data_file
 
 # --------------------------------------------------------------------------------------
 
+
 def test_header(calver, exp_type):
     """Create a header-like dict from `calver` and `exp_type` to support
     testing.
     """
     header = {
-        "META.INSTRUMENT.NAME" : "SYSTEM",
-        "REFTYPE" : "CRDSCFG",
-        "META.CALIBRATION_SOFTWARE_VERSION" : calver,
-        "META.EXPOSURE.TYPE" : exp_type,
-        }
+        "META.INSTRUMENT.NAME": "SYSTEM",
+        "REFTYPE": "CRDSCFG",
+        "META.CALIBRATION_SOFTWARE_VERSION": calver,
+        "META.EXPOSURE.TYPE": exp_type,
+    }
     return header
 
+
 # --------------------------------------------------------------------------------------
+
 
 def filepath_to_pipelines(dataset_path, context=None):
     """Given `dataset_path` and `context` name,  return the sequence of calibration
@@ -39,6 +42,7 @@ def filepath_to_pipelines(dataset_path, context=None):
     """
     header = data_file.get_header(dataset_path, context)
     return header_to_pipelines(header, context)
+
 
 def header_to_pipelines(header, context=None):
     """Based on `header` and `context` provide the project specific list of calibration

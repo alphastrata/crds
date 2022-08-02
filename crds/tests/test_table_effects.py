@@ -5,6 +5,7 @@ from crds import tests
 from crds.tests import test_config
 from crds.bestrefs import BestrefsScript
 
+
 def dt_table_effects_default_always_reprocess():
     """
     Test: Default rule: always reprocess, based on STIS PCTAB.
@@ -39,6 +40,7 @@ def dt_table_effects_default_always_reprocess():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_table_effects_reprocess_test():
     """
     Test: COS WCPTAB, reprocess yes
@@ -66,6 +68,7 @@ def dt_table_effects_reprocess_test():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_table_effects_reprocess_no():
     """
@@ -96,10 +99,13 @@ def dt_table_effects_reprocess_no():
     >>> test_config.cleanup(old_state)
     """
 
+
 def main():
     """Run module tests,  for now just doctests only."""
     from crds.tests import test_table_effects, tstmod
+
     return tstmod(test_table_effects)
+
 
 if __name__ == "__main__":
     print(main())

@@ -22,6 +22,7 @@ from . import test_config
 
 # ===================================================================
 
+
 def dt_check_archive_file_api_true():
     """
     >>> old_state = test_config.setup()
@@ -31,6 +32,7 @@ def dt_check_archive_file_api_true():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_check_archive_file_api_false():
     """
@@ -43,8 +45,9 @@ def dt_check_archive_file_api_false():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_check_archive_script():
-        """
+    """
     >>> old_state = test_config.setup()
     >>> check_archive.CheckArchiveScript("crds.misc.check_archive --files foo.map hst.pmap")()
     CRDS - INFO -  Mapping URL: '.../mappings/hst/'
@@ -57,12 +60,16 @@ def dt_check_archive_script():
     >>> test_config.cleanup(old_state)
     """
 
+
 # ==================================================================
+
 
 def main():
     """Run module tests,  for now just doctests only."""
     from crds.tests import test_check_archive, tstmod
+
     return tstmod(test_check_archive)
+
 
 if __name__ == "__main__":
     print(main())

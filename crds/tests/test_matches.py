@@ -17,6 +17,7 @@ HERE = os.path.dirname(__file__) or "."
 
 # ==================================================================================
 
+
 def dt_matches_files():
     """
     >>> old_state = test_config.setup()
@@ -27,6 +28,7 @@ def dt_matches_files():
     >>> config.set_crds_state(old_state)
     """
 
+
 def dt_matches_files_omit_parameters_brief():
     """
     >>> old_state = test_config.setup()
@@ -36,6 +38,7 @@ def dt_matches_files_omit_parameters_brief():
     >>> config.set_crds_state(old_state)
     """
 
+
 def dt_matches_tuple_format():
     """
     >>> old_state = test_config.setup()
@@ -44,6 +47,7 @@ def dt_matches_tuple_format():
     0
     >>> config.set_crds_state(old_state)
     """
+
 
 def dt_matches_datasets_minimize_headers_contexts_condition():
     """
@@ -55,13 +59,16 @@ def dt_matches_datasets_minimize_headers_contexts_condition():
     >>> config.set_crds_state(old_state)
     """
 
+
 # ==================================================================================
 
 
 def tst():
     """Run module tests,  for now just doctests only."""
     from crds.tests import test_matches, tstmod
+
     return tstmod(test_matches)
+
 
 if __name__ == "__main__":
     print(tst())

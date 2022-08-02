@@ -10,27 +10,28 @@ from crds.tests import test_config
 # Contrived headers which will select bad files.
 
 HST_HEADER = {
-    'INSTRUME' : 'ACS',
-    'REFTYPE' : 'PFLTFILE',
-    'DETECTOR': 'SBC',
-    'CCDAMP': 'N/A',
-    'FILTER1' : 'PR110L',
-    'FILTER2' : 'N/A',
-    'OBSTYPE': 'SPECTROSCOPIC',
-    'FW1OFFST' : 'N/A',
-    'FW2OFFST': 'N/A',
-    'FWOFFST': 'N/A',
-    'DATE-OBS': '1991-01-01',
-    'TIME-OBS': '00:00:00'
-    }
+    "INSTRUME": "ACS",
+    "REFTYPE": "PFLTFILE",
+    "DETECTOR": "SBC",
+    "CCDAMP": "N/A",
+    "FILTER1": "PR110L",
+    "FILTER2": "N/A",
+    "OBSTYPE": "SPECTROSCOPIC",
+    "FW1OFFST": "N/A",
+    "FW2OFFST": "N/A",
+    "FWOFFST": "N/A",
+    "DATE-OBS": "1991-01-01",
+    "TIME-OBS": "00:00:00",
+}
 
 JWST_HEADER = {
     "meta.instrument.name": "MIRI",
     "meta.observation.date": "2012-07-25T00:00:00",
-    "meta.instrument.detector" : "MIRIMAGE",
-    "meta.instrument.filter" : "F1000W",
-    "meta.subarray.name" : "FULL",
-    }
+    "meta.instrument.detector": "MIRIMAGE",
+    "meta.instrument.filter": "F1000W",
+    "meta.subarray.name": "FULL",
+}
+
 
 def dt_bad_references_error_cache_config():
     """
@@ -56,6 +57,7 @@ def dt_bad_references_error_cache_config():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_bad_references_warning_cache_config():
     """
     A secondary behaviour is to permit use of bad references with a warning:
@@ -73,6 +75,7 @@ def dt_bad_references_warning_cache_config():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_bad_references_fast_mode():
     """
@@ -113,6 +116,7 @@ def dt_bad_references_bestrefs_script_error():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_bad_references_bestrefs_script_warning():
     """
     >>> old_state = test_config.setup(clear_existing=False)
@@ -134,6 +138,7 @@ def dt_bad_references_bestrefs_script_warning():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_bad_references_bestrefs_script_deprecated():
     """
     >>> old_state = test_config.setup(clear_existing=False)
@@ -152,6 +157,7 @@ def dt_bad_references_bestrefs_script_deprecated():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_bad_rules_jwst_getreferences_error():
     """
@@ -172,6 +178,7 @@ def dt_bad_rules_jwst_getreferences_error():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_bad_rules_jwst_getreferences_warning():
     """
@@ -194,6 +201,7 @@ def dt_bad_rules_jwst_getreferences_warning():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_bad_rules_jwst_bestrefs_script_error():
     """
     Here try bad rules for a JWST dataset:
@@ -210,10 +218,13 @@ def dt_bad_rules_jwst_bestrefs_script_error():
     >>> test_config.cleanup(old_state)
     """
 
+
 def main():
     """Run module tests,  for now just doctests only."""
     from crds.tests import test_bad_files, tstmod
+
     return tstmod(test_bad_files)
+
 
 if __name__ == "__main__":
     print(main())

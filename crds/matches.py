@@ -11,7 +11,7 @@ The api function find_full_match_paths() returns a list of "match paths",  lists
 import sys
 import os.path
 from collections import defaultdict
-from pprint import pprint as pp   # doctests
+from pprint import pprint as pp  # doctests
 
 import crds
 from crds.core import log, utils, cmdline, selectors
@@ -19,12 +19,16 @@ from crds.client import api
 
 # ===================================================================
 
+
 def test():
     """Run any doctests."""
     import doctest, crds.matches
+
     return doctest.testmod(crds.matches)
 
+
 # ===================================================================
+
 
 def find_full_match_paths(context, reffile):
     """Return the list of full match paths for `reference` in `context` as a
@@ -62,6 +66,7 @@ def find_full_match_paths(context, reffile):
     """
     ctx = crds.get_pickled_mapping(context, cached=True)  # reviewed
     return ctx.file_matches(reffile)
+
 
 def find_match_paths_as_dict(context, reffile):
     """Return the matching parameters for reffile as a list of dictionaries, one dict for
@@ -102,7 +107,8 @@ def find_match_paths_as_dict(context, reffile):
       'observatory': 'hst'}]
     """
     matches = find_full_match_paths(context, reffile)
-    return [ _flatten_items_to_dict(match) for match in matches ]
+    return [_flatten_items_to_dict(match) for match in matches]
+
 
 def _flatten_items_to_dict(match_path):
     """Given a `match_path` which is a sequence of parameter items and sub-paths,  return
@@ -118,6 +124,7 @@ def _flatten_items_to_dict(match_path):
             result.update(_flatten_items_to_dict(par))
     return result
 
+
 def get_minimum_exptime(context, references):
     """Return the minimum EXPTIME for the list of `references` with respect to `context`.
     This is used to define the potential reprocessing impact of new references,  since
@@ -129,12 +136,13 @@ def get_minimum_exptime(context, references):
     """
     return min([_get_minimum_exptime(context, ref) for ref in references])
 
+
 def _get_minimum_exptime(context, reffile):
     """Given a `context` and a `reffile` in it,  return the minimum EXPTIME for all of
     it's match paths constructed from DATE-OBS and TIME-OBS.
     """
     path_dicts = find_match_paths_as_dict(context, reffile)
-    exptimes = [ get_exptime(path_dict) for path_dict in path_dicts ]
+    exptimes = [get_exptime(path_dict) for path_dict in path_dicts]
     return min(exptimes)
 
 
@@ -143,8 +151,9 @@ DATE_TIME_PAIRS = [
     ("META.OBSERVATION.DATE", "META.OBSERVATION.TIME"),
     ("META_OBSERVATION_DATE", "META_OBSERVATION_TIME"),
     ("META.EXPOSURE.START_TIME"),
-    ("META_EXPOSURE_START_TIME")
-    ]
+    ("META_EXPOSURE_START_TIME"),
+]
+
 
 def get_exptime(match_dict):
     """Given a `match_dict` dictionary of matching parameters for one match path,
@@ -159,10 +168,14 @@ def get_exptime(match_dict):
         except KeyError:
             continue
     else:
-        log.verbose("matches.exp_time:  no exptime value found. returning worst case 1900-01-01 00:00:00.")
+        log.verbose(
+            "matches.exp_time:  no exptime value found. returning worst case 1900-01-01 00:00:00."
+        )
         return "1900-01-01 00:00:00"
 
+
 # ===================================================================
+
 
 class MatchesScript(cmdline.ContextsScript):
     """Command line script for printing reference selection criteria."""
@@ -213,26 +226,65 @@ jwst_niriss_throughput_0008.fits :  META.INSTRUMENT.FILTER='F480M'
 
     def add_args(self):
         super(MatchesScript, self).add_args()
-        self.add_argument("--files", nargs="+", default=(),
-            help="References for which to dump selection criteria.")
-        self.add_argument("--files-from-contexts", action="store_true",
-            help="Operate on all references referred to by the context parameters.")
-        self.add_argument("--filters", nargs="+", default=(),
-            help="Parameter constraints (key=value) which references matching on `key` must satisfy.  Unused parameters for a reference type are ignored.")
-        self.add_argument("-b", "--brief-paths", action="store_true",
-            help="Don't show the instrument and filekind clutter if already in filename.")
-        self.add_argument("-o", "--omit-parameter-names", action="store_true",
-            help="Hide the parameter names of the selection criteria,  just show the values.")
-        self.add_argument("-t", "--tuple-format", action="store_true",
-            help="Print the match info as Python tuples.")
-        self.add_argument("-d", "--datasets", nargs="+",
-            help="Dataset ids for which to dump matching parameters from DADSOPS or equivalent database.")
-        self.add_argument("-i", "--instrument", type=str,
-            help="Instrument for which to dump matching parameters from DADSOPS or equivalent database.")
-        self.add_argument("-c", "--condition-values", action="store_true",
-            help="When dumping dataset parameters, first apply CRDS value conditioning / normalization.")
-        self.add_argument("-m", "--minimize-headers", action="store_true",
-            help="When dumping dataset parameters,  limit them to matching parameters, excluding e.g. historical bestrefs.")
+        self.add_argument(
+            "--files",
+            nargs="+",
+            default=(),
+            help="References for which to dump selection criteria.",
+        )
+        self.add_argument(
+            "--files-from-contexts",
+            action="store_true",
+            help="Operate on all references referred to by the context parameters.",
+        )
+        self.add_argument(
+            "--filters",
+            nargs="+",
+            default=(),
+            help="Parameter constraints (key=value) which references matching on `key` must satisfy.  Unused parameters for a reference type are ignored.",
+        )
+        self.add_argument(
+            "-b",
+            "--brief-paths",
+            action="store_true",
+            help="Don't show the instrument and filekind clutter if already in filename.",
+        )
+        self.add_argument(
+            "-o",
+            "--omit-parameter-names",
+            action="store_true",
+            help="Hide the parameter names of the selection criteria,  just show the values.",
+        )
+        self.add_argument(
+            "-t",
+            "--tuple-format",
+            action="store_true",
+            help="Print the match info as Python tuples.",
+        )
+        self.add_argument(
+            "-d",
+            "--datasets",
+            nargs="+",
+            help="Dataset ids for which to dump matching parameters from DADSOPS or equivalent database.",
+        )
+        self.add_argument(
+            "-i",
+            "--instrument",
+            type=str,
+            help="Instrument for which to dump matching parameters from DADSOPS or equivalent database.",
+        )
+        self.add_argument(
+            "-c",
+            "--condition-values",
+            action="store_true",
+            help="When dumping dataset parameters, first apply CRDS value conditioning / normalization.",
+        )
+        self.add_argument(
+            "-m",
+            "--minimize-headers",
+            action="store_true",
+            help="When dumping dataset parameters,  limit them to matching parameters, excluding e.g. historical bestrefs.",
+        )
 
     def main(self):
         """Process command line parameters in to a context and list of
@@ -245,7 +297,9 @@ jwst_niriss_throughput_0008.fits :  META.INSTRUMENT.FILTER='F480M'
             self.dump_dataset_headers()
         else:
             self.print_help()
-            log.error("Specify --files to dump reference match cases or --datasets to dump dataset matching parameters.")
+            log.error(
+                "Specify --files to dump reference match cases or --datasets to dump dataset matching parameters."
+            )
         return log.errors()
 
     @property
@@ -274,7 +328,9 @@ jwst_niriss_throughput_0008.fits :  META.INSTRUMENT.FILTER='F480M'
             if self.args.datasets:
                 headers = api.get_dataset_headers_by_id(context, self.args.datasets)
             elif self.args.instrument:
-                headers = api.get_dataset_headers_by_instrument(context, self.args.instrument)
+                headers = api.get_dataset_headers_by_instrument(
+                    context, self.args.instrument
+                )
             for dataset_id, header in headers.items():
                 multi_context_headers[dataset_id].append((context, header))
         for dataset_id, context_headers in multi_context_headers.items():
@@ -286,15 +342,16 @@ jwst_niriss_throughput_0008.fits :  META.INSTRUMENT.FILTER='F480M'
                 if len(self.contexts) == 1:
                     print(dataset_id, ":", log.format_parameter_list(header))
                 else:
-                    print(dataset_id, ":", context, ":", log.format_parameter_list(header))
+                    print(
+                        dataset_id, ":", context, ":", log.format_parameter_list(header)
+                    )
 
     def locate_file(self, filename):
         """Override for self.files..."""
         return os.path.basename(filename)
 
     def dump_match_tuples(self, context):
-        """Print out the match tuples for `references` under `context`.
-        """
+        """Print out the match tuples for `references` under `context`."""
         ctx = context if len(self.contexts) > 1 else ""
         for ref in self.matched_files:
             matches = self.find_match_tuples(context, ref)
@@ -305,8 +362,7 @@ jwst_niriss_throughput_0008.fits :  META.INSTRUMENT.FILTER='F480M'
                 log.verbose(ctx, ref, ":", "none")
 
     def find_match_tuples(self, context, reffile):
-        """Return the list of match representations for `reference` in `context`.
-        """
+        """Return the list of match representations for `reference` in `context`."""
         ctx = crds.get_cached_mapping(context)
         matches = ctx.file_matches(reffile)
         result = []
@@ -314,7 +370,9 @@ jwst_niriss_throughput_0008.fits :  META.INSTRUMENT.FILTER='F480M'
             prefix = self.format_prefix(path[0])
             if self.is_filtered(path):
                 continue
-            match_tuple = tuple([self.format_match_tup(tup) for section in path[1:] for tup in section])
+            match_tuple = tuple(
+                [self.format_match_tup(tup) for section in path[1:] for tup in section]
+            )
             if self.args.tuple_format:
                 if prefix:
                     match_tuple = prefix + match_tuple
@@ -331,8 +389,11 @@ jwst_niriss_throughput_0008.fits :  META.INSTRUMENT.FILTER='F480M'
             key, value = (item.strip() for item in filter.split("="))
             for section in path[1:]:
                 for tup in section:
-                    if (tup[0].upper() == key.upper() and
-                        value.upper() not in selectors.glob_list(tup[1].upper())):
+                    if tup[
+                        0
+                    ].upper() == key.upper() and value.upper() not in selectors.glob_list(
+                        tup[1].upper()
+                    ):
                         return True
         return False
 
@@ -355,5 +416,6 @@ jwst_niriss_throughput_0008.fits :  META.INSTRUMENT.FILTER='F480M'
             tup = tup[0], repr(tup[1])
             return "=".join(tup if not self.args.omit_parameter_names else tup[1:])
 
+
 if __name__ == "__main__":
-   sys.exit(MatchesScript()())
+    sys.exit(MatchesScript()())

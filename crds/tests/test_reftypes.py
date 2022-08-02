@@ -25,6 +25,7 @@ def reftypes_load_type_spec_spec():
     >>> test_config.cleanup(old_state)
     """
 
+
 def reftypes_load_type_spec_rmap():
     """
     >>> old_state = test_config.setup()
@@ -33,6 +34,7 @@ def reftypes_load_type_spec_rmap():
     >>> test_config.cleanup(old_state)
     """
 
+
 def reftypes_hst_load_raw_specs():
     """
     >>> old_state = test_config.setup()
@@ -40,6 +42,7 @@ def reftypes_hst_load_raw_specs():
     >>> spec = reftypes.load_raw_specs(SPECS)
     >>> test_config.cleanup(old_state)
     """
+
 
 def reftypes_hst_save_json_specs():
     """
@@ -53,6 +56,7 @@ def reftypes_hst_save_json_specs():
     >>> test_config.cleanup(old_state)
     """
 
+
 def reftypes_jwst_load_raw_specs():
     """
     >>> old_state = test_config.setup()
@@ -60,6 +64,7 @@ def reftypes_jwst_load_raw_specs():
     >>> spec = reftypes.load_raw_specs(SPECS)
     >>> test_config.cleanup(old_state)
     """
+
 
 def reftypes_jwst_save_json_specs():
     """
@@ -73,6 +78,7 @@ def reftypes_jwst_save_json_specs():
     >>> test_config.cleanup(old_state)
     """
 
+
 def reftypes_roman_load_raw_specs():
     """
     >>> old_state = test_config.setup()
@@ -80,6 +86,7 @@ def reftypes_roman_load_raw_specs():
     >>> spec = reftypes.load_raw_specs(SPECS)
     >>> test_config.cleanup(old_state)
     """
+
 
 def reftypes_roman_save_json_specs():
     """
@@ -92,6 +99,7 @@ def reftypes_roman_save_json_specs():
     CRDS - INFO -  Saved combined type specs to '...'
     >>> test_config.cleanup(old_state)
     """
+
 
 def reftypes_hst_reference_name_to_tpn_infos():
     """
@@ -110,7 +118,8 @@ def reftypes_hst_reference_name_to_tpn_infos():
     >>> test_config.cleanup(old_state)
     """
 
-def reftypes_jwst_reference_name_to_tpn_infos():    # doctest: +ELLIPSIS
+
+def reftypes_jwst_reference_name_to_tpn_infos():  # doctest: +ELLIPSIS
     """
     >>> old_state = test_config.setup()
     >>> types = reftypes.get_types_object("jwst")
@@ -184,6 +193,7 @@ def reftypes_jwst_reference_name_to_tpn_infos():    # doctest: +ELLIPSIS
     >>> test_config.cleanup(old_state)
     """
 
+
 def reftypes_roman_reference_name_to_tpn_infos():
     """
     >>> old_state = test_config.setup() # doctest: +ELLIPSIS
@@ -207,6 +217,7 @@ def reftypes_roman_reference_name_to_tpn_infos():
     >>> test_config.cleanup(old_state)
     """
 
+
 def reftypes_hst_get_filekinds():
     """
     >>> old_state = test_config.setup()
@@ -215,6 +226,7 @@ def reftypes_hst_get_filekinds():
     ['backtab', 'darkfile', 'flatfile', 'idctab', 'illmfile', 'maskfile', 'nlinfile', 'noisfile', 'pedsbtab', 'phottab', 'pmodfile', 'pmskfile', 'rnlcortb', 'saacntab', 'saadfile', 'tdffile', 'tempfile', 'zprattab']
     >>> test_config.cleanup(old_state)
     """
+
 
 def reftypes_jwst_get_filekinds():
     """
@@ -225,6 +237,7 @@ def reftypes_jwst_get_filekinds():
     >>> test_config.cleanup(old_state)
     """
 
+
 def reftypes_roman_get_filekinds():
     """
     >>> old_state = test_config.setup()
@@ -233,6 +246,7 @@ def reftypes_roman_get_filekinds():
     True
     >>> test_config.cleanup(old_state)
     """
+
 
 def reftypes_reference_name_to_tpn_text():
     """
@@ -253,6 +267,7 @@ def reftypes_reference_name_to_tpn_text():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def reftypes_reference_name_to_ld_tpn_text():
     """
@@ -283,10 +298,11 @@ def reftypes_get_row_keys_by_instrument():
     >>> test_config.cleanup(old_state)
     """
 
+
 # ==================================================================================
 
-class TestReftypes(test_config.CRDSTestCase):
 
+class TestReftypes(test_config.CRDSTestCase):
     def setUp(self, *args, **keys):
         super(TestReftypes, self).setUp(*args, **keys)
         self._old_debug = log.set_exception_trap(False)
@@ -302,7 +318,9 @@ class TestReftypes(test_config.CRDSTestCase):
         #         assert_raises(ValueError, certify.validators.validator, tinfo)
         pass
 
+
 # ==================================================================================
+
 
 def main():
     """Run module tests,  for now just doctests only."""
@@ -312,7 +330,9 @@ def main():
     unittest.TextTestRunner().run(suite)
 
     from crds.tests import test_reftypes, tstmod
+
     return tstmod(test_reftypes)
+
 
 if __name__ == "__main__":
     print(main())

@@ -6,42 +6,99 @@ from crds.hst import locate
 
 
 _COS_PARAMETRIZED_COMPONENTS = {
-    "cosmcp_g130mc1055m", "cosmcp_g130mc1096m", "cosmcp_g130mc1222m",
-    "cosmcp_g130mc1291m", "cosmcp_g130mc1300m", "cosmcp_g130mc1309m",
-    "cosmcp_g130mc1318m", "cosmcp_g130mc1327m", "cosmcp_g140lc1230m",
-    "cosmcp_g140lc1280m", "cosmcp_g160mc1577m", "cosmcp_g160mc1589m",
-    "cosmcp_g140lc1105m", "cosmcp_g140lc800m", "cosmcp_g160mc1533m",
-    "cosmcp_g160mc1600m", "cosmcp_g160mc1611m", "cosmcp_g160mc1623m",
-    "cosncm3g185mc1786m", "cosncm3g185mc1817m", "cosncm3g185mc1835m",
-    "cosncm3g185mc1850m", "cosncm3g185mc1864m", "cosncm3g185mc1882m",
-    "cosncm3g185mc1890m", "cosncm3g185mc1900m", "cosncm3g185mc1913m",
-    "cosncm3g185mc1921m", "cosncm3g185mc1941m", "cosncm3g185mc1953m",
-    "cosncm3g185mc1971m", "cosncm3g185mc1986m", "cosncm3g185mc2010m",
-    "cosncm3g225mc2186m", "cosncm3g225mc2217m", "cosncm3g225mc2233m",
-    "cosncm3g225mc2250m", "cosncm3g225mc2268m", "cosncm3g225mc2283m",
-    "cosncm3g225mc2306m", "cosncm3g225mc2325m", "cosncm3g225mc2339m",
-    "cosncm3g225mc2357m", "cosncm3g225mc2373m", "cosncm3g225mc2390m",
-    "cosncm3g225mc2410m", "cosncm3g230lc2635m", "cosncm3g230lc2950m",
-    "cosncm3g230lc3000m", "cosncm3g230lc3360m", "cosncm3g230lc3360m",
-    "cosncm3g285mc2617m", "cosncm3g285mc2637m", "cosncm3g285mc2657m",
-    "cosncm3g285mc2676m", "cosncm3g285mc2695m", "cosncm3g285mc2709m",
-    "cosncm3g285mc2719m", "cosncm3g285mc2739m", "cosncm3g285mc2850m",
-    "cosncm3g285mc2952m", "cosncm3g285mc2979m", "cosncm3g285mc2996m",
-    "cosncm3g285mc3018m", "cosncm3g285mc3035m", "cosncm3g285mc3057m",
-    "cosncm3g285mc3074m", "cosncm3g285mc3094m",
+    "cosmcp_g130mc1055m",
+    "cosmcp_g130mc1096m",
+    "cosmcp_g130mc1222m",
+    "cosmcp_g130mc1291m",
+    "cosmcp_g130mc1300m",
+    "cosmcp_g130mc1309m",
+    "cosmcp_g130mc1318m",
+    "cosmcp_g130mc1327m",
+    "cosmcp_g140lc1230m",
+    "cosmcp_g140lc1280m",
+    "cosmcp_g160mc1577m",
+    "cosmcp_g160mc1589m",
+    "cosmcp_g140lc1105m",
+    "cosmcp_g140lc800m",
+    "cosmcp_g160mc1533m",
+    "cosmcp_g160mc1600m",
+    "cosmcp_g160mc1611m",
+    "cosmcp_g160mc1623m",
+    "cosncm3g185mc1786m",
+    "cosncm3g185mc1817m",
+    "cosncm3g185mc1835m",
+    "cosncm3g185mc1850m",
+    "cosncm3g185mc1864m",
+    "cosncm3g185mc1882m",
+    "cosncm3g185mc1890m",
+    "cosncm3g185mc1900m",
+    "cosncm3g185mc1913m",
+    "cosncm3g185mc1921m",
+    "cosncm3g185mc1941m",
+    "cosncm3g185mc1953m",
+    "cosncm3g185mc1971m",
+    "cosncm3g185mc1986m",
+    "cosncm3g185mc2010m",
+    "cosncm3g225mc2186m",
+    "cosncm3g225mc2217m",
+    "cosncm3g225mc2233m",
+    "cosncm3g225mc2250m",
+    "cosncm3g225mc2268m",
+    "cosncm3g225mc2283m",
+    "cosncm3g225mc2306m",
+    "cosncm3g225mc2325m",
+    "cosncm3g225mc2339m",
+    "cosncm3g225mc2357m",
+    "cosncm3g225mc2373m",
+    "cosncm3g225mc2390m",
+    "cosncm3g225mc2410m",
+    "cosncm3g230lc2635m",
+    "cosncm3g230lc2950m",
+    "cosncm3g230lc3000m",
+    "cosncm3g230lc3360m",
+    "cosncm3g230lc3360m",
+    "cosncm3g285mc2617m",
+    "cosncm3g285mc2637m",
+    "cosncm3g285mc2657m",
+    "cosncm3g285mc2676m",
+    "cosncm3g285mc2695m",
+    "cosncm3g285mc2709m",
+    "cosncm3g285mc2719m",
+    "cosncm3g285mc2739m",
+    "cosncm3g285mc2850m",
+    "cosncm3g285mc2952m",
+    "cosncm3g285mc2979m",
+    "cosncm3g285mc2996m",
+    "cosncm3g285mc3018m",
+    "cosncm3g285mc3035m",
+    "cosncm3g285mc3057m",
+    "cosncm3g285mc3074m",
+    "cosncm3g285mc3094m",
 }
 
 _ACS_PARAMETRIZED_COMPONENTS = {
-    "acs_fr388n", "acs_fr388n", "acs_fr423n",
-    "acs_fr459m", "acs_fr462n", "acs_fr505n",
-    "acs_fr551n", "acs_fr601n", "acs_fr647m",
-    "acs_fr656n", "acs_fr716n", "acs_fr782n",
-    "acs_fr853n", "acs_fr914m", "acs_fr1016n",
+    "acs_fr388n",
+    "acs_fr388n",
+    "acs_fr423n",
+    "acs_fr459m",
+    "acs_fr462n",
+    "acs_fr505n",
+    "acs_fr551n",
+    "acs_fr601n",
+    "acs_fr647m",
+    "acs_fr656n",
+    "acs_fr716n",
+    "acs_fr782n",
+    "acs_fr853n",
+    "acs_fr914m",
+    "acs_fr1016n",
     "acs_fr931n",
 }
 
 _WFPC2_PARAMETRIZED_COMPONENTS = {
-    "wfpc2_contpc1", "wfpc2_contwf2", "wfpc2_contwf3",
+    "wfpc2_contpc1",
+    "wfpc2_contwf2",
+    "wfpc2_contwf3",
     "wfpc2_contwf4",
 }
 
@@ -66,18 +123,24 @@ _GRAPH_KEYWORD_OVERRIDES = {
 # wfpc2 must occur before wfpc in this list, so that prefix
 # checks will assign the correct instrument:
 _HST_INSTRUMENTS = [
-    "acs", "cos", "stis", "wfc3", "wfpc2",
-    "foc", "hrs", "hsp", "nicmos", "wfpc",
-    "ota", "fgs", "fos"
+    "acs",
+    "cos",
+    "stis",
+    "wfc3",
+    "wfpc2",
+    "foc",
+    "hrs",
+    "hsp",
+    "nicmos",
+    "wfpc",
+    "ota",
+    "fgs",
+    "fos",
 ]
 
-_NICMOS_COMPONENT_PREFIXES = {
-    "nic", "nic1", "nic2", "nic3"
-}
+_NICMOS_COMPONENT_PREFIXES = {"nic", "nic1", "nic2", "nic3"}
 
-_OTA_COMPONENTS = {
-    "clear", "dark", "hst_ota"
-}
+_OTA_COMPONENTS = {"clear", "dark", "hst_ota"}
 
 _NON_HST_INSTRUMENT = "nonhst"
 
@@ -132,13 +195,37 @@ KNOWN_MISSING_THROUGHPUT_COMPONENTS = {
 # We can get rid of this once
 # https://jira.stsci.edu/browse/REDCAT-103 is resolved.
 KNOWN_MISSING_THERMAL_COMPONENTS = {
-    "nic1_bend", "nic1_bend1", "nic1_cmask", "nic1_dewar", "nic1_edge",
-    "nic1_hole", "nic1_image", "nic1_pads", "nic1_para1", "nic1_para2",
-    "nic1_primary", "nic1_pupil", "nic1_reimag", "nic1_sec", "nic1_spider",
-    "nic2_sec", "nic3_bend", "nic3_bend1", "nic3_cmask", "nic3_dewar",
-    "nic3_edge", "nic3_hole", "nic3_image", "nic3_pads", "nic3_para1",
-    "nic3_para2", "nic3_primary", "nic3_pupil", "nic3_reimag", "nic3_sec",
-    "nic3_spider"
+    "nic1_bend",
+    "nic1_bend1",
+    "nic1_cmask",
+    "nic1_dewar",
+    "nic1_edge",
+    "nic1_hole",
+    "nic1_image",
+    "nic1_pads",
+    "nic1_para1",
+    "nic1_para2",
+    "nic1_primary",
+    "nic1_pupil",
+    "nic1_reimag",
+    "nic1_sec",
+    "nic1_spider",
+    "nic2_sec",
+    "nic3_bend",
+    "nic3_bend1",
+    "nic3_cmask",
+    "nic3_dewar",
+    "nic3_edge",
+    "nic3_hole",
+    "nic3_image",
+    "nic3_pads",
+    "nic3_para1",
+    "nic3_para2",
+    "nic3_primary",
+    "nic3_pupil",
+    "nic3_reimag",
+    "nic3_sec",
+    "nic3_spider",
 }
 
 
@@ -162,7 +249,9 @@ def get_cache_path(context, reftype, error_on_missing=True):
         return None
 
     if len(filenames) != 1:
-        raise RuntimeError("Expected '{}' rmap to contain one reference file".format(reftype))
+        raise RuntimeError(
+            "Expected '{}' rmap to contain one reference file".format(reftype)
+        )
 
     filename = filenames[0]
     return config.locate_file(filename, observatory="hst")

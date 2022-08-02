@@ -20,6 +20,7 @@ from nose.tools import assert_raises, assert_true
 
 # ==================================================================================
 
+
 def dt_or_bars_certify_bad_keyword():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -40,6 +41,7 @@ def dt_or_bars_certify_bad_keyword():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_or_bars_certify_bad_value():
     """
     >>> old_state = test_config.setup(url="https://jwst-serverless-mode.stsci.edu")
@@ -58,6 +60,7 @@ def dt_or_bars_certify_bad_value():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_or_bars_refactor_add_file():
     """
@@ -82,6 +85,7 @@ def dt_or_bars_refactor_add_file():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_or_bars_refactor_replace_file():
     """
@@ -111,13 +115,16 @@ def dt_or_bars_refactor_replace_file():
     >>> test_config.cleanup(old_state)
     """
 
+
 # ==================================================================================
 
 
 def tst():
     """Run module tests,  for now just doctests only."""
     from crds.tests import test_or_bars, tstmod
+
     return tstmod(test_or_bars)
+
 
 if __name__ == "__main__":
     print(tst())

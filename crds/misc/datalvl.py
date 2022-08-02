@@ -5,8 +5,15 @@ import json
 
 import crds
 
+
 def get_data_level(
-    reftype, calibration_version, context=None, extras=None, observatory="jwst", ignore_cache=False):
+    reftype,
+    calibration_version,
+    context=None,
+    extras=None,
+    observatory="jwst",
+    ignore_cache=False,
+):
     """Based on `context` and `calibration_version` (nominally CAL_VER), return the
     minimum data level associated with reference type `reftype`.  Nominally
     this means fetching and interpreting the SYSTEM DATALVL reference file so
@@ -14,19 +21,25 @@ def get_data_level(
     up-to-date and accessible CRDS cache.
     """
     header = {
-        "META.INSTRUMENT.NAME":"SYSTEM",
-        "INSTRUME":"SYSTEM",
-        "INSTRUMENT":"SYSTEM",
-        "META.CALIBRATION_SOFTWARE_VERSION":calibration_version,
-        "CAL_VER":calibration_version,
-        "VERSION":calibration_version,
-        }
+        "META.INSTRUMENT.NAME": "SYSTEM",
+        "INSTRUME": "SYSTEM",
+        "INSTRUMENT": "SYSTEM",
+        "META.CALIBRATION_SOFTWARE_VERSION": calibration_version,
+        "CAL_VER": calibration_version,
+        "VERSION": calibration_version,
+    }
     header.update(extras or {})
     bestrefs = crds.getreferences(
-        header, context=context, reftypes=["datalvl"], observatory=observatory, ignore_cache=False)
+        header,
+        context=context,
+        reftypes=["datalvl"],
+        observatory=observatory,
+        ignore_cache=False,
+    )
     reference_path = bestrefs["datalvl"]
     type_to_level = get_type_to_level(reference_path)
     return type_to_level[reftype]
+
 
 def get_type_to_level(refpath):
     """Given SYSTEM DATALVL reference file path `refpath`,  load it,
@@ -34,6 +47,7 @@ def get_type_to_level(refpath):
     """
     loaded = json.load(open(refpath))
     return invert_cal_levels(loaded["cal_levels"])
+
 
 def invert_cal_levels(cal_levels):
     """Invert and return the cal_levels mapping.
@@ -77,7 +91,9 @@ def invert_cal_levels(cal_levels):
                 type_to_level[type] = level
     return type_to_level
 
+
 def test():
     import doctest
     from crds.misc import datalvl
+
     doctest.testmod(datalvl)

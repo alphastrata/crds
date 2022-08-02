@@ -75,6 +75,7 @@ from crds.tests import test_config
 from crds.misc import uniqname
 from crds.misc.uniqname import UniqnameScript
 
+
 def dt_synphot_uniqname():
     """
     Compute diffs for two .pmap's:
@@ -84,6 +85,7 @@ def dt_synphot_uniqname():
     CRDS - INFO -  Would rename 'data/16n1832tm_tmc.fits' --> 'data/...m_tmc.fits'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_cdbs_uniqname():
     """
@@ -98,6 +100,7 @@ def dt_cdbs_uniqname():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_has_checksum():
     """
     Compute diffs for two .pmap's:
@@ -110,6 +113,7 @@ def dt_has_checksum():
     >>> test_config.cleanup(old_state)
     """
 
+
 def test():
     """Run module tests,  for now just doctests only.
 
@@ -119,7 +123,9 @@ def test():
     things go wrong.
     """
     from crds.tests import test_uniqname, tstmod
+
     return tstmod(test_uniqname)
+
 
 if __name__ == "__main__":
     print(test())

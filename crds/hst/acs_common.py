@@ -9,7 +9,7 @@ from crds.core import rmap, log, utils, timestamp
 
 #   This section contains matching customizations.
 
-ACS_HALF_CHIP_COLS = 2048         #used in custom bias selection algorithm
+ACS_HALF_CHIP_COLS = 2048  # used in custom bias selection algorithm
 
 # date beyond which an exposure was
 # taken in the SM4 configuration

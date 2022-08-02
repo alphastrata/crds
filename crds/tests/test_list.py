@@ -321,6 +321,7 @@ from crds.tests import test_config
 
 from crds.diff import DiffScript
 
+
 def dt_list_mappings():
     """
     >>> old_state = test_config.setup()
@@ -345,6 +346,7 @@ def dt_list_mappings():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_list_cached_mappings():
     """
     >>> old_state = test_config.setup()
@@ -359,6 +361,7 @@ def dt_list_cached_mappings():
     >>> doctest.ELLIPSIS_MARKER = '...'
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_list_references():
     """
@@ -377,6 +380,7 @@ def dt_list_references():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_list_cached_references():
     """
     >>> import doctest
@@ -393,6 +397,7 @@ def dt_list_cached_references():
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
 
+
 def dt_list_dataset_ids():
     """
     >>> old_state = test_config.setup()
@@ -405,6 +410,7 @@ def dt_list_dataset_ids():
     0
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_list_dataset_headers():
     """
@@ -430,6 +436,7 @@ def dt_list_dataset_headers():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_list_dataset_headers_json():
     """
     >>> old_state = test_config.setup()
@@ -442,6 +449,7 @@ def dt_list_dataset_headers_json():
     >>> doctest.ELLIPSIS_MARKER = '...'
     """
 
+
 def dt_list_dataset_headers_bogus():
     """
     >>> old_state = test_config.setup()
@@ -450,6 +458,7 @@ def dt_list_dataset_headers_bogus():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_list_dataset_headers_id_expansions_only():
     """
@@ -462,6 +471,7 @@ def dt_list_dataset_headers_id_expansions_only():
     0
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_list_required_parkeys_pmap():
     """
@@ -477,6 +487,7 @@ def dt_list_required_parkeys_pmap():
     0
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_list_required_parkeys_imap():
     """
@@ -507,6 +518,7 @@ def dt_list_required_parkeys_imap():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_list_required_parkeys_rmap():
     """
     >>> old_state = test_config.setup()
@@ -515,6 +527,7 @@ def dt_list_required_parkeys_rmap():
     0
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_list_resolve_contexts_range():
     """
@@ -529,6 +542,7 @@ def dt_list_resolve_contexts_range():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_list_resolve_contexts_date():
     """
     >>> old_state = test_config.setup()
@@ -538,6 +552,7 @@ def dt_list_resolve_contexts_date():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_list_remote_context():
     """
     >>> old_state = test_config.setup()
@@ -545,6 +560,7 @@ def dt_list_remote_context():
     hst_....pmap
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_list_operational_context():
     """
@@ -554,15 +570,6 @@ def dt_list_operational_context():
     >>> test_config.cleanup(old_state)
     """
 
-def dt_list_references_by_context():
-    """
-    >>> old_state = test_config.setup()
-    >>> ListScript("crds.list --references --contexts hst-cos-deadtab-2014-11-11T00:00:00")() # doctest: +ELLIPSIS
-    s7g1700gl_dead.fits
-    s7g1700ql_dead.fits
-    0
-    >>> test_config.cleanup(old_state)
-    """
 
 def dt_list_references_by_context():
     """
@@ -573,6 +580,18 @@ def dt_list_references_by_context():
     0
     >>> test_config.cleanup(old_state)
     """
+
+
+def dt_list_references_by_context():
+    """
+    >>> old_state = test_config.setup()
+    >>> ListScript("crds.list --references --contexts hst-cos-deadtab-2014-11-11T00:00:00")() # doctest: +ELLIPSIS
+    s7g1700gl_dead.fits
+    s7g1700ql_dead.fits
+    0
+    >>> test_config.cleanup(old_state)
+    """
+
 
 def dt_list_cat_mappings():
     """
@@ -655,6 +674,7 @@ def dt_list_status():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_list_config():
     """
     >>> old_state = test_config.setup()
@@ -675,6 +695,7 @@ def dt_list_config():
     >>> test_config.cleanup(old_state)
     """
 
+
 def main():
     """Run module tests,  for now just doctests only.
 
@@ -684,7 +705,9 @@ def main():
     things go wrong.
     """
     from crds.tests import test_list, tstmod
+
     return tstmod(test_list)
+
 
 if __name__ == "__main__":
     print(main())

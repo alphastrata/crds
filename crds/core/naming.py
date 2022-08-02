@@ -17,6 +17,7 @@ __all__ = [
 
 # =============================================================================================================
 
+
 def generate_unique_name(filename, observatory=None, now=None):
     """Given and original filepath `filename` generate a unique CRDS name for the file."""
     if observatory is None:
@@ -25,7 +26,9 @@ def generate_unique_name(filename, observatory=None, now=None):
         locator = utils.get_locator_module(observatory)
     return locator.generate_unique_name(filename, now)
 
+
 # =============================================================================================================
+
 
 def newer(name1, name2):
     """Determine if `name1` is a more recent file than `name2` accounting for
@@ -114,20 +117,17 @@ def newer(name1, name2):
 
     """
     cases = {
-        ("crds", "crds")  : "compare_crds",
-        ("oldcdbs", "oldcdbs") : "compare",
-        ("newcdbs", "newcdbs") : "compare",
-        ("oldsynphot", "oldsynphot") : "compare",
-        ("newsynphot", "newsynphot") : "compare",
-
-        ("crds", "oldcdbs") : True,
-        ("oldcdbs", "crds") : False,
-
-        ("newcdbs", "oldcdbs") : True,
-        ("oldcdbs", "newcdbs") : False,
-
-        ("newsynphot", "oldsynphot") : True,
-        ("oldsynphot", "newsynphot") : False,
+        ("crds", "crds"): "compare_crds",
+        ("oldcdbs", "oldcdbs"): "compare",
+        ("newcdbs", "newcdbs"): "compare",
+        ("oldsynphot", "oldsynphot"): "compare",
+        ("newsynphot", "newsynphot"): "compare",
+        ("crds", "oldcdbs"): True,
+        ("oldcdbs", "crds"): False,
+        ("newcdbs", "oldcdbs"): True,
+        ("oldcdbs", "newcdbs"): False,
+        ("newsynphot", "oldsynphot"): True,
+        ("oldsynphot", "newsynphot"): False,
     }
     name1, name2 = crds_basename(name1), crds_basename(name2)
     class1 = classify_name(name1)
@@ -135,12 +135,12 @@ def newer(name1, name2):
     case = cases.get((class1, class2), "raise")
     if name1 == "N/A":
         return False
-    elif name2 =="N/A":
+    elif name2 == "N/A":
         result = True
     elif case == "compare_crds":
         if extension_rank(name1) == extension_rank(name2):
             serial1, serial2 = newstyle_serial(name1), newstyle_serial(name2)
-            result = serial1 > serial2   # same extension compares by counter
+            result = serial1 > serial2  # same extension compares by counter
         else:
             result = extension_rank(name1) > extension_rank(name2)
     elif case == "compare":
@@ -148,9 +148,14 @@ def newer(name1, name2):
     elif case in [True, False]:
         result = case
     else:
-        raise NameComparisonError("Unhandled name comparison case: ", repr((class1, class2)))
-    log.verbose("Comparing filename time order:", repr(name1), ">", repr(name2), "-->", result)
+        raise NameComparisonError(
+            "Unhandled name comparison case: ", repr((class1, class2))
+        )
+    log.verbose(
+        "Comparing filename time order:", repr(name1), ">", repr(name2), "-->", result
+    )
     return result
+
 
 def crds_basename(name):
     """basename() accounting for N/A pass thru."""
@@ -158,6 +163,7 @@ def crds_basename(name):
         return "N/A"
     else:
         return os.path.basename(name)
+
 
 def classify_name(name):
     """Classify filename `name` as "crds", "synphot", "oldcdbs", or "newcdbs".
@@ -198,8 +204,11 @@ def classify_name(name):
         return "newcdbs"
     else:
         # raise NameComparisonError("Failed to classify name", repr(name), "for determining time order.")
-        log.warning("Failed to classify name", repr(name), "for determining time order.")
+        log.warning(
+            "Failed to classify name", repr(name), "for determining time order."
+        )
         return "oldcdbs"  # if it's a garbage name, make it oldest so replacing it is normal.
+
 
 def crds_name(name):
     """Return True IFF `name` is a CRDS-style name, e.g. hst_acs.imap
@@ -217,8 +226,14 @@ def crds_name(name):
     """
     return name.startswith(tuple(ALL_OBSERVATORIES))
 
-OLD_CDBS = re.compile(config.complete_re(r"[A-Za-z][A-Za-z0-9]{8}_[A-Za-z0-9]{1,8}\.[A-Za-z0-9]{1,6}"))
-NEW_CDBS = re.compile(config.complete_re(r"[0-9][A-Za-z0-9]{8}_[A-Za-z0-9]{1,8}\.[A-Za-z0-9]{1,6}"))
+
+OLD_CDBS = re.compile(
+    config.complete_re(r"[A-Za-z][A-Za-z0-9]{8}_[A-Za-z0-9]{1,8}\.[A-Za-z0-9]{1,6}")
+)
+NEW_CDBS = re.compile(
+    config.complete_re(r"[0-9][A-Za-z0-9]{8}_[A-Za-z0-9]{1,8}\.[A-Za-z0-9]{1,6}")
+)
+
 
 def old_cdbs_name(name1):
     """Return True IFF name1 is and original CDBS-style name.
@@ -238,6 +253,7 @@ def old_cdbs_name(name1):
     """
     return OLD_CDBS.match(name1) is not None
 
+
 def new_cdbs_name(name1):
     """Return True IFF name1 is an extended CDBS-style name.
 
@@ -256,8 +272,14 @@ def new_cdbs_name(name1):
     """
     return NEW_CDBS.match(name1) is not None
 
-NEW_SYNPHOT_RE = re.compile(config.complete_re(r"[0-9][a-zA-Za-z0-9]{7}m_(tmc|tmg|tmt)\.[A-Za-z0-9]{1,6}"))
-OLD_SYNPHOT_RE = re.compile(config.complete_re(r"[A-Za-z][a-zA-Za-z0-9]{7}m_(tmc|tmg|tmt)\.[A-Za-z0-9]{1,6}"))
+
+NEW_SYNPHOT_RE = re.compile(
+    config.complete_re(r"[0-9][a-zA-Za-z0-9]{7}m_(tmc|tmg|tmt)\.[A-Za-z0-9]{1,6}")
+)
+OLD_SYNPHOT_RE = re.compile(
+    config.complete_re(r"[A-Za-z][a-zA-Za-z0-9]{7}m_(tmc|tmg|tmt)\.[A-Za-z0-9]{1,6}")
+)
+
 
 def synphot_name(name):
     """Return True IFF `name` is the name of an ETC master table file of some kind.
@@ -279,13 +301,16 @@ def synphot_name(name):
     """
     return old_synphot_name(name) or new_synphot_name(name)
 
+
 def new_synphot_name(name):
     """Return True IFF `name` is the name of an ETC master table file of some kind."""
     return NEW_SYNPHOT_RE.match(name) is not None
 
+
 def old_synphot_name(name):
     """Return True IFF `name` is the name of an ETC master table file of some kind."""
     return OLD_SYNPHOT_RE.match(name) is not None
+
 
 def extension_rank(filename):
     """Return a date ranking for `filename` based on extension, lowest numbers are oldest.
@@ -314,6 +339,7 @@ def extension_rank(filename):
         return 4.0
     else:
         return 5.0
+
 
 def newstyle_serial(name):
     """Return the serial number associated with a CRDS-style name.

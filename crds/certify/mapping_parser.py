@@ -98,6 +98,7 @@ def profile_parse(filename="hst_cos_deadtab.rmap"):
 
 Parsing = namedtuple("Parsing", "header,selector,comment")
 
+
 def parse_mapping(filename):
     """Parse mapping `filename`.   Return parsing."""
     global parsley, MAPPING_PARSER
@@ -110,11 +111,16 @@ def parse_mapping(filename):
 
     log.verbose("Parsing", repr(filename))
     filename = config.locate_mapping(filename)
-    with log.augment_exception("Parsing error in", repr(filename), exception_class=exceptions.MappingFormatError):
+    with log.augment_exception(
+        "Parsing error in",
+        repr(filename),
+        exception_class=exceptions.MappingFormatError,
+    ):
         with open(filename) as pfile:
             parser = MAPPING_PARSER(pfile.read())
             header, selector, comment = parser.mapping()
             return Parsing(header, selector, comment)
+
 
 def check_duplicates(parsing):
     """Examine mapping `parsing` from parse_mapping() for duplicate header or selector entries."""

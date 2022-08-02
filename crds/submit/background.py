@@ -8,10 +8,12 @@ from crds import exceptions
 
 # ==================================================================================================
 
+
 class ThreadWithExceptions(threading.Thread):
     """ThreadWithExceptions captures any exception raised during the Thread and stores
     both the result or the exception str() and repr() as attributes.
     """
+
     def __init__(self, target, *args, **keys):
         super(ThreadWithExceptions, self).__init__(*args, **keys)
         self.target = target
@@ -32,6 +34,7 @@ class ThreadWithExceptions(threading.Thread):
             self.rexc = repr(exc)
             self.exc = str(exc)
 
+
 def background(func):
     """A threading decorator use @background above the function you want to run in
     the background.
@@ -45,11 +48,13 @@ def background(func):
         """Function wrapper which runs the function as a background thread and
         returns the started daemon thread.
         """
+
         def target_func():
             """Binding function which creates closure of function with passed args
             for purposes of parameterless function for threading.
             """
             return func(*args, **keys)
+
         thread = ThreadWithExceptions(target=target_func, name=func.__name__)
         thread.daemon = True
         thread.start()
@@ -58,6 +63,7 @@ def background(func):
     run_thread.__name__ = func.__name__ + "[background]"
 
     return run_thread
+
 
 def background_complete(thread):
     """Complete a background task `t` which is either a ThreadWithExceptions object or
@@ -77,8 +83,11 @@ def background_complete(thread):
         if thread.exc is None:
             return thread.result
         else:
-            raise exceptions.CrdsBackgroundError("Exception in", repr(thread.name), ":", repr(thread.exc))
+            raise exceptions.CrdsBackgroundError(
+                "Exception in", repr(thread.name), ":", repr(thread.exc)
+            )
     else:
         return thread
+
 
 # ==================================================================================================

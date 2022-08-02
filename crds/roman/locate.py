@@ -34,7 +34,14 @@ from crds.io import abstract
 # These two functions decouple the generic reference file certifier program
 # from observatory-unique ways of specifying and caching Validator parameters.
 
-from crds.roman import TYPES, INSTRUMENTS, FILEKINDS, EXTENSIONS, INSTRUMENT_FIXERS, TYPE_FIXERS
+from crds.roman import (
+    TYPES,
+    INSTRUMENTS,
+    FILEKINDS,
+    EXTENSIONS,
+    INSTRUMENT_FIXERS,
+    TYPE_FIXERS,
+)
 
 get_row_keys_by_instrument = TYPES.get_row_keys_by_instrument
 get_item = TYPES.get_item
@@ -51,6 +58,7 @@ HERE = os.path.dirname(__file__) or "."
 
 # Stub like HST for now
 
+
 def header_to_reftypes(header, context="roman-operational"):
     """Based on `header` return the default list of appropriate reference type names.
 
@@ -60,6 +68,7 @@ def header_to_reftypes(header, context="roman-operational"):
 
     """
     return []  # translates to "all types" for instrument defined by header.
+
 
 def header_to_pipelines(header, context="roman-operational"):
     """Based on `header` return the default list of appropriate reference type names.
@@ -72,7 +81,9 @@ def header_to_pipelines(header, context="roman-operational"):
     """
     raise NotImplementedError("Roman has not defined header_to_pipelines().")
 
+
 # =============================================================================
+
 
 def tpn_path(tpn_file):
     """Return the full filepath of `tpn_file`.
@@ -82,6 +93,7 @@ def tpn_path(tpn_file):
 
     """
     return os.path.join(HERE, "tpns", tpn_file)
+
 
 def get_extra_tpninfos(refpath):
     """Returns TpnInfos (valid value enumerations) derived from the cal code data models schema.
@@ -99,17 +111,20 @@ def get_extra_tpninfos(refpath):
     []
 
     """
-    return []   # use this to ignore datamodels schema for CRDS value checking
+    return []  # use this to ignore datamodels schema for CRDS value checking
     # XXXX roman  -- datamodels schema scraping can potentially be enabled once
     # romancal and datamodels are integrated.   This will effectively translate the
     # datamodels schema (core unless work is done) automatically as-if they were
     # being specified in CRDS .tpn files.
     # return schema.get_schema_tpninfos(refpath)
 
+
 def project_check(refpath, rmap):
     pass
 
+
 # =======================================================================
+
 
 def match_context_key(key):
     """Set the case of a context key appropriately for this project, Roman
@@ -121,7 +136,9 @@ def match_context_key(key):
     """
     return key.upper()
 
+
 # =======================================================================
+
 
 @utils.cached
 def get_file_properties(filename):
@@ -157,11 +174,14 @@ def get_file_properties(filename):
             result = properties_inside_mapping(filename)
         except Exception as exc:
             result = get_reference_properties(filename)[2:4]
-    assert result[0] in INSTRUMENTS+[""], "Bad instrument " + \
-        repr(result[0]) + " in filename " + repr(filename)
-    assert result[1] in FILEKINDS+[""], "Bad filekind " + \
-        repr(result[1]) + " in filename " + repr(filename)
+    assert result[0] in INSTRUMENTS + [""], (
+        "Bad instrument " + repr(result[0]) + " in filename " + repr(filename)
+    )
+    assert result[1] in FILEKINDS + [""], (
+        "Bad filekind " + repr(result[1]) + " in filename " + repr(filename)
+    )
     return result
+
 
 def decompose_newstyle_name(filename):
     """
@@ -201,28 +221,29 @@ def decompose_newstyle_name(filename):
     serial = list_get(parts, 3, "")
 
     if ext == ".pmap":
-        assert len(parts) in [1,2], "Invalid .pmap filename " + repr(filename)
+        assert len(parts) in [1, 2], "Invalid .pmap filename " + repr(filename)
         instrument, filekind = "", ""
         serial = list_get(parts, 1, "")
     elif ext == ".imap":
-        assert len(parts) in [2,3], "Invalid .imap filename " + repr(filename)
+        assert len(parts) in [2, 3], "Invalid .imap filename " + repr(filename)
         instrument = parts[1]
         filekind = ""
         serial = list_get(parts, 2, "")
     else:
-        assert len(parts) in [3,4], "Invalid filename " + repr(filename)
+        assert len(parts) in [3, 4], "Invalid filename " + repr(filename)
         instrument = parts[1]
         filekind = parts[2]
         serial = list_get(parts, 3, "")
 
     # Don't include filename in these or it messes up crds.certify unique error tracking.
 
-    assert instrument in INSTRUMENTS+[""], "Invalid instrument " + repr(instrument)
-    assert filekind in FILEKINDS+[""], "Invalid filekind " + repr(filekind)
+    assert instrument in INSTRUMENTS + [""], "Invalid instrument " + repr(instrument)
+    assert filekind in FILEKINDS + [""], "Invalid filekind " + repr(filekind)
     assert re.fullmatch(r"\d*", serial), "Invalid id field " + repr(id)
     # extension may vary for upload temporary files.
 
     return path, observatory, instrument, filekind, serial, ext
+
 
 def properties_inside_mapping(filename):
     """Load `filename`s mapping header to discover and
@@ -249,6 +270,7 @@ def properties_inside_mapping(filename):
     else:
         result = map.instrument, map.filekind
     return result
+
 
 def _get_fields(filename):
     """
@@ -277,6 +299,7 @@ def _get_fields(filename):
     parts = name.split("_")
     return path, parts, ext
 
+
 def list_get(l, index, default):
     """
     >>> list_get([], 0, None)
@@ -301,6 +324,7 @@ def list_get(l, index, default):
     except IndexError:
         return default
 
+
 def get_reference_properties(filename):
     """Figure out ASDF (instrument, filekind, serial) based on `filename`.
 
@@ -316,14 +340,16 @@ def get_reference_properties(filename):
     crds.core.exceptions.CrdsNamingError: Can't identify instrument of 's7g1700gl_dead_bad_xsum.fits' : Invalid instrument 'cos'
 
     """
-    try:   # Hopefully it's a nice new standard filename, easy
+    try:  # Hopefully it's a nice new standard filename, easy
         return decompose_newstyle_name(filename)
     except AssertionError:  # cryptic legacy paths & names, i.e. reality
         pass
     # If not, dig inside the FITS file, slow
     return ref_properties_from_header(filename)
 
+
 # =======================================================================
+
 
 def ref_properties_from_header(filename):
     """Look inside ASDF `filename` header to determine instrument, filekind.
@@ -347,15 +373,20 @@ def ref_properties_from_header(filename):
         assert instrument in INSTRUMENTS, "Invalid instrument " + repr(instrument)
     except Exception as exc:
         raise exceptions.CrdsNamingError(
-            "Can't identify instrument of", repr(name), ":", str(exc)) from exc
+            "Can't identify instrument of", repr(name), ":", str(exc)
+        ) from exc
     try:
-        filekind = header.get('ROMAN.META.REFTYPE', 'UNDEFINED').lower()
+        filekind = header.get("ROMAN.META.REFTYPE", "UNDEFINED").lower()
         assert filekind in FILEKINDS, "Invalid file type " + repr(filekind)
     except Exception as exc:
-        raise exceptions.CrdsNamingError("Can't identify ROMAN.META.REFTYPE of", repr(name))
+        raise exceptions.CrdsNamingError(
+            "Can't identify ROMAN.META.REFTYPE of", repr(name)
+        )
     return path, "roman", instrument, filekind, serial, ext
 
+
 # =============================================================================
+
 
 def reference_keys_to_dataset_keys(rmapping, header):
     """Given a header dictionary for a reference file, map the header back to keys
@@ -479,8 +510,8 @@ def reference_keys_to_dataset_keys(rmapping, header):
 
     # Basic common pattern translations
     translations = {
-        "ROMAN.META.EXPOSURE.P_EXPTYPE" : "ROMAN.META.EXPOSURE.TYPE",
-        "ROMAN.META.INSTRUMENT.P_DETECTOR"  : "ROMAN.META.INSTRUMENT.DETECTOR",
+        "ROMAN.META.EXPOSURE.P_EXPTYPE": "ROMAN.META.EXPOSURE.TYPE",
+        "ROMAN.META.INSTRUMENT.P_DETECTOR": "ROMAN.META.INSTRUMENT.DETECTOR",
         "ROMAN.META.INSTRUMENT.P_OPTICAL_ELEMENT": "ROMAN.META.INSTRUMENT.OPTICAL_ELEMENT",
     }
 
@@ -490,20 +521,33 @@ def reference_keys_to_dataset_keys(rmapping, header):
     except AttributeError:
         pass
 
-    log.verbose("reference_to_dataset translations:\n", log.PP(translations), verbosity=60)
+    log.verbose(
+        "reference_to_dataset translations:\n", log.PP(translations), verbosity=60
+    )
     log.verbose("reference_to_dataset input header:\n", log.PP(header), verbosity=80)
 
     for key in header:
         # Match META.X.P_SOMETHING or P_SOMETH
         if (key.split(".")[-1].startswith("P_")) and key not in translations:
-            log.warning("CRDS-pattern-like keyword", repr(key),
-                        "w/o CRDS translation to corresponding dataset keyword.")
-            log.info("Pattern-like keyword", repr(key),
-                     "may be misspelled or missing its translation in CRDS.  Pattern will not be used.")
-            log.info("The translation for", repr(key),
-                     "can be defined in crds.roman.locate or rmap header reference_to_dataset field.")
-            log.info("If this is not a pattern keyword, adding a translation to 'not-a-pattern'",
-                     "will suppress this warning.")
+            log.warning(
+                "CRDS-pattern-like keyword",
+                repr(key),
+                "w/o CRDS translation to corresponding dataset keyword.",
+            )
+            log.info(
+                "Pattern-like keyword",
+                repr(key),
+                "may be misspelled or missing its translation in CRDS.  Pattern will not be used.",
+            )
+            log.info(
+                "The translation for",
+                repr(key),
+                "can be defined in crds.roman.locate or rmap header reference_to_dataset field.",
+            )
+            log.info(
+                "If this is not a pattern keyword, adding a translation to 'not-a-pattern'",
+                "will suppress this warning.",
+            )
 
     # Add replacements for translations *if* the existing untranslated value
     # is poor and the translated value is better defined.   This is to do
@@ -515,8 +559,16 @@ def reference_keys_to_dataset_keys(rmapping, header):
             dval = header.get(translations[rkey], None)
             rval = header[rkey]
             if rval not in [None, "UNDEFINED"] and rval != dval:
-                log.info("Setting", repr(dkey), "=", repr(dval),
-                         "to value of", repr(rkey), "=", repr(rval))
+                log.info(
+                    "Setting",
+                    repr(dkey),
+                    "=",
+                    repr(dval),
+                    "to value of",
+                    repr(rkey),
+                    "=",
+                    repr(rval),
+                )
                 header[dkey] = rval
 
     if "ROMAN.META.SUBARRAY.NAME" not in header:
@@ -540,7 +592,9 @@ def reference_keys_to_dataset_keys(rmapping, header):
 
     return header
 
+
 # =============================================================================
+
 
 def condition_matching_header(rmapping, header):
     """Normalize header values for .rmap reference insertion.
@@ -549,9 +603,11 @@ def condition_matching_header(rmapping, header):
     {1: 2, 3: 4, 5: 6}
 
     """
-    return dict(header)   # NOOP for Roman,  may have to revisit
+    return dict(header)  # NOOP for Roman,  may have to revisit
+
 
 # ============================================================================
+
 
 def fits_to_parkeys(fits_header):
     """
@@ -562,7 +618,9 @@ def fits_to_parkeys(fits_header):
 
     return dict(fits_header)
 
+
 # ============================================================================
+
 
 def get_env_prefix(instrument):
     """Return the environment variable prefix (IRAF prefix) for `instrument`.
@@ -572,6 +630,7 @@ def get_env_prefix(instrument):
 
     """
     return "crds://"
+
 
 def filekind_to_keyword(filekind):
     """Return the "keyword" at which a assigned reference should be recorded.
@@ -583,6 +642,7 @@ def filekind_to_keyword(filekind):
 
     """
     raise NotImplementedError("filekind_to_keyword not implemented for Roman")
+
 
 def locate_file(refname, mode=None):
     """Given a valid reffilename in CDBS or CRDS format,  return a cache path for the file.
@@ -616,7 +676,7 @@ def locate_file(refname, mode=None):
     ValueError: Unhandled reference file location mode 'other'
 
     """
-    if mode is  None:
+    if mode is None:
         mode = config.get_crds_ref_subdir_mode(observatory="roman")
     if mode == "instrument":
         instrument = utils.file_to_instrument(refname)
@@ -625,7 +685,8 @@ def locate_file(refname, mode=None):
         rootdir = config.get_crds_refpath("roman")
     else:
         raise ValueError("Unhandled reference file location mode " + repr(mode))
-    return  os.path.join(rootdir, os.path.basename(refname))
+    return os.path.join(rootdir, os.path.basename(refname))
+
 
 def locate_dir(instrument, mode=None):
     """Locate the instrument specific directory for a reference file.
@@ -658,21 +719,26 @@ def locate_dir(instrument, mode=None):
 
     """
 
-    if mode is  None:
+    if mode is None:
         mode = config.get_crds_ref_subdir_mode(observatory="roman")
     else:
         config.check_crds_ref_subdir_mode(mode)
     crds_refpath = config.get_crds_refpath("roman")
-    if mode == "instrument":   # use simple names inside CRDS cache.
+    if mode == "instrument":  # use simple names inside CRDS cache.
         rootdir = os.path.join(crds_refpath, instrument.lower())
         if not os.path.exists(rootdir):
-            if config.writable_cache_or_verbose("Skipping making instrument directory link for", repr(instrument)):
+            if config.writable_cache_or_verbose(
+                "Skipping making instrument directory link for", repr(instrument)
+            ):
                 utils.ensure_dir_exists(rootdir + "/locate_dir.fits")
-    elif mode == "flat":    # use original flat cache structure,  all instruments in same directory.
+    elif (
+        mode == "flat"
+    ):  # use original flat cache structure,  all instruments in same directory.
         rootdir = crds_refpath
     else:
         raise ValueError("Unhandled reference file location mode " + repr(mode))
     return rootdir
+
 
 def get_cross_strapped_pairs(header):
     """Roman does not use FITS files so there is no cross-strapping between datamodels
@@ -684,10 +750,13 @@ def get_cross_strapped_pairs(header):
     """
     return []
 
+
 # ============================================================================
+
 
 def test():
     """Run the module doctests."""
     import doctest
     from . import locate
+
     return doctest.testmod(locate)

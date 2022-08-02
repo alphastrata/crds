@@ -25,7 +25,14 @@ from crds.io import abstract
 # These two functions decouple the generic reference file certifier program
 # from observatory-unique ways of specifying and caching Validator parameters.
 
-from crds.jwst import TYPES, INSTRUMENTS, FILEKINDS, EXTENSIONS, INSTRUMENT_FIXERS, TYPE_FIXERS
+from crds.jwst import (
+    TYPES,
+    INSTRUMENTS,
+    FILEKINDS,
+    EXTENSIONS,
+    INSTRUMENT_FIXERS,
+    TYPE_FIXERS,
+)
 
 from . import schema
 
@@ -44,27 +51,31 @@ from crds.jwst.pipeline import header_to_reftypes, header_to_pipelines
 
 MODEL = None
 
+
 def get_datamodels():
     try:
         from jwst import datamodels  # this is fatal.
     except ImportError:
         log.error(
-            "CRDS requires installation of the 'jwst' package to operate on JWST files.")
+            "CRDS requires installation of the 'jwst' package to operate on JWST files."
+        )
         raise
     global MODEL
     if MODEL is None:
-        with log.error_on_exception(
-                "Failed constructing basic JWST DataModel"):
+        with log.error_on_exception("Failed constructing basic JWST DataModel"):
             MODEL = datamodels.DataModel()
     return datamodels
+
 
 # =============================================================================
 
 HERE = os.path.dirname(__file__) or "."
 
+
 def tpn_path(tpn_file):
     """Return the full filepath of `tpn_file`."""
     return os.path.join(HERE, "tpns", tpn_file)
+
 
 def get_extra_tpninfos(refpath):
     """Returns TpnInfos (valid value enumerations) derived from the cal code data models schema."""
@@ -73,9 +84,11 @@ def get_extra_tpninfos(refpath):
     # that will require enhanced schema scraping.
     # return schema.get_schema_tpninfos(refpath)
 
+
 def project_check(refpath, rmap):
     if not rmap.filekind.startswith("pars-"):
         get_data_model_flat_dict(refpath)
+
 
 def get_data_model_flat_dict(filepath):
     """Get the header from `filepath` using the jwst data model."""
@@ -86,10 +99,14 @@ def get_data_model_flat_dict(filepath):
         with datamodels.open(filepath) as d_model:
             flat_dict = d_model.to_flat_dict(include_arrays=False)
     except Exception as exc:
-        raise exceptions.ValidationError("JWST Data Models:", str(exc).replace("u'","'")) from exc
+        raise exceptions.ValidationError(
+            "JWST Data Models:", str(exc).replace("u'", "'")
+        ) from exc
     return flat_dict
 
+
 # =======================================================================
+
 
 def match_context_key(key):
     """Set the case of a context key appropriately for this project, JWST
@@ -97,9 +114,11 @@ def match_context_key(key):
     """
     return key.upper()
 
+
 # =======================================================================
 
 REF_EXT_RE = re.compile(r"\.fits|\.r\dh$")
+
 
 @utils.cached
 def get_file_properties(filename):
@@ -130,11 +149,14 @@ def get_file_properties(filename):
             result = properties_inside_mapping(filename)
         except Exception as exc:
             result = get_reference_properties(filename)[2:4]
-    assert result[0] in INSTRUMENTS+[""], "Bad instrument " + \
-        repr(result[0]) + " in filename " + repr(filename)
-    assert result[1] in FILEKINDS+[""], "Bad filekind " + \
-        repr(result[1]) + " in filename " + repr(filename)
+    assert result[0] in INSTRUMENTS + [""], (
+        "Bad instrument " + repr(result[0]) + " in filename " + repr(filename)
+    )
+    assert result[1] in FILEKINDS + [""], (
+        "Bad filekind " + repr(result[1]) + " in filename " + repr(filename)
+    )
     return result
+
 
 def decompose_newstyle_name(filename):
     """
@@ -167,24 +189,24 @@ def decompose_newstyle_name(filename):
     serial = list_get(parts, 3, "")
 
     if ext == ".pmap":
-        assert len(parts) in [1,2], "Invalid .pmap filename " + repr(filename)
+        assert len(parts) in [1, 2], "Invalid .pmap filename " + repr(filename)
         instrument, filekind = "", ""
         serial = list_get(parts, 1, "")
     elif ext == ".imap":
-        assert len(parts) in [2,3], "Invalid .imap filename " + repr(filename)
+        assert len(parts) in [2, 3], "Invalid .imap filename " + repr(filename)
         instrument = parts[1]
         filekind = ""
         serial = list_get(parts, 2, "")
     else:
-        assert len(parts) in [3,4], "Invalid filename " + repr(filename)
+        assert len(parts) in [3, 4], "Invalid filename " + repr(filename)
         instrument = parts[1]
         filekind = parts[2]
         serial = list_get(parts, 3, "")
 
     # Don't include filename in these or it messes up crds.certify unique error tracking.
 
-    assert instrument in INSTRUMENTS+[""], "Invalid instrument " + repr(instrument)
-    assert filekind in FILEKINDS+[""], "Invalid filekind " + repr(filekind)
+    assert instrument in INSTRUMENTS + [""], "Invalid instrument " + repr(instrument)
+    assert filekind in FILEKINDS + [""], "Invalid filekind " + repr(filekind)
 
     # The original regular expresssion "\d*\" matches anything in the below assert statement, so it's basically a no-op.
     # The correct way to do it is with fullmatch. However, that generates a bunch of test failures that need
@@ -200,10 +222,11 @@ def decompose_newstyle_name(filename):
     #
     # XXXX TODO: Change to us fullmatch and resolve all the ensuing test failures.
     assert re.match(r"\d*", serial), "Invalid id field " + repr(id)
-    #assert re.fullmatch(r"\d*", serial), "Invalid id field " + repr(id)
+    # assert re.fullmatch(r"\d*", serial), "Invalid id field " + repr(id)
     # extension may vary for upload temporary files.
 
     return path, observatory, instrument, filekind, serial, ext
+
 
 def properties_inside_mapping(filename):
     """Load `filename`s mapping header to discover and
@@ -218,6 +241,7 @@ def properties_inside_mapping(filename):
         result = map.instrument, map.filekind
     return result
 
+
 def _get_fields(filename):
     path = os.path.dirname(filename)
     name = os.path.basename(filename)
@@ -225,29 +249,35 @@ def _get_fields(filename):
     parts = name.split("_")
     return path, parts, ext
 
+
 def list_get(l, index, default):
     try:
         return l[index]
     except IndexError:
         return default
 
+
 def get_reference_properties(filename):
-    """Figure out FITS (instrument, filekind, serial) based on `filename`.
-    """
-    try:   # Hopefully it's a nice new standard filename, easy
+    """Figure out FITS (instrument, filekind, serial) based on `filename`."""
+    try:  # Hopefully it's a nice new standard filename, easy
         return decompose_newstyle_name(filename)
     except AssertionError:  # cryptic legacy paths & names, i.e. reality
         pass
     # If not, dig inside the FITS file, slow
     return ref_properties_from_header(filename)
 
+
 # =======================================================================
 
-FILEKIND_KEYWORDS = ["REFTYPE", "TYPE", "META.REFTYPE",]
+FILEKIND_KEYWORDS = [
+    "REFTYPE",
+    "TYPE",
+    "META.REFTYPE",
+]
+
 
 def ref_properties_from_header(filename):
-    """Look inside FITS `filename` header to determine instrument, filekind.
-    """
+    """Look inside FITS `filename` header to determine instrument, filekind."""
     # For legacy files,  just use the root filename as the unique id
     path, parts, ext = _get_fields(filename)
     serial = os.path.basename(os.path.splitext(filename)[0])
@@ -259,7 +289,8 @@ def ref_properties_from_header(filename):
         assert instrument in INSTRUMENTS, "Invalid instrument " + repr(instrument)
     except Exception as exc:
         raise exceptions.CrdsNamingError(
-            "Can't identify instrument of", repr(name), ":", str(exc)) from exc
+            "Can't identify instrument of", repr(name), ":", str(exc)
+        ) from exc
     try:
         filekind = utils.get_any_of(header, FILEKIND_KEYWORDS, "UNDEFINED").lower()
         assert filekind in FILEKINDS, "Invalid file type " + repr(filekind)
@@ -267,7 +298,9 @@ def ref_properties_from_header(filename):
         raise exceptions.CrdsNamingError("Can't identify REFTYPE of", repr(name))
     return path, "jwst", instrument, filekind, serial, ext
 
+
 # =============================================================================
+
 
 def reference_keys_to_dataset_keys(rmapping, header):
     """Given a header dictionary for a reference file, map the header back to keys
@@ -284,41 +317,31 @@ def reference_keys_to_dataset_keys(rmapping, header):
 
     # Basic common pattern translations
     translations = {
-            "META.EXPOSURE.P_EXPTYPE" : "META.EXPOSURE.TYPE",
-            "P_EXP_TY" : "META.EXPOSURE.TYPE",
-
-            "META.INSTRUMENT.P_BAND" : "META.INSTRUMENT.BAND",
-            "P_BAND" : "META.INSTRUMENT.BAND",
-
-            "META.INSTRUMENT.P_DETECTOR"  : "META.INSTRUMENT.DETECTOR",
-            "P_DETECT"  : "META.INSTRUMENT.DETECTOR",
-
-            "META.INSTRUMENT.P_CHANNEL" : "META.INSTRUMENT.CHANNEL",
-            "P_CHANNE" : "META.INSTRUMENT.CHANNEL",
-
-            "META.INSTRUMENT.P_FILTER" : "META.INSTRUMENT.FILTER",
-            "P_FILTER"  : "META.INSTRUMENT.FILTER",
-
-            "META.INSTRUMENT.P_PUPIL"  : "META.INSTRUMENT.PUPIL",
-            "P_PUPIL" : "META.INSTRUMENT.PUPIL",
-
-            "META.INSTRUMENT.P_MODULE"  : "META.INSTRUMENT.MODULE",
-            "P_MODULE" : "META.INSTRUMENT.MODULE",
-
-            "META.SUBARRAY.P_SUBARRAY" : "META.SUBARRAY.NAME",
-            "P_SUBARR" : "META.SUBARRAY.NAME",
-
-            "META.INSTRUMENT.P_GRATING" : "META.INSTRUMENT.GRATING",
-            "P_GRATIN" : "META.INSTRUMENT.GRATING",
-
-            "META.EXPOSURE.PREADPATT" : "META.EXPOSURE.READPATT",
-            "META.EXPOSURE.P_READPATT" : "META.EXPOSURE.READPATT",
-            "P_READPA" : "META.EXPOSURE.READPATT",
-
-            # vvvv Speculative,  not currently defined or required by CAL vvvvv
-            "META.INSTRUMENT.PCORONAGRAPH" : "META.INSTRUMENT.CORONAGRAPH",
-            "P_CORONM" : "META.INSTRUMENT.CORONAGRAPH",
-        }
+        "META.EXPOSURE.P_EXPTYPE": "META.EXPOSURE.TYPE",
+        "P_EXP_TY": "META.EXPOSURE.TYPE",
+        "META.INSTRUMENT.P_BAND": "META.INSTRUMENT.BAND",
+        "P_BAND": "META.INSTRUMENT.BAND",
+        "META.INSTRUMENT.P_DETECTOR": "META.INSTRUMENT.DETECTOR",
+        "P_DETECT": "META.INSTRUMENT.DETECTOR",
+        "META.INSTRUMENT.P_CHANNEL": "META.INSTRUMENT.CHANNEL",
+        "P_CHANNE": "META.INSTRUMENT.CHANNEL",
+        "META.INSTRUMENT.P_FILTER": "META.INSTRUMENT.FILTER",
+        "P_FILTER": "META.INSTRUMENT.FILTER",
+        "META.INSTRUMENT.P_PUPIL": "META.INSTRUMENT.PUPIL",
+        "P_PUPIL": "META.INSTRUMENT.PUPIL",
+        "META.INSTRUMENT.P_MODULE": "META.INSTRUMENT.MODULE",
+        "P_MODULE": "META.INSTRUMENT.MODULE",
+        "META.SUBARRAY.P_SUBARRAY": "META.SUBARRAY.NAME",
+        "P_SUBARR": "META.SUBARRAY.NAME",
+        "META.INSTRUMENT.P_GRATING": "META.INSTRUMENT.GRATING",
+        "P_GRATIN": "META.INSTRUMENT.GRATING",
+        "META.EXPOSURE.PREADPATT": "META.EXPOSURE.READPATT",
+        "META.EXPOSURE.P_READPATT": "META.EXPOSURE.READPATT",
+        "P_READPA": "META.EXPOSURE.READPATT",
+        # vvvv Speculative,  not currently defined or required by CAL vvvvv
+        "META.INSTRUMENT.PCORONAGRAPH": "META.INSTRUMENT.CORONAGRAPH",
+        "P_CORONM": "META.INSTRUMENT.CORONAGRAPH",
+    }
 
     # Rmap header reference_to_dataset field tranlations,  can override basic!
     try:
@@ -326,20 +349,33 @@ def reference_keys_to_dataset_keys(rmapping, header):
     except AttributeError:
         pass
 
-    log.verbose("reference_to_dataset translations:\n", log.PP(translations), verbosity=60)
+    log.verbose(
+        "reference_to_dataset translations:\n", log.PP(translations), verbosity=60
+    )
     log.verbose("reference_to_dataset input header:\n", log.PP(header), verbosity=80)
 
     for key in header:
         # Match META.X.P_SOMETHING or P_SOMETH
         if (key.split(".")[-1].startswith("P_")) and key not in translations:
-            log.warning("CRDS-pattern-like keyword", repr(key),
-                        "w/o CRDS translation to corresponding dataset keyword.")
-            log.info("Pattern-like keyword", repr(key),
-                     "may be misspelled or missing its translation in CRDS.  Pattern will not be used.")
-            log.info("The translation for", repr(key),
-                     "can be defined in crds.jwst.locate or rmap header reference_to_dataset field.")
-            log.info("If this is not a pattern keyword, adding a translation to 'not-a-pattern'",
-                     "will suppress this warning.")
+            log.warning(
+                "CRDS-pattern-like keyword",
+                repr(key),
+                "w/o CRDS translation to corresponding dataset keyword.",
+            )
+            log.info(
+                "Pattern-like keyword",
+                repr(key),
+                "may be misspelled or missing its translation in CRDS.  Pattern will not be used.",
+            )
+            log.info(
+                "The translation for",
+                repr(key),
+                "can be defined in crds.jwst.locate or rmap header reference_to_dataset field.",
+            )
+            log.info(
+                "If this is not a pattern keyword, adding a translation to 'not-a-pattern'",
+                "will suppress this warning.",
+            )
 
     # Add replacements for translations *if* the existing untranslated value
     # is poor and the translated value is better defined.   This is to do
@@ -351,8 +387,16 @@ def reference_keys_to_dataset_keys(rmapping, header):
             dval = header.get(translations[rkey], None)
             rval = header[rkey]
             if rval not in [None, "UNDEFINED"] and rval != dval:
-                log.info("Setting", repr(dkey), "=", repr(dval),
-                         "to value of", repr(rkey), "=", repr(rval))
+                log.info(
+                    "Setting",
+                    repr(dkey),
+                    "=",
+                    repr(dval),
+                    "to value of",
+                    repr(rkey),
+                    "=",
+                    repr(rval),
+                )
                 header[dkey] = rval
 
     header = abstract.cross_strap_header(header)
@@ -392,13 +436,17 @@ def reference_keys_to_dataset_keys(rmapping, header):
 
     return header
 
+
 # =============================================================================
+
 
 def condition_matching_header(rmapping, header):
     """Normalize header values for .rmap reference insertion."""
-    return dict(header)   # NOOP for JWST,  may have to revisit
+    return dict(header)  # NOOP for JWST,  may have to revisit
+
 
 # ============================================================================
+
 
 def fits_to_parkeys(fits_header):
     """Map a FITS header onto rmap parkeys appropriate for JWST."""
@@ -410,14 +458,16 @@ def fits_to_parkeys(fits_header):
             if not pk:
                 pk = key
             else:
-                assert len(pk) == 1, "CRDS JWST Data Model ambiguity on " + \
-                    repr(key) + " = " + repr(pk)
+                assert len(pk) == 1, (
+                    "CRDS JWST Data Model ambiguity on " + repr(key) + " = " + repr(pk)
+                )
                 pk = pk[0]
         else:
             pk = key
         pk = pk.upper()
         parkeys[pk] = value
     return parkeys
+
 
 @utils.cached
 def cached_dm_find_fits_keyword(key):
@@ -426,13 +476,18 @@ def cached_dm_find_fits_keyword(key):
     """
     get_datamodels()
     return MODEL.find_fits_keyword(key.upper(), return_result=True)
+
+
 # ============================================================================
+
 
 def get_env_prefix(instrument):
     """Return the environment variable prefix (IRAF prefix) for `instrument`."""
     return "crds://"
 
+
 # META.REF_FILE.SPECWCS.NAME.FITS_KEYWORD
+
 
 def filekind_to_keyword(filekind):
     """Return the FITS keyword at which a reference should be recorded.
@@ -443,6 +498,7 @@ def filekind_to_keyword(filekind):
     'R_SUPERB'
     """
     from . import schema
+
     flat_schema = schema.get_flat_schema()
     filekind = filekind.upper()
     meta_path = "META.REF_FILE.{}.NAME.FITS_KEYWORD".format(filekind)
@@ -452,16 +508,20 @@ def filekind_to_keyword(filekind):
         warn_filekind_once(filekind)
         return filekind
 
+
 @utils.cached
 def warn_filekind_once(filekind):
-    log.warning("No apparent JWST cal code data models schema support for", log.srepr(filekind))
+    log.warning(
+        "No apparent JWST cal code data models schema support for", log.srepr(filekind)
+    )
+
 
 def locate_file(refname, mode=None):
     """Given a valid reffilename in CDBS or CRDS format,  return a cache path for the file.
     The aspect of this which is complicated is determining instrument and an instrument
     specific sub-directory for it based on the filename alone,  not the file contents.
     """
-    if mode is  None:
+    if mode is None:
         mode = config.get_crds_ref_subdir_mode(observatory="jwst")
     if mode == "instrument":
         instrument = utils.file_to_instrument(refname)
@@ -470,25 +530,31 @@ def locate_file(refname, mode=None):
         rootdir = config.get_crds_refpath("jwst")
     else:
         raise ValueError("Unhandled reference file location mode " + repr(mode))
-    return  os.path.join(rootdir, os.path.basename(refname))
+    return os.path.join(rootdir, os.path.basename(refname))
+
 
 def locate_dir(instrument, mode=None):
     """Locate the instrument specific directory for a reference file."""
-    if mode is  None:
+    if mode is None:
         mode = config.get_crds_ref_subdir_mode(observatory="jwst")
     else:
         config.check_crds_ref_subdir_mode(mode)
     crds_refpath = config.get_crds_refpath("jwst")
-    if mode == "instrument":   # use simple names inside CRDS cache.
+    if mode == "instrument":  # use simple names inside CRDS cache.
         rootdir = os.path.join(crds_refpath, instrument.lower())
         if not os.path.exists(rootdir):
-            if config.writable_cache_or_verbose("Skipping making instrument directory link for", repr(instrument)):
+            if config.writable_cache_or_verbose(
+                "Skipping making instrument directory link for", repr(instrument)
+            ):
                 utils.ensure_dir_exists(rootdir + "/locate_dir.fits")
-    elif mode == "flat":    # use original flat cache structure,  all instruments in same directory.
+    elif (
+        mode == "flat"
+    ):  # use original flat cache structure,  all instruments in same directory.
         rootdir = crds_refpath
     else:
         raise ValueError("Unhandled reference file location mode " + repr(mode))
     return rootdir
+
 
 # =======================================================================
 
@@ -498,26 +564,29 @@ def locate_dir(instrument, mode=None):
 # XXXX the first translation should be the FITS keyword assuming there is one!!
 
 CROSS_STRAPPED_KEYWORDS = {
-
     # META.REF_FILE.X is now obsolete but retained for backward compatibility.
     # it was replaced by META.X
-
     # These include non-DM keywords
-    "META.INSTRUMENT.NAME" : ["INSTRUME", "INSTRUMENT", "META.INSTRUMENT.TYPE",],
-    "META.TELESCOPE" : ["TELESCOP","TELESCOPE","META.TELESCOPE"],
-    "META.DESCRIPTION" : ["DESCRIP","DESCRIPTION"],
-    "META.REFTYPE" : ["REFTYPE",],
-
+    "META.INSTRUMENT.NAME": [
+        "INSTRUME",
+        "INSTRUMENT",
+        "META.INSTRUMENT.TYPE",
+    ],
+    "META.TELESCOPE": ["TELESCOP", "TELESCOPE", "META.TELESCOPE"],
+    "META.DESCRIPTION": ["DESCRIP", "DESCRIPTION"],
+    "META.REFTYPE": [
+        "REFTYPE",
+    ],
     # These include non-core-DM DM fields
-    "META.AUTHOR" : ["AUTHOR",],
-    "META.PEDIGREE" : ["PEDIGREE"],
-    "META.USEAFTER" : ["USEAFTER"],
-    "META.HISTORY" : ["HISTORY"],
-    "META.CALIBRATION_SOFTWARE_VERSION" : ["CAL_VER", "CALIBRATION_SOFTWARE_VERSION"],
-    "META.OBSERVATION.DATE" : ["DATE-OBS"],
-    "META.OBSERVATION.TIME" : ["TIME-OBS"],
-
-
+    "META.AUTHOR": [
+        "AUTHOR",
+    ],
+    "META.PEDIGREE": ["PEDIGREE"],
+    "META.USEAFTER": ["USEAFTER"],
+    "META.HISTORY": ["HISTORY"],
+    "META.CALIBRATION_SOFTWARE_VERSION": ["CAL_VER", "CALIBRATION_SOFTWARE_VERSION"],
+    "META.OBSERVATION.DATE": ["DATE-OBS"],
+    "META.OBSERVATION.TIME": ["TIME-OBS"],
     # These should all be stock DM:FITS,  automatic
     # "META.INSTRUMENT.BAND" : ["BAND"],
     # "META.INSTRUMENT.CHANNEL" : ["CHANNEL"],
@@ -525,7 +594,6 @@ CROSS_STRAPPED_KEYWORDS = {
     # "META.INSTRUMENT.FILTER" : ["FILTER"],
     # "META.INSTRUMENT.PUPIL" : ["PUPIL"],
     # "META.INSTRUMENT.GRATING" : ["GRATING"],
-
     # "META.SUBARRAY.NAME" : ["SUBARRAY"],
     # "META.SUBARRAY.XSTART" : ["SUBSTRT1"],
     # "META.SUBARRAY.YSTART" : ["SUBSTRT2"],
@@ -533,24 +601,25 @@ CROSS_STRAPPED_KEYWORDS = {
     # "META.SUBARRAY.YSIZE" : ["SUBSIZE2"],
     # "META.SUBARRAY.FASTAXIS" : ["FASTAXIS"],
     # "META.SUBARRAY.SLOWAXIS" : ["SLOWAXIS"],
-
     # "META.EXPOSURE.TYPE" : ["EXP_TYPE"],
     # "META.EXPOSURE.READPATT" : ["READPATT"],
-
     # "META.APERTURE.NAME" : ["APERTURE", "APERNAME"],
 }
 
 # ============================================================================
 
+
 @utils.cached
 def get_static_pairs():
     return abstract.equivalence_dict_to_pairs(CROSS_STRAPPED_KEYWORDS)
+
 
 def get_cross_strapped_pairs(header):
     """Return the list of keyword pairs where each pair describes synonyms for the same
     piece of data.
     """
-    return  get_static_pairs() + _get_fits_datamodel_pairs(header)
+    return get_static_pairs() + _get_fits_datamodel_pairs(header)
+
 
 def _get_fits_datamodel_pairs(header):
     """Return the (FITS, DM) and (DM, FITS) cross strap pairs associated with
@@ -559,13 +628,18 @@ def _get_fits_datamodel_pairs(header):
     """
     pairs = []
     from . import schema
+
     for key in header:
-        with log.verbose_warning_on_exception("Failed cross strapping keyword", repr(key)):
+        with log.verbose_warning_on_exception(
+            "Failed cross strapping keyword", repr(key)
+        ):
             fitskey = schema.dm_to_fits(key) or key
             dmkey = schema.fits_to_dm(key) or key
             pairs.append((fitskey, dmkey))
             pairs.append((dmkey, fitskey))
-    log.verbose("Cal code datamodels keyword equivalencies:\n", log.PP(pairs), verbosity=90)
+    log.verbose(
+        "Cal code datamodels keyword equivalencies:\n", log.PP(pairs), verbosity=90
+    )
     return pairs
 
 
@@ -574,6 +648,7 @@ def _get_fits_datamodel_pairs(header):
 # Standard model names
 DATA_MODEL_RE_STR = r"(META(\.[A-Z][A-Z0-9_]*)+)"
 DATA_MODEL_RE = re.compile(DATA_MODEL_RE_STR)
+
 
 def add_fits_keywords(log_message):
     """Process log `message` and annotate data model keywords/paths with
@@ -585,6 +660,7 @@ def add_fits_keywords(log_message):
         return _add_fits_keywords(log_message)
     except Exception:  # if annotation fails,  just return the original message
         return log_message
+
 
 def _add_fits_keywords(log_message):
     """Process log `message` and annotate data model keywords/paths with
@@ -602,13 +678,14 @@ def _add_fits_keywords(log_message):
             fits_key = _hack_fits_translation(model_key)
         annotation = " [" + fits_key + "]"
         if annotation not in log_message:
-            log_message = log_message.replace(
-                model_key, model_key + annotation)
+            log_message = log_message.replace(model_key, model_key + annotation)
     return log_message
+
 
 # P_ keyword model names
 DATA_MODEL_P_RE_STR = r"META(\.[A-Z][A-Z0-9_]*)*\.(P_[A-Z0-9_]+)"
 DATA_MODEL_P_RE = re.compile(DATA_MODEL_P_RE_STR)
+
 
 def _hack_fits_translation(model_key):
     """Hack FITS translations for data models keyword/paths not covered
@@ -623,15 +700,20 @@ def _hack_fits_translation(model_key):
         fits_key = "FITS unknown"
     return fits_key
 
+
 log.append_crds_filter(add_fits_keywords)
+
 
 def disable_fits_annotations():
     log.remove_crds_filter(add_fits_keywords)
 
+
 # ============================================================================
+
 
 def test():
     """Run the module doctests."""
     import doctest
     from . import locate
+
     return doctest.testmod(locate)

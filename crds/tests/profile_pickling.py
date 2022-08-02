@@ -7,6 +7,7 @@ import crds
 from crds.tests.test_config import run_and_profile
 from crds import data_file
 
+
 def pickle_unpickle(context, data):
     p = crds.get_cached_mapping(context)
     p.get_required_parkeys()
@@ -20,10 +21,15 @@ def pickle_unpickle(context, data):
     assert str(p) == str(r)
     return {
         "refs": prefs == rrefs,
-        "strs" : str(p) == str(r),
+        "strs": str(p) == str(r),
         "equal": p == r,
         "diffs": diffs,
-        }
+    }
+
 
 if __name__ == "__main__":
-    run_and_profile("HST pickle/unpickle",  "pickle_unpickle('hst.pmap', 'data/j8bt06o6q_raw.fits')", globals())
+    run_and_profile(
+        "HST pickle/unpickle",
+        "pickle_unpickle('hst.pmap', 'data/j8bt06o6q_raw.fits')",
+        globals(),
+    )

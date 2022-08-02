@@ -14,10 +14,11 @@ except (ImportError, RuntimeError):
     log.verbose_warning("Failed to import 'requests' module.  check_archive disabled.")
     DISABLED.append("requests")
 
+
 class CheckArchiveScript(cmdline.Script):
     """Command line script for for checking archive file availability."""
 
-    description =  """Command line script for for checking archive file availability."""
+    description = """Command line script for for checking archive file availability."""
 
     epilog = """
 Checking out the archive with respect to CRDS file availability
@@ -77,16 +78,24 @@ the archive and appropriate CRDS server.
 
     def add_args(self):
         """Add additional custom parameter for CheckArchiveScript."""
-        self.add_argument('--files', nargs='*', dest='files', default=[],
-                          help='names of files to check for archive availability.')
-        self.add_argument('--dump-good-files', action='store_true',
-                          help='dump info on good files as well as those with errors.')
+        self.add_argument(
+            "--files",
+            nargs="*",
+            dest="files",
+            default=[],
+            help="names of files to check for archive availability.",
+        )
+        self.add_argument(
+            "--dump-good-files",
+            action="store_true",
+            help="dump info on good files as well as those with errors.",
+        )
         super(CheckArchiveScript, self).add_args()
 
     @property
     def files(self):
         """Return the filename basenames specified by --files parameters or @-file."""
-        return [ os.path.basename(x) for x in self.get_files(self.args.files) ]
+        return [os.path.basename(x) for x in self.get_files(self.args.files)]
 
     @property
     def mapping_url(self):
@@ -113,7 +122,9 @@ the archive and appropriate CRDS server.
         log.standard_status()
 
     def init_files(self, files):
-        self.file_info = api.get_file_info_map(self.observatory, files, fields=["size", "sha1sum"])
+        self.file_info = api.get_file_info_map(
+            self.observatory, files, fields=["size", "sha1sum"]
+        )
 
     def archive_url(self, filename):
         """Return the URL used to fetch `filename` from the archive."""
@@ -126,11 +137,20 @@ the archive and appropriate CRDS server.
         """Verify the likely presence of `filename` on the archive web server.  Issue an ERROR if absent."""
         url = self.archive_url(filename)
         response = requests.head(url)
-        if response.status_code in [200,]:
+        if response.status_code in [
+            200,
+        ]:
             log.verbose("File", repr(filename), "is available from", repr(url))
             return self.check_length(filename, response)
         else:
-            log.error("File", repr(filename), "failed HTTP HEAD with code =", response.status_code, "from", repr(url))
+            log.error(
+                "File",
+                repr(filename),
+                "failed HTTP HEAD with code =",
+                response.status_code,
+                "from",
+                repr(url),
+            )
             self.missing_files.append(filename)
             return False
 
@@ -139,8 +159,14 @@ the archive and appropriate CRDS server.
         archive_size = int(response.headers["content-length"])
         crds_size = int(self.file_info[filename]["size"])
         if archive_size != crds_size:
-            log.error("File", repr(filename), "available but length bad.  crds size:", crds_size,
-                      "archive size:", archive_size)
+            log.error(
+                "File",
+                repr(filename),
+                "available but length bad.  crds size:",
+                crds_size,
+                "archive size:",
+                archive_size,
+            )
             self.bad_length_files.append(filename)
             return False
         else:
@@ -161,18 +187,24 @@ the archive and appropriate CRDS server.
     def dump_file(self, filename, kind):
         """Dump info about one file annotated with string `kind`."""
         if self.file_info[filename] != "NOT FOUND":
-            print(filename, self.file_info[filename]["sha1sum"], self.file_info[filename]["size"], kind)
+            print(
+                filename,
+                self.file_info[filename]["sha1sum"],
+                self.file_info[filename]["size"],
+                kind,
+            )
+
 
 def file_available(filename):
     """Return True IFF `filename` is believed to be available,  nominally
     based on HTTP HEAD to the archive.
     """
-    with log.error_on_exception("Failed verify_archive_file() for",
-                                repr(filename)):
+    with log.error_on_exception("Failed verify_archive_file() for", repr(filename)):
         script = CheckArchiveScript()
         script.init_files([filename])
         available = script.verify_archive_file(filename)
         return available
+
 
 if __name__ == "__main__":
     sys.exit(CheckArchiveScript()())

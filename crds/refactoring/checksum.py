@@ -23,14 +23,17 @@ from crds import data_file
 
 # ============================================================================
 
+
 def update_checksum(file_):
     """Rewrite the checksum of a single mapping, in place.   Reports duplicate cases being dropped."""
     if not check_duplicates(file_):
         mapping = rmap.Mapping.from_file(file_, ignore_checksum=True)
         mapping.write()
 
+
 # Interim step to making update_checksums universal.  Switch to update_mapping_checksums now.
 update_mapping_checksum = update_checksum
+
 
 def check_duplicates(file_):
     """Before rewriting an rmap to update the checksum, certify to ensure no
@@ -42,7 +45,9 @@ def check_duplicates(file_):
     new_errs = log.errors()
     return new_errs > old_errs
 
+
 # ============================================================================
+
 
 def add_checksum(file_):
     """Add checksums to file_."""
@@ -54,7 +59,11 @@ def add_checksum(file_):
         update_mapping_checksum(file_)
     else:
         raise exceptions.CrdsError(
-            "File", repr(file_), "does not appear to be a CRDS reference or mapping file.")
+            "File",
+            repr(file_),
+            "does not appear to be a CRDS reference or mapping file.",
+        )
+
 
 def remove_checksum(file_):
     """Remove checksums from `file_`."""
@@ -62,10 +71,16 @@ def remove_checksum(file_):
     if config.is_reference(file_):
         data_file.remove_checksum(file_)
     elif config.is_mapping(file_):
-        raise exceptions.CrdsError("Mapping checksums cannot be removed for:", repr(file_))
+        raise exceptions.CrdsError(
+            "Mapping checksums cannot be removed for:", repr(file_)
+        )
     else:
         raise exceptions.CrdsError(
-            "File", repr(file_), "does not appear to be a CRDS reference or mapping file.")
+            "File",
+            repr(file_),
+            "does not appear to be a CRDS reference or mapping file.",
+        )
+
 
 def verify_checksum(file_):
     """Verify checksums in `file_`."""
@@ -74,13 +89,20 @@ def verify_checksum(file_):
         data_file.verify_checksum(file_)
     elif config.is_mapping(file_):
         if config.CRDS_IGNORE_MAPPING_CHECKSUM.get():
-            log.warning("Mapping checksums are disabled by config.CRDS_IGNORE_MAPPING_CHECKSM.")
+            log.warning(
+                "Mapping checksums are disabled by config.CRDS_IGNORE_MAPPING_CHECKSM."
+            )
         rmap.load_mapping(file_)
     else:
         raise exceptions.CrdsError(
-            "File", repr(file_), "does not appear to be a CRDS reference or mapping file.")
+            "File",
+            repr(file_),
+            "does not appear to be a CRDS reference or mapping file.",
+        )
+
 
 # ============================================================================
+
 
 class ChecksumScript(cmdline.Script):
     """Command line script for updating CRDS rule and reference file checksums."""
@@ -117,16 +139,21 @@ class ChecksumScript(cmdline.Script):
 
     def add_args(self):
         self.add_argument(
-            "files", type=str, nargs="+",
-            help="Files to operate on, CRDS rule or reference files.")
+            "files",
+            type=str,
+            nargs="+",
+            help="Files to operate on, CRDS rule or reference files.",
+        )
 
         self.add_argument(
-            "--remove", action="store_true",
-            help="Remove checksums when specified.  Invalid for CRDS mappings.")
+            "--remove",
+            action="store_true",
+            help="Remove checksums when specified.  Invalid for CRDS mappings.",
+        )
 
         self.add_argument(
-            "--verify", action="store_true",
-            help="Verify checksums when specified.")
+            "--verify", action="store_true", help="Verify checksums when specified."
+        )
 
     def main(self):
         for file_ in self.files:
@@ -138,6 +165,7 @@ class ChecksumScript(cmdline.Script):
                 else:
                     add_checksum(file_)
         return log.errors()
+
 
 if __name__ == "__main__":
     sys.exit(ChecksumScript()())

@@ -13,10 +13,7 @@ __all__ = [
 ]
 
 
-_VALIDATOR_MODULES = [
-    core_validators,
-    synphot_validators
-]
+_VALIDATOR_MODULES = [core_validators, synphot_validators]
 
 
 def validator(info, context=None):
@@ -24,10 +21,17 @@ def validator(info, context=None):
     if len(info.values) == 1 and info.values[0].startswith("&"):
         # This block handles &-types like &PEDIGREE and &SYBDATE
         # only called on static TPN infos.
-        class_name = "".join([v.capitalize() for v in info.values[0][1:].split("_")]) + "Validator"
+        class_name = (
+            "".join([v.capitalize() for v in info.values[0][1:].split("_")])
+            + "Validator"
+        )
         module = next((m for m in _VALIDATOR_MODULES if hasattr(m, class_name)), None)
         if module is None:
-            raise ValueError("Unrecognized validator {}, expected class {}".format(info.values[0], class_name))
+            raise ValueError(
+                "Unrecognized validator {}, expected class {}".format(
+                    info.values[0], class_name
+                )
+            )
         rval = getattr(module, class_name)(info, context=context)
     elif info.datatype == "C":
         rval = core_validators.CharacterValidator(info, context=context)
@@ -58,7 +62,13 @@ def get_validators(observatory, refpath, context=None):
     """
     tpns = _get_reffile_tpninfos(observatory, refpath)
     checkers = [validator(x, context=context) for x in tpns]
-    log.verbose("Validators for", repr(refpath), "("+str(len(checkers))+"):\n", log.PP(checkers), verbosity=65)
+    log.verbose(
+        "Validators for",
+        repr(refpath),
+        "(" + str(len(checkers)) + "):\n",
+        log.PP(checkers),
+        verbosity=65,
+    )
     return checkers
 
 

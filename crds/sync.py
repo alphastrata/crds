@@ -32,7 +32,15 @@ import glob
 # ============================================================================
 
 import crds
-from crds.core import log, config, utils, rmap, heavy_client, cmdline, crds_cache_locking
+from crds.core import (
+    log,
+    config,
+    utils,
+    rmap,
+    heavy_client,
+    cmdline,
+    crds_cache_locking,
+)
 from crds import data_file
 from crds.core.log import srepr
 from crds.client import api
@@ -40,6 +48,7 @@ from crds.client import api
 # ============================================================================
 
 # ============================================================================
+
 
 class SyncScript(cmdline.ContextsScript):
     """Command line script for synchronizing local CRDS file cache with CRDS server."""
@@ -214,51 +223,134 @@ class SyncScript(cmdline.ContextsScript):
 
     def add_args(self):
         super(SyncScript, self).add_args()
-        self.add_argument("--files", nargs="*", help="Explicitly list files to be synced.")
-        self.add_argument('--dataset-files', metavar='DATASET', type=cmdline.dataset, nargs='*',
-                          help='Cache references for the specified datasets FITS files.')
-        self.add_argument('--dataset-ids', metavar='DATASET', type=str, nargs='*',
-                          help='Cache references for the specified dataset ids.')
-        self.add_argument('--fetch-references', action='store_true', dest="fetch_references",
-                          help='Cache all the references for the specified contexts.')
-        self.add_argument('--purge-references', action='store_true', dest="purge_references",
-                          help='Remove reference files not referred to by contexts from the cache.')
-        self.add_argument('--purge-mappings', action='store_true', dest="purge_mappings",
-                          help='Remove mapping files not referred to by contexts from the cache.')
-        self.add_argument('--dry-run', action="store_true",
-                          help= "Don't remove purged files, or repair files,  just print out their names.")
+        self.add_argument(
+            "--files", nargs="*", help="Explicitly list files to be synced."
+        )
+        self.add_argument(
+            "--dataset-files",
+            metavar="DATASET",
+            type=cmdline.dataset,
+            nargs="*",
+            help="Cache references for the specified datasets FITS files.",
+        )
+        self.add_argument(
+            "--dataset-ids",
+            metavar="DATASET",
+            type=str,
+            nargs="*",
+            help="Cache references for the specified dataset ids.",
+        )
+        self.add_argument(
+            "--fetch-references",
+            action="store_true",
+            dest="fetch_references",
+            help="Cache all the references for the specified contexts.",
+        )
+        self.add_argument(
+            "--purge-references",
+            action="store_true",
+            dest="purge_references",
+            help="Remove reference files not referred to by contexts from the cache.",
+        )
+        self.add_argument(
+            "--purge-mappings",
+            action="store_true",
+            dest="purge_mappings",
+            help="Remove mapping files not referred to by contexts from the cache.",
+        )
+        self.add_argument(
+            "--dry-run",
+            action="store_true",
+            help="Don't remove purged files, or repair files,  just print out their names.",
+        )
 
-        self.add_argument('-k', '--check-files', action='store_true', dest='check_files',
-                          help='Check cached files against the CRDS database and report anomalies.')
-        self.add_argument('-s', '--check-sha1sum', action='store_true', dest='check_sha1sum',
-                          help='For --check-files,  also verify file sha1sums.')
-        self.add_argument('-r', '--repair-files', action='store_true', dest='repair_files',
-                          help='Repair or re-download files noted as bad by --check-files')
-        self.add_argument('--purge-rejected', action='store_true', dest='purge_rejected',
-                          help='Purge files noted as rejected by --check-files')
-        self.add_argument('--purge-blacklisted', action='store_true', dest='purge_blacklisted',
-                          help='Purge files (and their mapping anscestors) noted as blacklisted by --check-files')
-        self.add_argument('--fetch-sqlite-db', action='store_true', dest='fetch_sqlite_db',
-                          help='Download a sqlite3 version of the CRDS file catalog.')
-        self.add_argument("--organize", metavar="NEW_SUBDIR_MODE", type=config.check_crds_ref_subdir_mode,
-                          nargs="?", default=None,
-                          help="Migrate cache to specified structure, 'flat' or 'instrument'. WARNING: perform only on idle caches.")
-        self.add_argument("--organize-delete-junk", action="store_true",
-                          help="When --organize'ing, delete obstructing files or directories CRDS discovers.")
-        self.add_argument("--verify-context-change", action="store_true",
-                          help="Make it an error if the context does not update to something new.")
-        self.add_argument("--push-context", metavar="KEY", type=str,
-                          help="Push the name of the final cached context to the server for the pipeline identified by KEY.")
-        self.add_argument("--clear-pickles", action="store_true",
-                          help="Remove all context pickles from the CRDS cache. Can precede --save-pickles.")
-        self.add_argument("--save-pickles", action="store_true",
-                          help="Save pre-compiled versions of the sync'ed contexts in the CRDS cache.  Keep pre-existing pickles.")
-        self.add_argument("--output-dir", type=str, default=None,
-                          help="Directory to output sync'ed files, for simple syncs,  particularly --files.   Implies 'flat' cache.")
-        self.add_argument("--clear-locks", action="store_true",
-                          help="Remove CRDS cache file lock(s).")
-        self.add_argument("--force-config-update", action="store_true",
-                          help="Even if sync errors occur, attempt to update the CRDS configuration, including the default context.")
+        self.add_argument(
+            "-k",
+            "--check-files",
+            action="store_true",
+            dest="check_files",
+            help="Check cached files against the CRDS database and report anomalies.",
+        )
+        self.add_argument(
+            "-s",
+            "--check-sha1sum",
+            action="store_true",
+            dest="check_sha1sum",
+            help="For --check-files,  also verify file sha1sums.",
+        )
+        self.add_argument(
+            "-r",
+            "--repair-files",
+            action="store_true",
+            dest="repair_files",
+            help="Repair or re-download files noted as bad by --check-files",
+        )
+        self.add_argument(
+            "--purge-rejected",
+            action="store_true",
+            dest="purge_rejected",
+            help="Purge files noted as rejected by --check-files",
+        )
+        self.add_argument(
+            "--purge-blacklisted",
+            action="store_true",
+            dest="purge_blacklisted",
+            help="Purge files (and their mapping anscestors) noted as blacklisted by --check-files",
+        )
+        self.add_argument(
+            "--fetch-sqlite-db",
+            action="store_true",
+            dest="fetch_sqlite_db",
+            help="Download a sqlite3 version of the CRDS file catalog.",
+        )
+        self.add_argument(
+            "--organize",
+            metavar="NEW_SUBDIR_MODE",
+            type=config.check_crds_ref_subdir_mode,
+            nargs="?",
+            default=None,
+            help="Migrate cache to specified structure, 'flat' or 'instrument'. WARNING: perform only on idle caches.",
+        )
+        self.add_argument(
+            "--organize-delete-junk",
+            action="store_true",
+            help="When --organize'ing, delete obstructing files or directories CRDS discovers.",
+        )
+        self.add_argument(
+            "--verify-context-change",
+            action="store_true",
+            help="Make it an error if the context does not update to something new.",
+        )
+        self.add_argument(
+            "--push-context",
+            metavar="KEY",
+            type=str,
+            help="Push the name of the final cached context to the server for the pipeline identified by KEY.",
+        )
+        self.add_argument(
+            "--clear-pickles",
+            action="store_true",
+            help="Remove all context pickles from the CRDS cache. Can precede --save-pickles.",
+        )
+        self.add_argument(
+            "--save-pickles",
+            action="store_true",
+            help="Save pre-compiled versions of the sync'ed contexts in the CRDS cache.  Keep pre-existing pickles.",
+        )
+        self.add_argument(
+            "--output-dir",
+            type=str,
+            default=None,
+            help="Directory to output sync'ed files, for simple syncs,  particularly --files.   Implies 'flat' cache.",
+        )
+        self.add_argument(
+            "--clear-locks", action="store_true", help="Remove CRDS cache file lock(s)."
+        )
+        self.add_argument(
+            "--force-config-update",
+            action="store_true",
+            help="Even if sync errors occur, attempt to update the CRDS configuration, including the default context.",
+        )
 
     # ------------------------------------------------------------------------------------------
 
@@ -270,7 +362,7 @@ class SyncScript(cmdline.ContextsScript):
             crds_cache_locking.clear_cache_locks()
             return log.errors()
 
-        self.handle_misc_switches()   # simple side effects only
+        self.handle_misc_switches()  # simple side effects only
 
         # if explicitly requested,  or the cache is suspect or being ignored,  clear
         # cached context pickles.
@@ -291,8 +383,13 @@ class SyncScript(cmdline.ContextsScript):
 
         # verification is relative to sync'ed files,  and can include file replacement if
         # defects are found.
-        if (self.args.check_files or self.args.check_sha1sum or self.args.repair_files or
-            self.args.purge_blacklisted or self.args.purge_rejected):
+        if (
+            self.args.check_files
+            or self.args.check_sha1sum
+            or self.args.repair_files
+            or self.args.purge_blacklisted
+            or self.args.purge_rejected
+        ):
             self.verify_files(verify_file_list)
 
         # context pickles should only be (re)generated after mappings are fully sync'ed and verified
@@ -303,8 +400,12 @@ class SyncScript(cmdline.ContextsScript):
         # implement pipeline support functions of context update verify and echo
         # If --output-dir was specified,  do not update cache config.
         if self.args.output_dir:
-            log.verbose_warning("Used --output-dir,  skipping cache server_config update including default context and bad files.")
-            if config.writable_cache_or_verbose("skipping removal of ref_cache_subdir_mode file."):
+            log.verbose_warning(
+                "Used --output-dir,  skipping cache server_config update including default context and bad files."
+            )
+            if config.writable_cache_or_verbose(
+                "skipping removal of ref_cache_subdir_mode file."
+            ):
                 os.remove(config.get_crds_ref_subdir_file(self.observatory))
         else:
             self.update_context()
@@ -312,6 +413,7 @@ class SyncScript(cmdline.ContextsScript):
         self.report_stats()
         log.standard_status()
         return log.errors()
+
     # ------------------------------------------------------------------------------------------
 
     def handle_misc_switches(self):
@@ -333,7 +435,9 @@ class SyncScript(cmdline.ContextsScript):
 
         if self.readonly_cache:
             log.info("Syncing READONLY cache,  only checking functions are enabled.")
-            log.info("All cached updates, context changes, and file downloads are inhibited.")
+            log.info(
+                "All cached updates, context changes, and file downloads are inhibited."
+            )
 
     def file_transfers(self):
         """Top level control for the primary function of downloading files specified as:
@@ -353,7 +457,9 @@ class SyncScript(cmdline.ContextsScript):
         elif self.contexts:
             verify_file_list = self.interpret_contexts()
         else:
-            log.error("Define --all, --contexts, --last, --range, --files, or --fetch-sqlite-db to sync.")
+            log.error(
+                "Define --all, --contexts, --last, --range, --files, or --fetch-sqlite-db to sync."
+            )
             sys.exit(-1)
         return verify_file_list
 
@@ -391,7 +497,9 @@ class SyncScript(cmdline.ContextsScript):
         else:
             active_references = self.get_context_references()
         # Handle GEIS paired data files
-        active_references = set(active_references + self.get_conjugates(active_references))
+        active_references = set(
+            active_references + self.get_conjugates(active_references)
+        )
         return active_references
 
     def update_context(self):
@@ -404,18 +512,24 @@ class SyncScript(cmdline.ContextsScript):
         """
         if not log.errors() or self.args.force_config_update:
             if self.args.verify_context_change:
-                old_context = heavy_client.load_server_info(self.observatory).operational_context
+                old_context = heavy_client.load_server_info(
+                    self.observatory
+                ).operational_context
             heavy_client.update_config_info(self.observatory)
             if self.args.verify_context_change:
                 self.verify_context_change(old_context)
             if self.args.push_context:
                 self.push_context()
         else:
-            log.warning("Errors occurred during sync,  skipping CRDS cache config and context update.")
+            log.warning(
+                "Errors occurred during sync,  skipping CRDS cache config and context update."
+            )
 
     def clear_pickles(self):
         """Remove all pickles."""
-        log.info("Removing all context pickles.  Use --save-pickles to recreate for specified contexts.")
+        log.info(
+            "Removing all context pickles.  Use --save-pickles to recreate for specified contexts."
+        )
         for path in rmap.list_pickles("*.pmap", self.observatory, full_path=True):
             if os.path.exists(path):
                 utils.remove(path, self.observatory)
@@ -427,7 +541,9 @@ class SyncScript(cmdline.ContextsScript):
         """
         for context in contexts:
             with log.error_on_exception("Failed pickling", repr(context)):
-                crds.get_pickled_mapping.uncached(context, use_pickles=True, save_pickles=True)  # reviewed
+                crds.get_pickled_mapping.uncached(
+                    context, use_pickles=True, save_pickles=True
+                )  # reviewed
 
     # ------------------------------------------------------------------------------------------
 
@@ -438,20 +554,41 @@ class SyncScript(cmdline.ContextsScript):
 
     def verify_context_change(self, old_context):
         """Verify that the starting and post-sync contexts are different,  or issue an error."""
-        new_context = heavy_client.load_server_info(self.observatory).operational_context
+        new_context = heavy_client.load_server_info(
+            self.observatory
+        ).operational_context
         if old_context == new_context:
-            log.error("Expected operational context switch but starting and post-sync contexts are both", repr(old_context))
+            log.error(
+                "Expected operational context switch but starting and post-sync contexts are both",
+                repr(old_context),
+            )
         else:
-            log.info("Operational context updated from", repr(old_context), "to",  repr(new_context))
+            log.info(
+                "Operational context updated from",
+                repr(old_context),
+                "to",
+                repr(new_context),
+            )
 
     def push_context(self):
         """Push the final context recorded in the local cache to the CRDS server so it can be displayed
         as the operational state of a pipeline.
         """
         info = heavy_client.load_server_info(self.observatory)
-        with log.error_on_exception("Failed pushing cached operational context name to CRDS server"):
-            api.push_remote_context(self.observatory, "operational", self.args.push_context, info.operational_context)
-            log.info("Pushed cached operational context name", repr(info.operational_context), "to CRDS server")
+        with log.error_on_exception(
+            "Failed pushing cached operational context name to CRDS server"
+        ):
+            api.push_remote_context(
+                self.observatory,
+                "operational",
+                self.args.push_context,
+                info.operational_context,
+            )
+            log.info(
+                "Pushed cached operational context name",
+                repr(info.operational_context),
+                "to CRDS server",
+            )
 
     # ------------------------------------------------------------------------------------------
 
@@ -459,9 +596,9 @@ class SyncScript(cmdline.ContextsScript):
         """Remove all mappings not under pmaps `self.contexts`."""
         # rmap.list_mappings lists all mappings in the *local* cache.
         # in contrast,  client.list_mappings globs available mappings in the server cache.
-        purge_maps = set(rmap.list_mappings('*.[pir]map', self.observatory))
+        purge_maps = set(rmap.list_mappings("*.[pir]map", self.observatory))
         keep = set(self.get_context_mappings())
-        self.remove_files(sorted(purge_maps-keep), "mapping")
+        self.remove_files(sorted(purge_maps - keep), "mapping")
 
     # ------------------------------------------------------------------------------------------
 
@@ -476,22 +613,39 @@ class SyncScript(cmdline.ContextsScript):
         if config.get_cache_readonly():
             log.info("READONLY CACHE estimating required downloads.")
             if not self.args.ignore_cache:
-                already_have = (set(rmap.list_references("*", self.observatory)) |
-                                set(rmap.list_mappings("*", self.observatory)))
+                already_have = set(rmap.list_references("*", self.observatory)) | set(
+                    rmap.list_mappings("*", self.observatory)
+                )
             else:
                 already_have = set()
-            fetched = [ x for x in sorted(files - already_have) if not x.startswith("NOT FOUND") ]
+            fetched = [
+                x for x in sorted(files - already_have) if not x.startswith("NOT FOUND")
+            ]
             for _file in files:
                 if _file in already_have:
-                    log.verbose("File", repr(_file), "is already in the CRDS cache.", verbosity=55)
+                    log.verbose(
+                        "File",
+                        repr(_file),
+                        "is already in the CRDS cache.",
+                        verbosity=55,
+                    )
                 else:
-                    log.verbose("File", repr(_file), "would be downloaded.", verbosity=55)
+                    log.verbose(
+                        "File", repr(_file), "would be downloaded.", verbosity=55
+                    )
             if fetched:
                 with log.info_on_exception("File size information not available."):
-                    info_map = api.get_file_info_map(self.observatory, fetched, fields=["size"])
+                    info_map = api.get_file_info_map(
+                        self.observatory, fetched, fields=["size"]
+                    )
                     total_bytes = api.get_total_bytes(info_map)
-                    log.info("READONLY CACHE would download", len(fetched), "files totalling",
-                             utils.human_format_number(total_bytes).strip(), "bytes.")
+                    log.info(
+                        "READONLY CACHE would download",
+                        len(fetched),
+                        "files totalling",
+                        utils.human_format_number(total_bytes).strip(),
+                        "bytes.",
+                    )
             else:
                 log.info("READONLY CACHE no reference downloads expected.")
         else:
@@ -526,32 +680,65 @@ class SyncScript(cmdline.ContextsScript):
     def sync_datasets(self):
         """Sync mappings and references for datasets with respect to `self.contexts`."""
         if not self.contexts:
-            log.error("Define --contexts under which references are fetched for --dataset-files or --dataset-ids.""")
+            log.error(
+                "Define --contexts under which references are fetched for --dataset-files or --dataset-ids."
+                ""
+            )
             sys.exit(-1)
         active_references = []
         for context in self.contexts:
             if self.args.dataset_ids:
-                if len(self.args.dataset_ids) == 1 and self.args.dataset_ids[0].startswith("@"):
+                if len(self.args.dataset_ids) == 1 and self.args.dataset_ids[
+                    0
+                ].startswith("@"):
                     with open(self.args.dataset_ids[0][1:]) as pfile:
                         self.args.dataset_ids = pfile.read().splitlines()
-                with log.error_on_exception("Failed to get matching parameters for", self.args.dataset_ids):
-                    id_headers = api.get_dataset_headers_by_id(context, self.args.dataset_ids)
+                with log.error_on_exception(
+                    "Failed to get matching parameters for", self.args.dataset_ids
+                ):
+                    id_headers = api.get_dataset_headers_by_id(
+                        context, self.args.dataset_ids
+                    )
             for dataset in self.args.dataset_files or self.args.dataset_ids:
                 log.info("Syncing context '%s' dataset '%s'." % (context, dataset))
-                with log.error_on_exception("Failed to get matching parameters from", repr(dataset)):
+                with log.error_on_exception(
+                    "Failed to get matching parameters from", repr(dataset)
+                ):
                     if self.args.dataset_files:
-                        headers = { dataset : data_file.get_conditioned_header(dataset, observatory=self.observatory) }
+                        headers = {
+                            dataset: data_file.get_conditioned_header(
+                                dataset, observatory=self.observatory
+                            )
+                        }
                     else:
-                        headers = { dataset_id : header for (dataset_id, header) in id_headers.items() if
-                                    dataset.upper() in dataset_id }
+                        headers = {
+                            dataset_id: header
+                            for (dataset_id, header) in id_headers.items()
+                            if dataset.upper() in dataset_id
+                        }
                     for assc_dataset, header in headers.items():
-                        with log.error_on_exception("Failed syncing references for dataset", repr(assc_dataset),
-                                                    "under context", repr(context)):
-                            bestrefs = crds.getrecommendations(header, context=context, observatory=self.observatory,
-                                                               ignore_cache=self.args.ignore_cache)
-                            log.verbose("Best references for", repr(assc_dataset), "are", bestrefs)
+                        with log.error_on_exception(
+                            "Failed syncing references for dataset",
+                            repr(assc_dataset),
+                            "under context",
+                            repr(context),
+                        ):
+                            bestrefs = crds.getrecommendations(
+                                header,
+                                context=context,
+                                observatory=self.observatory,
+                                ignore_cache=self.args.ignore_cache,
+                            )
+                            log.verbose(
+                                "Best references for",
+                                repr(assc_dataset),
+                                "are",
+                                bestrefs,
+                            )
                             active_references.extend(bestrefs.values())
-        active_references = [ ref for ref in active_references if not ref.startswith("NOT FOUND") ]
+        active_references = [
+            ref for ref in active_references if not ref.startswith("NOT FOUND")
+        ]
         log.verbose("Syncing references:", repr(active_references))
         return list(set(active_references))
 
@@ -568,11 +755,22 @@ class SyncScript(cmdline.ContextsScript):
         """Check `files` against the CRDS server database to ensure integrity and check reject status."""
         basenames = [os.path.basename(file) for file in files]
         try:
-            log.verbose("Downloading verification info for", len(basenames), "files.", verbosity=10)
-            infos = api.get_file_info_map(observatory=self.observatory, files=basenames,
-                                         fields=["size","rejected","blacklisted","state","sha1sum"])
+            log.verbose(
+                "Downloading verification info for",
+                len(basenames),
+                "files.",
+                verbosity=10,
+            )
+            infos = api.get_file_info_map(
+                observatory=self.observatory,
+                files=basenames,
+                fields=["size", "rejected", "blacklisted", "state", "sha1sum"],
+            )
         except Exception as exc:
-            log.error("Failed getting file info.  CACHE VERIFICATION FAILED.  Exception: ", repr(str(exc)))
+            log.error(
+                "Failed getting file info.  CACHE VERIFICATION FAILED.  Exception: ",
+                repr(str(exc)),
+            )
             return
         bytes_so_far = 0
         total_bytes = api.get_total_bytes(infos)
@@ -581,7 +779,9 @@ class SyncScript(cmdline.ContextsScript):
             if infos[bfile] == "NOT FOUND":
                 log.error("CRDS has no record of file", repr(bfile))
             else:
-                self.verify_file(file, infos[bfile], bytes_so_far, total_bytes, nth_file, len(files))
+                self.verify_file(
+                    file, infos[bfile], bytes_so_far, total_bytes, nth_file, len(files)
+                )
                 bytes_so_far += int(infos[bfile]["size"])
 
     def verify_file(self, file, info, bytes_so_far, total_bytes, nth_file, total_files):
@@ -593,8 +793,17 @@ class SyncScript(cmdline.ContextsScript):
         # Only output verification info for slow sha1sum checks by default
         log.verbose(
             api.file_progress(
-                "Verifying", base, path, n_bytes, bytes_so_far, total_bytes, nth_file, total_files),
-            verbosity=10 if self.args.check_sha1sum else 60)
+                "Verifying",
+                base,
+                path,
+                n_bytes,
+                bytes_so_far,
+                total_bytes,
+                nth_file,
+                total_files,
+            ),
+            verbosity=10 if self.args.check_sha1sum else 60,
+        )
 
         if not os.path.exists(path):
             if base not in self.bad_files:
@@ -604,29 +813,56 @@ class SyncScript(cmdline.ContextsScript):
         # Checks which force repairs should do if/else to avoid repeat repair
         size = os.stat(path).st_size
         if int(info["size"]) != size:
-            self.error_and_repair(path, "File", repr(base), "length mismatch LOCAL size=" + srepr(size),
-                                  "CRDS size=" + srepr(info["size"]))
+            self.error_and_repair(
+                path,
+                "File",
+                repr(base),
+                "length mismatch LOCAL size=" + srepr(size),
+                "CRDS size=" + srepr(info["size"]),
+            )
         elif self.args.check_sha1sum or config.is_mapping(base):
-            log.verbose("Computing checksum for", repr(base), "of size", repr(size), verbosity=60)
+            log.verbose(
+                "Computing checksum for",
+                repr(base),
+                "of size",
+                repr(size),
+                verbosity=60,
+            )
             sha1sum = utils.checksum(path)
             if info["sha1sum"] == "none":
                 log.warning("CRDS doesn't know the checksum for", repr(base))
             elif info["sha1sum"] != sha1sum:
-                self.error_and_repair(path, "File", repr(base), "checksum mismatch CRDS=" + repr(info["sha1sum"]),
-                                      "LOCAL=" + repr(sha1sum))
+                self.error_and_repair(
+                    path,
+                    "File",
+                    repr(base),
+                    "checksum mismatch CRDS=" + repr(info["sha1sum"]),
+                    "LOCAL=" + repr(sha1sum),
+                )
 
         if info["state"] not in ["archived", "operational"]:
-            log.warning("File", repr(base), "has an unusual CRDS file state", repr(info["state"]))
+            log.warning(
+                "File",
+                repr(base),
+                "has an unusual CRDS file state",
+                repr(info["state"]),
+            )
 
         if info["rejected"] != "false":
-            log.verbose_warning("File", repr(base), "has been explicitly rejected.", verbosity=60)
+            log.verbose_warning(
+                "File", repr(base), "has been explicitly rejected.", verbosity=60
+            )
             if self.args.purge_rejected:
                 self.remove_files([path], "file")
             return
 
         if info["blacklisted"] != "false":
-            log.verbose_warning("File", repr(base), "has been blacklisted or is dependent on a blacklisted file.",
-                                verbosity=60)
+            log.verbose_warning(
+                "File",
+                repr(base),
+                "has been blacklisted or is dependent on a blacklisted file.",
+                verbosity=60,
+            )
             if self.args.purge_blacklisted:
                 self.remove_files([path], "file")
             return
@@ -636,7 +872,9 @@ class SyncScript(cmdline.ContextsScript):
         """Issue an error message and repair `file` if requested by command line args."""
         log.error(*args, **keys)
         if self.args.repair_files:
-            if config.writable_cache_or_info("Skipping remove and re-download of", repr(file)):
+            if config.writable_cache_or_info(
+                "Skipping remove and re-download of", repr(file)
+            ):
                 log.info("Repairing file", repr(file))
                 utils.remove(file, observatory=self.observatory)
                 self.dump_files(self.default_context, [file])
@@ -650,36 +888,73 @@ class SyncScript(cmdline.ContextsScript):
         """Find all references in the CRDS cache and relink them to the paths which are implied by `new_mode`.
         This is used to reroganize existing file caches into new layouts,  e.g. flat -->  by instrument.
         """
-        old_refpaths = rmap.list_references("*", observatory=self.observatory, full_path=True)
+        old_refpaths = rmap.list_references(
+            "*", observatory=self.observatory, full_path=True
+        )
         old_mode = config.get_crds_ref_subdir_mode(self.observatory)
-        log.info("Reorganizing", len(old_refpaths), "references from", repr(old_mode), "to", repr(new_mode))
+        log.info(
+            "Reorganizing",
+            len(old_refpaths),
+            "references from",
+            repr(old_mode),
+            "to",
+            repr(new_mode),
+        )
         config.set_crds_ref_subdir_mode(new_mode, observatory=self.observatory)
-        new_mode = config.get_crds_ref_subdir_mode(self.observatory)  # did it really change.
+        new_mode = config.get_crds_ref_subdir_mode(
+            self.observatory
+        )  # did it really change.
         for refpath in old_refpaths:
             with log.error_on_exception("Failed relocating:", repr(refpath)):
-                desired_loc = config.locate_file(os.path.basename(refpath), observatory=self.observatory)
+                desired_loc = config.locate_file(
+                    os.path.basename(refpath), observatory=self.observatory
+                )
                 if desired_loc != refpath:
                     if os.path.exists(desired_loc):
                         if not self.args.organize_delete_junk:
-                            log.warning("Link or directory already exists at", repr(desired_loc), "Skipping", repr(refpath))
+                            log.warning(
+                                "Link or directory already exists at",
+                                repr(desired_loc),
+                                "Skipping",
+                                repr(refpath),
+                            )
                             continue
                         utils.remove(desired_loc, observatory=self.observatory)
-                    if config.writable_cache_or_info("Skipping file relocation from", repr(refpath), "to", repr(desired_loc)):
+                    if config.writable_cache_or_info(
+                        "Skipping file relocation from",
+                        repr(refpath),
+                        "to",
+                        repr(desired_loc),
+                    ):
                         log.info("Relocating", repr(refpath), "to", repr(desired_loc))
                         shutil.move(refpath, desired_loc)
                 else:
                     if old_mode != new_mode:
-                        log.verbose_warning("Keeping existing cached file", repr(desired_loc), "already in target mode", repr(new_mode))
+                        log.verbose_warning(
+                            "Keeping existing cached file",
+                            repr(desired_loc),
+                            "already in target mode",
+                            repr(new_mode),
+                        )
                     else:
-                        log.verbose_warning("No change in subdirectory mode", repr(old_mode), "skipping reorganization of", repr(refpath))
+                        log.verbose_warning(
+                            "No change in subdirectory mode",
+                            repr(old_mode),
+                            "skipping reorganization of",
+                            repr(refpath),
+                        )
         if new_mode == "flat" and old_mode == "instrument":
-            log.info("Reorganizing from 'instrument' to 'flat' cache,  removing instrument directories.")
+            log.info(
+                "Reorganizing from 'instrument' to 'flat' cache,  removing instrument directories."
+            )
             for instrument in self.locator.INSTRUMENTS:
                 self.remove_dir(instrument)
 
     def remove_dir(self, instrument):
         """Remove an instrument cache directory and any associated legacy link."""
-        if config.writable_cache_or_info("Skipping remove instrument", repr(instrument), "directory."):
+        if config.writable_cache_or_info(
+            "Skipping remove instrument", repr(instrument), "directory."
+        ):
             crds_refpath = config.get_crds_refpath(self.observatory)
             prefix = self.locator.get_env_prefix(instrument)
             rootdir = os.path.join(crds_refpath, instrument)
@@ -687,9 +962,10 @@ class SyncScript(cmdline.ContextsScript):
             if len(glob.glob(os.path.join(rootdir, "*"))):
                 log.info("Residual files in '{}'. Not removing.".format(rootdir))
                 return
-            if os.path.exists(refdir):   # skip crds://  vs.  oref
+            if os.path.exists(refdir):  # skip crds://  vs.  oref
                 utils.remove(refdir, observatory=self.observatory)
             utils.remove(rootdir, observatory=self.observatory)
+
 
 # ==============================================================================================================
 

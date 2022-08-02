@@ -9,6 +9,7 @@ from crds.tests import test_config
 from crds.refactoring import checksum
 from crds.refactoring.checksum import ChecksumScript
 
+
 def dt_checksum_script_fits_add():
     """
     >>> old_state = test_config.setup()
@@ -36,6 +37,7 @@ def dt_checksum_script_fits_add():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_checksum_script_fits_remove():
     """
     >>> old_state = test_config.setup()
@@ -62,6 +64,7 @@ def dt_checksum_script_fits_remove():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_checksum_script_fits_verify_good():
     """
     >>> old_state = test_config.setup()
@@ -81,6 +84,7 @@ def dt_checksum_script_fits_verify_good():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_checksum_script_fits_verify_bad():
     """
     >>> old_state = test_config.setup()
@@ -94,7 +98,9 @@ def dt_checksum_script_fits_verify_bad():
     >>> test_config.cleanup(old_state)
     """
 
+
 # ----------------------------------------------------------------------
+
 
 def dt_checksum_script_rmap_verify_good():
     """
@@ -104,6 +110,7 @@ def dt_checksum_script_rmap_verify_good():
     0
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_checksum_script_rmap_add_bad():
     """
@@ -121,6 +128,7 @@ def dt_checksum_script_rmap_add_bad():
     >>> os.remove("add_bad.rmap")
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_checksum_script_rmap_verify_bad():
     """
@@ -147,6 +155,7 @@ def dt_checksum_script_rmap_remove_bad():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_checksum_script_rmap_verify_missing():
     """
     >>> old_state = test_config.setup()
@@ -160,6 +169,7 @@ def dt_checksum_script_rmap_verify_missing():
     >>> os.remove("verify_missing.rmap")
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_checksum_script_unsupported_asdf():
     """
@@ -179,6 +189,7 @@ def dt_checksum_script_unsupported_asdf():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_checksum_script_unsupported_json():
     """
     >>> old_state = test_config.setup()
@@ -196,6 +207,7 @@ def dt_checksum_script_unsupported_json():
     1
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_checksum_script_unsupported_text():
     """
@@ -215,6 +227,7 @@ def dt_checksum_script_unsupported_text():
     >>> test_config.cleanup(old_state)
     """
 
+
 def test():
     """Run module tests,  for now just doctests only.
 
@@ -224,7 +237,9 @@ def test():
     things go wrong.
     """
     from crds.tests import test_checksum, tstmod
+
     return tstmod(test_checksum)
+
 
 if __name__ == "__main__":
     print(test())

@@ -1,8 +1,8 @@
-'''
+"""
 Created on Feb 15, 2017
 
 @author: jmiller
-'''
+"""
 import re
 import os.path
 
@@ -12,20 +12,24 @@ from .abstract import AbstractFile
 
 # ================================================================================================================
 
+
 def is_geis(name):
     """Return True IFF `name` identifies a GEIS header file."""
     name = os.path.basename(name)
     return bool(re.match(r"r[0-9](h|d)", name[-3:]))
+
 
 def is_geis_data(name):
     """Return True IFF `name` identifies a GEIS data file."""
     name = os.path.basename(name)
     return bool(re.match(r"r[0-9]d", name[-3:]))
 
+
 def is_geis_header(name):
     """Return True IFF `name` identifies a GEIS data file."""
     name = os.path.basename(name)
     return bool(re.match(r"r[0-9]h", name[-3:]))
+
 
 def get_conjugate(reference):
     """Return any file associated with `reference`,  nominally GEIS data from header,
@@ -38,7 +42,9 @@ def get_conjugate(reference):
         return reference[:-1] + "d"
     return None
 
+
 # ================================================================================================================
+
 
 class GeisFile(AbstractFile):
 
@@ -65,7 +71,7 @@ class GeisFile(AbstractFile):
                 line = line[:31]
 
             if line.startswith("HISTORY"):
-                history.append(str(line[len("HISTORY"):].strip()))
+                history.append(str(line[len("HISTORY") :].strip()))
                 continue
 
             words = [x.strip() for x in line.split("=")]
@@ -94,6 +100,7 @@ class GeisFile(AbstractFile):
             header["HISTORY"] = "\n".join(history)
 
         return header
+
 
 _GEIS_TEST_DATA = u"""
 SIMPLE  =                    F /
@@ -198,11 +205,14 @@ False
      'UCH4CJTM': '0.'}
 """
 
+
 def test():
     """Run doctest on data_file module."""
     import doctest
     from . import geis
+
     return doctest.testmod(geis)
+
 
 if __name__ == "__main__":
     print(test())

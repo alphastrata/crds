@@ -8,12 +8,13 @@ import re
 import glob
 
 import crds
-from crds.core import (rmap, utils, log, cmdline, config)
+from crds.core import rmap, utils, log, cmdline, config
 from . import refactor
 
 # =============================================================================
 
 # Code used by the website to determine affected
+
 
 def get_update_map(old_pipeline, updated_rmaps):
     """Given the name of a pipeline context, `old_pipeline`, and a list
@@ -27,10 +28,10 @@ def get_update_map(old_pipeline, updated_rmaps):
 
     e.g.  miri_dflat_n/a
     """
-    pctx = crds.get_pickled_mapping(old_pipeline)   # reviewed
+    pctx = crds.get_pickled_mapping(old_pipeline)  # reviewed
     updates = {}
     for update in sorted(updated_rmaps):
-        if update.endswith(("_n/a","_N/A")):
+        if update.endswith(("_n/a", "_N/A")):
             instrument, _filekind, na = update.split("_")
         else:  # should be an rmap name
             instrument, _filekind = utils.get_file_properties(pctx.observatory, update)
@@ -41,9 +42,11 @@ def get_update_map(old_pipeline, updated_rmaps):
         updates[imap_name].append(update)
     return updates
 
+
 # =============================================================================
 
 # Code used by the website to generate new contexts.
+
 
 def generate_new_contexts(old_pipeline, updates, new_names):
     """Generate new pipeline and instrument context files given:
@@ -59,6 +62,7 @@ def generate_new_contexts(old_pipeline, updates, new_names):
     hack_in_new_maps(old_pipeline, new_pipeline, new_imaps)
     return [new_pipeline] + new_imaps
 
+
 def hack_in_new_maps(old, new, updated_maps):
     """Given mapping named `old`,  create a modified copy named `new` which
     installs each map of `updated_maps` in place of it's predecessor.
@@ -67,9 +71,30 @@ def hack_in_new_maps(old, new, updated_maps):
     for mapping in sorted(updated_maps):
         key, replaced, replacement = insert_mapping(new, mapping)
         if replaced:
-            log.info("Replaced", repr(replaced), "with", repr(replacement), "for", repr(key), "in", repr(old), "producing", repr(new))
+            log.info(
+                "Replaced",
+                repr(replaced),
+                "with",
+                repr(replacement),
+                "for",
+                repr(key),
+                "in",
+                repr(old),
+                "producing",
+                repr(new),
+            )
         else:
-            log.info("Added", repr(replacement), "for", repr(key), "in", repr(old), "producing", repr(new))
+            log.info(
+                "Added",
+                repr(replacement),
+                "for",
+                repr(key),
+                "in",
+                repr(old),
+                "producing",
+                repr(new),
+            )
+
 
 def insert_mapping(context, mapping):
     """Replace the filename in file `context` with the same generic name
@@ -93,16 +118,21 @@ def insert_mapping(context, mapping):
     loaded.write(where)
     return key, replaced, replacement
 
+
 def copy_mapping(old_map, new_map):
     """Make a copy of mapping `old_map` named `new_map`."""
     old_path = config.locate_mapping(old_map)
     new_path = config.locate_mapping(new_map)
-    assert not os.path.exists(new_path), "New mapping file " + repr(new_map) + " already exists."
+    assert not os.path.exists(new_path), (
+        "New mapping file " + repr(new_map) + " already exists."
+    )
     shutil.copyfile(old_path, new_path)
+
 
 # =============================================================================
 
 # Code for making "fake/test" new contexts on the command line.
+
 
 def new_context(old_pipeline, updated_rmaps):
     """Given a pipeline mapping name `old_pipeline`, and a list of the names
@@ -116,6 +146,7 @@ def new_context(old_pipeline, updated_rmaps):
     generate_new_contexts(old_pipeline, updates, new_names)
     return new_names
 
+
 def generate_fake_names(old_pipeline, updates):
     """Generate a map from old pipeline and instrument context names to new
     names for their updated replacements.   "Fake" names only work locally
@@ -127,6 +158,7 @@ def generate_fake_names(old_pipeline, updates):
     for old_imap in sorted(updates):
         new_names[old_imap] = fake_name(old_imap)
     return new_names
+
 
 def fake_name(old_map):
     """Given and old mapping name, `old_map`, adjust the serial number to
@@ -158,6 +190,7 @@ def fake_name(old_map):
             new_map = "./" + os.path.basename(new_map)
         return new_map
 
+
 def update_header_names(name_map):
     """Update the .name and .derived_from fields in mapping new_path.header
     to reflect derivation from old_path and name new_path.
@@ -165,11 +198,19 @@ def update_header_names(name_map):
     for old_path, new_path in sorted(name_map.items()):
         old_base, new_base = os.path.basename(old_path), os.path.basename(new_path)
         refactor.update_derivation(new_path, old_base)
-        log.info("Adjusting name", repr(new_base), "derived_from", repr(old_base),
-                 "in", repr(new_path))
-    return name_map # no change
+        log.info(
+            "Adjusting name",
+            repr(new_base),
+            "derived_from",
+            repr(old_base),
+            "in",
+            repr(new_path),
+        )
+    return name_map  # no change
+
 
 # ============================================================================
+
 
 class NewContextScript(cmdline.Script):
     """Defines the command line handler for crds newcontext."""
@@ -178,14 +219,20 @@ class NewContextScript(cmdline.Script):
 needed in order to support `new_rmaps`.   Currently generated contexts have
 fake names and are for local test purposes only,  not formal distribution.
 """
+
     def add_args(self):
         self.add_argument("old_pmap")
-        self.add_argument("new_rmap", nargs="+", help="Names of new rmaps to insert into the new context.""")
+        self.add_argument(
+            "new_rmap",
+            nargs="+",
+            help="Names of new rmaps to insert into the new context." "",
+        )
 
     def main(self):
         name_map = new_context(self.args.old_pmap, self.args.new_rmap)
         update_header_names(name_map)
         return log.errors()
+
 
 if __name__ == "__main__":
     sys.exit(NewContextScript()())

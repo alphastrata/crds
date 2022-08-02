@@ -12,6 +12,7 @@ from crds.client import api
 
 # ===================================================================
 
+
 class CrdsSqlQueryScript(cmdline.Script):
     """Command line script for querying a downloaded copy of the CRDS catalog using sqlite3."""
 
@@ -49,15 +50,34 @@ crds sql "select name, state, pedigree from crds_hst_catalog"
 
     def add_args(self):
         super(CrdsSqlQueryScript, self).add_args()
-        self.add_argument("sql_query", nargs="*", help="sqlite3 query to run on cached database.")
-        self.add_argument("-u", "--update-db", action="store_true",
-                          help="Updates local cached copy of CRDS catalog and context history from CRDS server.")
-        self.add_argument("-t", "--list-tables", action="store_true",
-                          help="Print out the table names contained in the database")
-        self.add_argument("-c", "--list-columns", metavar="TABLE", nargs="+",
-                          help="Print out the column names contained in the specified table of the database")
-        self.add_argument("-p", "--list-database-path", action="store_true",
-                          help="Print out the path of the local sqlite3 database file,  useable by sqlite3.")
+        self.add_argument(
+            "sql_query", nargs="*", help="sqlite3 query to run on cached database."
+        )
+        self.add_argument(
+            "-u",
+            "--update-db",
+            action="store_true",
+            help="Updates local cached copy of CRDS catalog and context history from CRDS server.",
+        )
+        self.add_argument(
+            "-t",
+            "--list-tables",
+            action="store_true",
+            help="Print out the table names contained in the database",
+        )
+        self.add_argument(
+            "-c",
+            "--list-columns",
+            metavar="TABLE",
+            nargs="+",
+            help="Print out the column names contained in the specified table of the database",
+        )
+        self.add_argument(
+            "-p",
+            "--list-database-path",
+            action="store_true",
+            help="Print out the path of the local sqlite3 database file,  useable by sqlite3.",
+        )
 
     def main(self):
         """Process command line parameters in to a context and list of
@@ -106,7 +126,7 @@ crds sql "select name, state, pedigree from crds_hst_catalog"
         """Return the list of database table names."""
         connection = sqlite3.connect(self.sqlite_db_path)
         cursor = connection.cursor()
-        query = 'select name from sqlite_master where type=\'table\''
+        query = "select name from sqlite_master where type='table'"
         log.verbose("querying:", repr(query))
         tables = [row[0] for row in cursor.execute(query)]
         connection.close()
@@ -139,7 +159,9 @@ crds sql "select name, state, pedigree from crds_hst_catalog"
         row = squash_unicode(row)
         return row
 
+
 # ===================================================================
+
 
 def squash_unicode(row):
     """Convert unicode strings in row to ordinary strings."""
@@ -150,6 +172,7 @@ def squash_unicode(row):
         else:
             row2.append(field)
     return tuple(row2)
+
 
 # ===================================================================
 

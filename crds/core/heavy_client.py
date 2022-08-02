@@ -60,7 +60,13 @@ import pickle
 from . import rmap, log, utils, config
 from .constants import ALL_OBSERVATORIES
 from .log import srepr
-from .exceptions import CrdsError, CrdsBadRulesError, CrdsBadReferenceError, CrdsConfigError, CrdsDownloadError
+from .exceptions import (
+    CrdsError,
+    CrdsBadRulesError,
+    CrdsBadReferenceError,
+    CrdsConfigError,
+    CrdsDownloadError,
+)
 from crds.client import api
 
 # import crds  # forward
@@ -68,18 +74,29 @@ from crds.client import api
 # ============================================================================
 
 __all__ = [
-    "getreferences", "getrecommendations",
-    "get_config_info", "update_config_info", "load_server_info",
-    "get_processing_mode", "get_context_name",
+    "getreferences",
+    "getrecommendations",
+    "get_config_info",
+    "update_config_info",
+    "load_server_info",
+    "get_processing_mode",
+    "get_context_name",
     "version_info",
-    "get_bad_mappings_in_context", "list_mappings",
+    "get_bad_mappings_in_context",
+    "list_mappings",
 ]
 
 # ============================================================================
 
 # !!!!! interface to jwst.stpipe.crds_client
-def getreferences(parameters, reftypes=None, context=None, ignore_cache=False,
-                  observatory="jwst", fast=False):
+def getreferences(
+    parameters,
+    reftypes=None,
+    context=None,
+    ignore_cache=False,
+    observatory="jwst",
+    fast=False,
+):
     """
     This is the top-level get reference call for all of CRDS.  Based on
     `parameters`, getreferences() will download/cache the corresponding best
@@ -119,18 +136,27 @@ def getreferences(parameters, reftypes=None, context=None, ignore_cache=False,
       returns a mapping from types requested in `reftypes` to the path for each
       cached reference file.
     """
-    final_context, bestrefs = _initial_recommendations("getreferences",
-        parameters, reftypes, context, ignore_cache, observatory, fast)
+    final_context, bestrefs = _initial_recommendations(
+        "getreferences", parameters, reftypes, context, ignore_cache, observatory, fast
+    )
 
     # Attempt to cache the recommended references,  which unlike dump_mappings
     # should work without network access if files are already cached.
     best_refs_paths = api.cache_references(
-        final_context, bestrefs, ignore_cache=ignore_cache)
+        final_context, bestrefs, ignore_cache=ignore_cache
+    )
 
     return best_refs_paths
 
-def getrecommendations(parameters, reftypes=None, context=None, ignore_cache=False,
-                       observatory="jwst", fast=False):
+
+def getrecommendations(
+    parameters,
+    reftypes=None,
+    context=None,
+    ignore_cache=False,
+    observatory="jwst",
+    fast=False,
+):
     """
     getrecommendations() returns the best references for the specified `parameters`
     and pipeline `context`.   Unlike getreferences(),  getrecommendations() does
@@ -169,18 +195,33 @@ def getrecommendations(parameters, reftypes=None, context=None, ignore_cache=Fal
       returns a mapping from types requested in `reftypes` to the path for each
       cached reference file.
     """
-    _final_context, bestrefs = _initial_recommendations("getrecommendations",
-        parameters, reftypes, context, ignore_cache, observatory, fast)
+    _final_context, bestrefs = _initial_recommendations(
+        "getrecommendations",
+        parameters,
+        reftypes,
+        context,
+        ignore_cache,
+        observatory,
+        fast,
+    )
 
     return bestrefs
 
+
 def _initial_recommendations(
-        name, parameters, reftypes=None, context=None, ignore_cache=False, observatory="jwst", fast=False):
+    name,
+    parameters,
+    reftypes=None,
+    context=None,
+    ignore_cache=False,
+    observatory="jwst",
+    fast=False,
+):
 
     """shared logic for getreferences() and getrecommendations()."""
 
     if not fast:
-        log.verbose("="*120)
+        log.verbose("=" * 120)
         log.verbose(name + "() CRDS version: ", version_info())
         log.verbose(name + "() server:", api.get_crds_server())
         log.verbose(name + "() observatory:", observatory)
@@ -207,7 +248,11 @@ def _initial_recommendations(
     if mode == "local":
         log.verbose("Computing best references locally.")
         bestrefs = local_bestrefs(
-            parameters, reftypes=reftypes, context=final_context, ignore_cache=ignore_cache)
+            parameters,
+            reftypes=reftypes,
+            context=final_context,
+            ignore_cache=ignore_cache,
+        )
     else:
         log.verbose("Computing best references remotely.")
         bestrefs = api.get_best_references(final_context, parameters, reftypes=reftypes)
@@ -225,6 +270,7 @@ def _initial_recommendations(
 
     return final_context, bestrefs
 
+
 # ============================================================================
 
 # This is cached because it should only produce output *once* per program run.
@@ -233,12 +279,17 @@ def warn_bad_context(observatory, context, instrument=None):
     """Issue a warning if `context` is a known bad file, or contains bad files."""
     bad_contained = get_bad_mappings_in_context(observatory, context, instrument)
     if bad_contained:
-        msg = log.format("Final context", repr(context),
-                         "is marked as scientifically invalid based on:", log.PP(bad_contained))
+        msg = log.format(
+            "Final context",
+            repr(context),
+            "is marked as scientifically invalid based on:",
+            log.PP(bad_contained),
+        )
         if config.ALLOW_BAD_RULES:
             log.warning(msg)
         else:
             raise CrdsBadRulesError(msg)
+
 
 # This is cached because it can be called multiple times for a single dataset,
 # both within warn_bad_mappings and elsewhere.
@@ -253,6 +304,7 @@ def get_bad_mappings_in_context(observatory, context, instrument=None):
     context_mappings = mapping_names(check_context)
     return sorted(list(context_mappings & bad_mappings))
 
+
 def mapping_names(context):
     """Return the full set of mapping names associated with `context`,  compute locally if possible,
     else consult server.
@@ -264,12 +316,15 @@ def mapping_names(context):
         contained_mappings = api.get_mapping_names(context)
     return set(contained_mappings)
 
+
 # ============================================================================
+
 
 def warn_bad_references(observatory, bestrefs):
     """Scan `bestrefs` mapping { filekind : bestref_path, ...} for bad references."""
     for reftype, refpath in bestrefs.items():
         warn_bad_reference(observatory, reftype, refpath)
+
 
 def warn_bad_reference(observatory, reftype, reference):
     """Return True IFF `reference` is in the set of scientifically invalid files for `observatory`.
@@ -281,18 +336,26 @@ def warn_bad_reference(observatory, reftype, reference):
     ref = os.path.basename(reference)
     bad_files = get_config_info(observatory).bad_files_set
     if ref in bad_files:
-        msg = log.format("Recommended reference", repr(ref), "of type", repr(reftype),
-                         "is designated scientifically invalid.")
+        msg = log.format(
+            "Recommended reference",
+            repr(ref),
+            "of type",
+            repr(reftype),
+            "is designated scientifically invalid.",
+        )
         if config.ALLOW_BAD_REFERENCES:
             log.warning(msg)
         else:
             raise CrdsBadReferenceError(msg)
 
+
 # ============================================================================
+
 
 def check_observatory(observatory):
     """Make sure `observatory` is valid."""
     assert observatory in ALL_OBSERVATORIES
+
 
 def check_parameters(header):
     """Make sure dict-like `header` is a mapping from strings to simple types.
@@ -301,35 +364,47 @@ def check_parameters(header):
     header = dict(header)
     keys = list(header.keys())
     for key in keys:
-        assert isinstance(key, str), \
-            "Non-string key " + repr(key) + " in parameters."
+        assert isinstance(key, str), "Non-string key " + repr(key) + " in parameters."
         try:
             header[key]
         except Exception as exc:
-            raise ValueError("Can't fetch mapping key", repr(key),
-                             "from parameters:", repr(str(exc))) from exc
+            raise ValueError(
+                "Can't fetch mapping key", repr(key), "from parameters:", repr(str(exc))
+            ) from exc
         if not isinstance(header[key], (str, float, int, bool)):
-            log.verbose_warning("Parameter " + repr(key) + " isn't a string, float, int, or bool.   Dropping.", verbosity=90)
+            log.verbose_warning(
+                "Parameter "
+                + repr(key)
+                + " isn't a string, float, int, or bool.   Dropping.",
+                verbosity=90,
+            )
             del header[key]
     return header
 
+
 def check_reftypes(reftypes):
     """Make sure reftypes is a sequence of string identifiers."""
-    assert isinstance(reftypes, (list, tuple, type(None))), \
-        "reftypes must be a list or tuple of strings, or sub-class of those."
+    assert isinstance(
+        reftypes, (list, tuple, type(None))
+    ), "reftypes must be a list or tuple of strings, or sub-class of those."
     if reftypes is not None:
         for reftype in reftypes:
-            assert isinstance(reftype, str), \
-                "each reftype must be a string, .e.g. biasfile or darkfile."
+            assert isinstance(
+                reftype, str
+            ), "each reftype must be a string, .e.g. biasfile or darkfile."
+
 
 def check_context(context):
     """Make sure `context` is a pipeline or instrument mapping."""
     if context is None:
         return
-    assert config.is_mapping_spec(context), \
-                "context should specify a pipeline or instrument mapping, .e.g. hst_0023.pmap,  or a date based spec, e.g. hst-2018-01-21T12:32:05"
+    assert config.is_mapping_spec(
+        context
+    ), "context should specify a pipeline or instrument mapping, .e.g. hst_0023.pmap,  or a date based spec, e.g. hst-2018-01-21T12:32:05"
+
 
 # ============================================================================
+
 
 def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
     """Perform bestref computations locally,  contacting the network only to
@@ -351,11 +426,12 @@ def local_bestrefs(parameters, reftypes, context, ignore_cache=False):
             api.dump_mappings(context, ignore_cache=ignore_cache)
         except CrdsError as exc:
             traceback.print_exc()
-            raise CrdsDownloadError(
-                "Failed caching mapping files:", str(exc)) from exc
+            raise CrdsDownloadError("Failed caching mapping files:", str(exc)) from exc
         return hv_best_references(context, parameters, reftypes)
 
+
 # =============================================================================
+
 
 def hv_best_references(context_file, header, include=None, condition=True):
     """Compute the best references for `header` for the given CRDS
@@ -375,12 +451,14 @@ def hv_best_references(context_file, header, include=None, condition=True):
     log.verbose("Bestrefs header:\n", log.PP(minheader))
     return ctx.get_best_references(minheader, include=include)
 
+
 # ============================================================================
 
 # !!!!! interface to jwst.stpipe.crds_client
 
 # Because get_processing_mode is a cached function,  it's results will not
 # change after the first call without some special action.
+
 
 @utils.cached
 def get_processing_mode(observatory, context=None):
@@ -392,6 +470,7 @@ def get_processing_mode(observatory, context=None):
     final_context = get_final_context(info, context)
 
     return info.effective_mode, final_context
+
 
 @utils.cached
 def get_context_name(observatory, context=None):
@@ -407,6 +486,7 @@ def get_context_name(observatory, context=None):
     """
     return get_processing_mode(observatory, context)[1]
 
+
 def get_final_context(info, context):
     """Based on env CRDS_CONTEXT, the `context` parameter, and the server's reported,
     cached, or defaulted `operational_context`,  choose the pipeline mapping which
@@ -417,18 +497,31 @@ def get_final_context(info, context):
     env_context = config.get_crds_env_context()
     if context:  # context parameter trumps all, <observatory>-operational is default
         input_context = context
-        log.verbose("Using reference file selection rules", srepr(input_context), "defined by caller.")
+        log.verbose(
+            "Using reference file selection rules",
+            srepr(input_context),
+            "defined by caller.",
+        )
         info.status = "context parameter"
     elif env_context:
         input_context = env_context
-        log.verbose("Using reference file selection rules", srepr(input_context),
-                    "defined by environment CRDS_CONTEXT.")
+        log.verbose(
+            "Using reference file selection rules",
+            srepr(input_context),
+            "defined by environment CRDS_CONTEXT.",
+        )
         info.status = "env var CRDS_CONTEXT"
     else:
         input_context = str(info.operational_context)
-        log.verbose("Using reference file selection rules", srepr(input_context), "defined by", info.status + ".")
+        log.verbose(
+            "Using reference file selection rules",
+            srepr(input_context),
+            "defined by",
+            info.status + ".",
+        )
     final_context = translate_date_based_context(input_context, info.observatory)
     return final_context
+
 
 def translate_date_based_context(context, observatory=None):
     """Check to see if `input_context` is based upon date rather than a context filename.  If it's
@@ -443,7 +536,9 @@ def translate_date_based_context(context, observatory=None):
             if context.startswith(observatory):
                 break
         else:
-            raise CrdsError("Cannot determine observatory to translate mapping '{}'".format(context))
+            raise CrdsError(
+                "Cannot determine observatory to translate mapping '{}'".format(context)
+            )
 
     info = get_config_info(observatory)
 
@@ -455,20 +550,35 @@ def translate_date_based_context(context, observatory=None):
         return info["versions_context"]
 
     if not info.connected:
-        raise CrdsError("Specified CRDS context by date '{}' and CRDS server is not reachable.".format(context))
+        raise CrdsError(
+            "Specified CRDS context by date '{}' and CRDS server is not reachable.".format(
+                context
+            )
+        )
     try:
         translated = api.get_context_by_date(context, observatory=info.observatory)
     except Exception as exc:
-        log.error("Failed to translate date based context", repr(context), ":", str(exc))
+        log.error(
+            "Failed to translate date based context", repr(context), ":", str(exc)
+        )
         raise
 
-    log.verbose("Date based context spec", repr(context), "translates to", repr(translated) + ".", verbosity=80)
+    log.verbose(
+        "Date based context spec",
+        repr(context),
+        "translates to",
+        repr(translated) + ".",
+        verbosity=80,
+    )
     return translated
+
 
 # ============================================================================
 
+
 class ConfigInfo(utils.Struct):
     """Encapsulate CRDS cache config info."""
+
     def __init__(self, *args, **keys):
         self.status = None
         self.connected = None
@@ -490,14 +600,27 @@ class ConfigInfo(utils.Struct):
         """
         mode = config.get_crds_processing_mode()  # local, remote, auto
         if mode == "auto":
-            eff_mode = "remote" if (self.connected and hasattr(self, "force_remote_mode") and self.force_remote_mode) else "local"
+            eff_mode = (
+                "remote"
+                if (
+                    self.connected
+                    and hasattr(self, "force_remote_mode")
+                    and self.force_remote_mode
+                )
+                else "local"
+            )
         else:
-            eff_mode = mode   # explicitly local or remote
+            eff_mode = mode  # explicitly local or remote
             if eff_mode == "remote" and not self.connected:
-                raise CrdsError("Can't compute 'remote' best references while off-line.  Set CRDS_MODE to 'local' or 'auto'.")
+                raise CrdsError(
+                    "Can't compute 'remote' best references while off-line.  Set CRDS_MODE to 'local' or 'auto'."
+                )
             if eff_mode == "local" and self.force_remote_mode:
-                log.warning("Computing bestrefs locally with obsolete client.   Recommended references may be sub-optimal.")
+                log.warning(
+                    "Computing bestrefs locally with obsolete client.   Recommended references may be sub-optimal."
+                )
         return eff_mode
+
 
 @utils.cached
 def get_config_info(observatory):
@@ -512,29 +635,46 @@ def get_config_info(observatory):
     try:
         info = ConfigInfo(api.get_server_info())
         if info.effective_mode != "remote":
-            if not config.writable_cache_or_verbose("Using cached configuration and default context."):
+            if not config.writable_cache_or_verbose(
+                "Using cached configuration and default context."
+            ):
                 info = load_server_info(observatory)
                 info.status = "cache"
                 info.connected = True
-                log.verbose("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
+                log.verbose(
+                    "Using CACHED CRDS reference assignment rules last updated on",
+                    repr(info.last_synced),
+                )
     except CrdsError as exc:
         if "serverless" not in api.get_crds_server():
-            log.verbose_warning("Couldn't contact CRDS server:", srepr(api.get_crds_server()), ":", str(exc))
+            log.verbose_warning(
+                "Couldn't contact CRDS server:",
+                srepr(api.get_crds_server()),
+                ":",
+                str(exc),
+            )
         info = load_server_info(observatory)
         info.status = "cache"
         info.connected = False
-        log.verbose("Using CACHED CRDS reference assignment rules last updated on", repr(info.last_synced))
+        log.verbose(
+            "Using CACHED CRDS reference assignment rules last updated on",
+            repr(info.last_synced),
+        )
     if info.observatory != observatory:
         raise CrdsConfigError(
-            "CRDS server at", repr(api.get_crds_server()),
-            "is inconsistent with observatory", repr(observatory) + ".",
+            "CRDS server at",
+            repr(api.get_crds_server()),
+            "is inconsistent with observatory",
+            repr(observatory) + ".",
             "You may be configured for the wrong project.  "
             "Check CRDS_SERVER_URL and CRDS_OBSERVATORY "
             "environment settings.  See https://jwst-crds.stsci.edu/docs/cmdline_bestrefs/ (JWST) "
-            "or https://hst-crds.stsci.edu/docs/cmdline_bestrefs/ (HST) for information on configuring CRDS.")
+            "or https://hst-crds.stsci.edu/docs/cmdline_bestrefs/ (HST) for information on configuring CRDS.",
+        )
     return info
 
-@utils.cached # effectively a "once" directive
+
+@utils.cached  # effectively a "once" directive
 def update_config_info(observatory):
     """Write out any server update to the CRDS configuration information.
     Skip the update if: not connected to server, readonly cache, write protected config files.
@@ -542,10 +682,16 @@ def update_config_info(observatory):
     if config.writable_cache_or_verbose("skipping config update."):
         info = get_config_info(observatory)
         if info.connected and info.effective_mode == "local":
-            log.verbose("Connected to server and computing locally, updating CRDS cache config and operational context.")
+            log.verbose(
+                "Connected to server and computing locally, updating CRDS cache config and operational context."
+            )
             cache_server_info(info, observatory)  # save locally
         else:
-            log.verbose("Not connected to CRDS server or operating in 'remote' mode,  skipping cache config update.", verbosity=65)
+            log.verbose(
+                "Not connected to CRDS server or operating in 'remote' mode,  skipping cache config update.",
+                verbosity=65,
+            )
+
 
 def cache_server_info(info, observatory):
     """Write down the server `info` dictionary to help configure off-line use."""
@@ -557,6 +703,7 @@ def cache_server_info(info, observatory):
     bad_files_lines = "\n".join(info.bad_files_list)
     bad_files_path = os.path.join(path, "bad_files.txt")
     cache_atomic_write(bad_files_path, bad_files_lines, "BAD FILES LIST")
+
 
 def cache_atomic_write(replace_path, contents, fail_warning):
     """Write string `contents` to cache file `replace_path` as an atomic action,
@@ -579,16 +726,27 @@ def cache_atomic_write(replace_path, contents, fail_warning):
                 file_.write(contents)
             os.rename(temp_path, replace_path)
         except Exception as exc:
-            log.verbose_warning("CACHE Failed writing", repr(replace_path),
-                                ":", fail_warning, ":", repr(exc))
+            log.verbose_warning(
+                "CACHE Failed writing",
+                repr(replace_path),
+                ":",
+                fail_warning,
+                ":",
+                repr(exc),
+            )
     else:
-        log.verbose("CACHE Skipped update of readonly", repr(replace_path), ":", fail_warning)
+        log.verbose(
+            "CACHE Skipped update of readonly", repr(replace_path), ":", fail_warning
+        )
+
 
 def load_server_info(observatory):
     """Return last connected server status to help configure off-line use."""
-    with log.fatal_error_on_exception("CRDS server connection and cache load FAILED.  Cannot continue.\n"
-                         " See https://hst-crds.stsci.edu/docs/cmdline_bestrefs/ or https://jwst-crds.stsci.edu/docs/cmdline_bestrefs/\n"
-                         " for more information on configuring CRDS,  particularly CRDS_PATH and CRDS_SERVER_URL."):
+    with log.fatal_error_on_exception(
+        "CRDS server connection and cache load FAILED.  Cannot continue.\n"
+        " See https://hst-crds.stsci.edu/docs/cmdline_bestrefs/ or https://jwst-crds.stsci.edu/docs/cmdline_bestrefs/\n"
+        " for more information on configuring CRDS,  particularly CRDS_PATH and CRDS_SERVER_URL."
+    ):
         server_config = config.get_uri("server_config")
         if server_config == "none":
             server_config = config.locate_config("server_config", observatory)
@@ -597,13 +755,16 @@ def load_server_info(observatory):
         info.status = "cache"
         return info
 
+
 # XXXX Careful with version string length here, FITS has a 68 char limit which degrades to CONTINUE records
 # XXXX which cause problems for other systems.
 def version_info():
     """Return CRDS checkout URL and revision,  client side."""
     import crds
+
     try:
         from . import git_version
+
         branch = revision = "none"
         for line in git_version.__full_version_info__.strip().split("\n"):
             if line.startswith("branch:"):
@@ -613,6 +774,7 @@ def version_info():
         return crds.__version__ + ", " + branch + ", " + revision
     except Exception:
         return "unknown"
+
 
 @utils.cached
 def get_context_parkeys(context, instrument):
@@ -626,10 +788,11 @@ def get_context_parkeys(context, instrument):
         parkeys = get_symbolic_mapping(context).get_required_parkeys()
     except Exception:
         parkeys = api.get_required_parkeys(context)
-    if isinstance(parkeys, (list,tuple)):
+    if isinstance(parkeys, (list, tuple)):
         return list(parkeys)
     else:
         return list(parkeys[instrument])
+
 
 # ============================================================================
 def list_mappings(observatory, glob_pattern):
@@ -637,10 +800,14 @@ def list_mappings(observatory, glob_pattern):
     mappings list given in server_info api rather than separate rpc call.
     """
     info = get_config_info(observatory)
-    return sorted([mapping for mapping in info.mappings if fnmatch.fnmatch(mapping, glob_pattern)])
+    return sorted(
+        [mapping for mapping in info.mappings if fnmatch.fnmatch(mapping, glob_pattern)]
+    )
+
 
 def get_symbolic_mapping(
-    mapping, observatory=None, cached=True, use_pickles=None, save_pickles=None, **keys):
+    mapping, observatory=None, cached=True, use_pickles=None, save_pickles=None, **keys
+):
     """Return a loaded mapping object,  first translating any date based or
     named contexts into a more primitive serial number only mapping name.
 
@@ -667,19 +834,28 @@ def get_symbolic_mapping(
     to interpret the symbolic name into a primitive name.
     """
     abs_mapping = translate_date_based_context(mapping, observatory)
-    return get_pickled_mapping(   # reviewed
-        abs_mapping, cached=cached, use_pickles=use_pickles, save_pickles=save_pickles, **keys)
+    return get_pickled_mapping(  # reviewed
+        abs_mapping,
+        cached=cached,
+        use_pickles=use_pickles,
+        save_pickles=save_pickles,
+        **keys
+    )
 
 
 # ============================================================================
 
-@utils.cached   # check callers for .uncached before removing.
-def get_pickled_mapping(mapping, cached=True, use_pickles=None, save_pickles=None, **keys):
+
+@utils.cached  # check callers for .uncached before removing.
+def get_pickled_mapping(
+    mapping, cached=True, use_pickles=None, save_pickles=None, **keys
+):
     """Load CRDS mapping from a context pickle if possible, nominally as a file
     system optimization to prevent 100+ file reads.
     """
-    assert config.is_mapping(mapping) or isinstance(mapping, rmap.Mapping), \
-        "`mapping` must be a literal CRDS mapping name, not a date-based context specification."
+    assert config.is_mapping(mapping) or isinstance(
+        mapping, rmap.Mapping
+    ), "`mapping` must be a literal CRDS mapping name, not a date-based context specification."
     if use_pickles is None:
         use_pickles = config.USE_PICKLED_CONTEXTS
     if save_pickles is None:
@@ -694,6 +870,7 @@ def get_pickled_mapping(mapping, cached=True, use_pickles=None, save_pickles=Non
     else:
         loaded = rmap.asmapping(mapping, cached=cached, **keys)
     return loaded
+
 
 def load_pickled_mapping(mapping):
     """Load the pickle for `mapping` where `mapping` is canonically named and
@@ -711,26 +888,38 @@ def load_pickled_mapping(mapping):
     log.info("Loaded pickled context", repr(mapping))
     return loaded
 
+
 def save_pickled_mapping(mapping, loaded):
     """Save live mapping `loaded` as a pickle under named based on `mapping` name."""
     pickle_file = config.locate_pickle(mapping)
     if not utils.is_writable(pickle_file):  # Don't even bother pickling
-        log.verbose("Pickle file", repr(pickle_file), "is not writable,  skipping pickle save.")
+        log.verbose(
+            "Pickle file", repr(pickle_file), "is not writable,  skipping pickle save."
+        )
         return
-    with log.verbose_warning_on_exception("Failed saving pickle for", repr(mapping), "to", repr(pickle_file)):
+    with log.verbose_warning_on_exception(
+        "Failed saving pickle for", repr(mapping), "to", repr(pickle_file)
+    ):
         loaded.force_load()
         pickled = pickle.dumps(loaded)
         cache_atomic_write(pickle_file, pickled, "CONTEXT PICKLE")
         log.info("Saved pickled context", repr(pickle_file))
 
+
 def remove_pickled_mapping(mapping):
     """Delete the pickle for `mapping` from the CRDS cache."""
     pickle_file = config.locate_pickle(mapping)
     if not utils.is_writable(pickle_file):  # Don't even bother pickling
-        log.verbose("Pickle file", repr(pickle_file), "is not writable,  skipping pickle remove.")
+        log.verbose(
+            "Pickle file",
+            repr(pickle_file),
+            "is not writable,  skipping pickle remove.",
+        )
         return
     if not os.path.exists(pickle_file):
-        log.verbose("Pickl file", repr(pickle_file), "does not exist,  skipping pickle remove.")
+        log.verbose(
+            "Pickl file", repr(pickle_file), "does not exist,  skipping pickle remove."
+        )
         return
     with log.warn_on_exception("Failed removing pickle for", repr(mapping)):
         os.remove(pickle_file)

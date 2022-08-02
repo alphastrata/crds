@@ -11,6 +11,7 @@ from collections.abc import MutableMapping
 
 # =============================================================================
 
+
 class TransformedDict(MutableMapping):
 
     """A dictionary that applies an arbitrary key and value altering functions
@@ -22,7 +23,7 @@ class TransformedDict(MutableMapping):
         self.update(dict(initializer))
 
     def __getstate__(self):
-        return dict(_contents = self._contents)
+        return dict(_contents=self._contents)
 
     def __setstate__(self, state):
         self._contents = state["_contents"]
@@ -64,7 +65,9 @@ class TransformedDict(MutableMapping):
         """
         return self.__class__.__name__ + "({})".format(sorted(list(self.items())))
 
+
 # =============================================================================
+
 
 class LazyFileDict(TransformedDict):
     """Instantiates a graph of inter-referencing files (like CRDS Mappings) on
@@ -81,14 +84,16 @@ class LazyFileDict(TransformedDict):
     and kept as literals,  e.g. N/A
     """
 
-    special_values_set = set()   # Override in sub-classes as needed
+    special_values_set = set()  # Override in sub-classes as needed
 
     def __init__(self, selector, load_keys):
         assert "loader" in load_keys
         self._xx_load_keys = load_keys
         self._xx_selector = {}
         super(LazyFileDict, self).__init__()
-        self._xx_selector = {self.transform_key(key): value for (key, value) in dict(selector).items()}
+        self._xx_selector = {
+            self.transform_key(key): value for (key, value) in dict(selector).items()
+        }
 
     def clear(self):
         """Drop all loaded selections reverting to pre-demand-loaded state."""
@@ -97,10 +102,10 @@ class LazyFileDict(TransformedDict):
     def __getstate__(self):
         """Drop dictionary attributes which correspond to loaded/cached members."""
         return dict(
-            _xx_load_keys = self._xx_load_keys,
-            _xx_selector = self._xx_selector,
-            _xx_superclass = super(LazyFileDict, self).__getstate__()
-            )
+            _xx_load_keys=self._xx_load_keys,
+            _xx_selector=self._xx_selector,
+            _xx_superclass=super(LazyFileDict, self).__getstate__(),
+        )
 
     def __setstate__(self, state):
         """Drop dictionary attributes which correspond to loaded/cached members."""
@@ -124,7 +129,9 @@ class LazyFileDict(TransformedDict):
                 if self.is_special_value(self._xx_selector[name]):
                     val = self._xx_selector[name]
                 else:
-                    val = self._xx_load_keys["loader"](self._xx_selector[name], **self._xx_load_keys)
+                    val = self._xx_load_keys["loader"](
+                        self._xx_selector[name], **self._xx_load_keys
+                    )
                 super(LazyFileDict, self).__setitem__(name, val)
             return val
         else:
@@ -157,14 +164,26 @@ class LazyFileDict(TransformedDict):
 
         NOTE:  Does not require full load.
         """
-        return sorted([key for key in self.keys() if not self.is_special_value(self._xx_selector[key])])
+        return sorted(
+            [
+                key
+                for key in self.keys()
+                if not self.is_special_value(self._xx_selector[key])
+            ]
+        )
 
     def special_keys(self):
         """Each of these keys has a corresponding values which IS special.
 
         NOTE:  Does not require full load.
         """
-        return sorted([key for key in self.keys() if self.is_special_value(self._xx_selector[key]) ])
+        return sorted(
+            [
+                key
+                for key in self.keys()
+                if self.is_special_value(self._xx_selector[key])
+            ]
+        )
 
     def values(self):
         """Return all the values of this LazyFileDict,  implicitly loading them all.
@@ -208,5 +227,11 @@ class LazyFileDict(TransformedDict):
 
     def __repr__(self):
         """Override __repr__ to prevent forced load of all selector items just for __repr__."""
-        return self.__class__.__name__ + "(" + repr(sorted(self._xx_selector.items())) + \
-            ", " + repr(sorted(self._xx_load_keys.items())) + ")"
+        return (
+            self.__class__.__name__
+            + "("
+            + repr(sorted(self._xx_selector.items()))
+            + ", "
+            + repr(sorted(self._xx_load_keys.items()))
+            + ")"
+        )

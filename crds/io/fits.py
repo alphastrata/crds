@@ -1,8 +1,8 @@
-'''
+"""
 Created on Feb 15, 2017
 
 @author: jmiller
-'''
+"""
 import re
 
 # ============================================================================
@@ -24,6 +24,7 @@ from .abstract import AbstractFile, hijack_warnings
 
 # ============================================================================
 
+
 @hijack_warnings
 def fits_open_trapped(filename, **keys):
     """Same as fits_open but with some astropy and JWST DM warnings hijacked by CRDS.
@@ -31,6 +32,7 @@ def fits_open_trapped(filename, **keys):
     checksums although technically they are driven by CRDS_FITS_VERIFY_CHECKSUM.
     """
     return fits_open(filename, **keys)
+
 
 @contextlib.contextmanager
 @utils.gc_collected
@@ -55,7 +57,10 @@ def fits_open(filename, **keys):
         if handle is not None:
             handle.close()
 
-def get_fits_header_union(filepath, needed_keys=(), original_name=None, observatory=None, **keys):
+
+def get_fits_header_union(
+    filepath, needed_keys=(), original_name=None, observatory=None, **keys
+):
     """Get the union of keywords from all header extensions of FITS
     file `fname`.  In the case of collisions, keep the first value
     found as extensions are loaded in numerical order.
@@ -67,7 +72,9 @@ def get_fits_header_union(filepath, needed_keys=(), original_name=None, observat
     log.verbose("Header of", repr(filepath), "=", log.PP(header), verbosity=90)
     return header
 
+
 # ============================================================================
+
 
 class FitsFile(AbstractFile):
 
@@ -141,8 +148,7 @@ class FitsFile(AbstractFile):
                     if hdu.name == index[0] and hdu.ver == index[1]:
                         return i
                 else:
-                    raise ValueError(
-                        "Unrecognized HDU index format: " + str(index))
+                    raise ValueError("Unrecognized HDU index format: " + str(index))
             raise ValueError("Can't find HDU: " + str(index))
 
     def get_array(self, array_name):
@@ -162,7 +168,7 @@ class FitsFile(AbstractFile):
         with fits_open(self.filepath, **keys) as hdulist:
             for hdu in hdulist:
                 for card in hdu.header.cards:
-                    card.verify('fix')
+                    card.verify("fix")
                     key, value = card.keyword, str(card.value)
                     if not key:
                         continue
@@ -176,27 +182,29 @@ class FitsFile(AbstractFile):
                 array_name = self._array_name_to_hdu_index(array_name)
                 hdu = hdulist[array_name[1]]
             except Exception:
-                return 'UNDEFINED'
+                return "UNDEFINED"
             generic_class = {
-                "IMAGEHDU" : "IMAGE",
-                "BINTABLEHDU" : "TABLE",
+                "IMAGEHDU": "IMAGE",
+                "BINTABLEHDU": "TABLE",
             }.get(hdu.__class__.__name__.upper(), "UNKNOWN")
-            if generic_class in ["IMAGE","UNKNOWN"]:
+            if generic_class in ["IMAGE", "UNKNOWN"]:
                 typespec = hdu.data.dtype.name
                 column_names = None
-            else: # TABLE
+            else:  # TABLE
                 dtype = hdu.data.dtype
-                typespec = {name.upper():str(dtype.fields[name][0]) for name in dtype.names}
+                typespec = {
+                    name.upper(): str(dtype.fields[name][0]) for name in dtype.names
+                }
                 column_names = [name.upper() for name in hdu.data.dtype.names]
             return utils.Struct(
-                        SHAPE = hdu.data.shape,
-                        KIND = generic_class,
-                        DATA_TYPE = typespec,
-                        COLUMN_NAMES = column_names,
-                        NAME = array_name[0],
-                        EXTENSION = array_name[1],
-                        DATA = hdu.data if (keytype == "D") else None
-                    )
+                SHAPE=hdu.data.shape,
+                KIND=generic_class,
+                DATA_TYPE=typespec,
+                COLUMN_NAMES=column_names,
+                NAME=array_name[0],
+                EXTENSION=array_name[1],
+                DATA=hdu.data if (keytype == "D") else None,
+            )
 
     # ----------------------------------------------------------------------------------------------
 
@@ -223,9 +231,11 @@ class FitsFile(AbstractFile):
     def remove_checksum(self):
         """Remove checksums from `filepath`."""
         output = "crds-" + str(uuid.uuid4()) + ".fits"
-        with fits_open(self.filepath, checksum=False, do_not_scale_image_data=True) as hdus:
+        with fits_open(
+            self.filepath, checksum=False, do_not_scale_image_data=True
+        ) as hdus:
             for hdu in hdus:
-                hdu.header.pop("CHECKSUM",None)
+                hdu.header.pop("CHECKSUM", None)
                 hdu.header.pop("DATASUM", None)
                 data = hdu.data if hdu.data is not None else np.array([])
                 fits.append(output, data, hdu.header, checksum=False)
@@ -235,7 +245,9 @@ class FitsFile(AbstractFile):
     @hijack_warnings
     def verify_checksum(self):
         """Verify checksums in `filepath`."""
-        with fits.open(self.filepath, do_not_scale_image_data=True, checksum=True) as hdus:
+        with fits.open(
+            self.filepath, do_not_scale_image_data=True, checksum=True
+        ) as hdus:
             for hdu in hdus:
                 hdu.verify("warn")
 
@@ -251,14 +263,18 @@ class FitsFile(AbstractFile):
                 return None
             else:
                 import asdf
+
                 buff = io.BytesIO(asdf_hdu.data)
                 with asdf.open(buff) as handle:
                     return str(handle.version)
 
+
 def test():
     from crds.io import fits
     import doctest
+
     return doctest.testmod(fits)
+
 
 if __name__ == "__main__":
     print(test())

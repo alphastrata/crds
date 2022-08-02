@@ -17,6 +17,7 @@ from nose.tools import assert_raises, assert_true
 
 HERE = os.path.dirname(__file__) or "."
 
+
 def dt_disabled_uses_finaall_mappings_using_reference():
     """
     >>> old_state = test_config.setup()
@@ -37,6 +38,7 @@ def dt_disabled_uses_finaall_mappings_using_reference():
 
     >>> test_config.cleanup(old_state)
     """
+
 
 def dt_disabled_uses_rmaps():
     """
@@ -69,6 +71,7 @@ def dt_disabled_uses_rmaps():
     >>> test_config.cleanup(old_state)
     """
 
+
 def dt_disabled_uses_imap():
     """
     >>> old_state = test_config.setup()
@@ -82,13 +85,15 @@ def dt_disabled_uses_imap():
     >>> test_config.cleanup(old_state)
     """
 
+
 class TestUses(test_config.CRDSTestCase):
-    '''
+    """
     def test_get_imap_except(self):
         r = rmap.get_cached_mapping("hst.pmap")
         with self.assertRaises(exceptions.CrdsUnknownInstrumentError):
             r.get_imap("foo")
-    '''
+    """
+
 
 # ==================================================================================
 
@@ -97,11 +102,14 @@ def tst():
     """Run module tests,  for now just doctests only."""
 
     import unittest
+
     suite = unittest.TestLoader().loadTestsFromTestCase(TestUses)
     unittest.TextTestRunner().run(suite)
 
     from crds.tests import test_uses, tstmod
+
     return tstmod(test_uses)
+
 
 if __name__ == "__main__":
     print(tst())

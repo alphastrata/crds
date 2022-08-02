@@ -1,15 +1,23 @@
 """Master ACS hooks module,  importer of versioned hooks."""
 
 from .acs_v1 import precondition_header_acs_biasfile_v1  # , acs_biasfile_filter
-from .acs_v2 import precondition_header_acs_biasfile_v2, fallback_header_acs_biasfile_v2 # , acs_biasfile_filter, acs_darkfile_filter
-from .acs_v3 import precondition_header_acs_biasfile_v3, fallback_header_acs_biasfile_v3, acs_biasfile_filter, acs_darkfile_filter
+from .acs_v2 import (
+    precondition_header_acs_biasfile_v2,
+    fallback_header_acs_biasfile_v2,
+)  # , acs_biasfile_filter, acs_darkfile_filter
+from .acs_v3 import (
+    precondition_header_acs_biasfile_v3,
+    fallback_header_acs_biasfile_v3,
+    acs_biasfile_filter,
+    acs_darkfile_filter,
+)
 
 #
 # This section contains relevant code from cdbsquery.py and explanation,  such as it is.
 # cdbsquery.py was/is part of CDBS.  This module is about capturing those quirks in different
 # ways for CRDS.
 #
-'''
+"""
 This is special case code which CDBS implements in cdbsquery.py
 (see crds/hst/cdbs/cdbs_bestrefs/cdbsquery.py or get the latest from Mike Swam / OPUS)
 
@@ -234,4 +242,4 @@ on nested selectors.
                  str(aSource._keywords[k._field][0]) + " ")
     #
     return querytxt
-'''
+"""

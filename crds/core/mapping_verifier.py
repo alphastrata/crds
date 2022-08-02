@@ -11,8 +11,10 @@ from . import selectors
 
 # ===================================================================
 
+
 class AstDumper(ast.NodeVisitor):
     """Debug class for dumping out rmap ASTs."""
+
     def visit(self, node):
         print(ast.dump(node), "\n")
         ast.NodeVisitor.visit(self, node)
@@ -24,6 +26,7 @@ class AstDumper(ast.NodeVisitor):
 
     visit_Assign = dump
     visit_Call = dump
+
 
 ILLEGAL_NODES = {
     "visit_FunctionDef",
@@ -58,54 +61,56 @@ ILLEGAL_NODES = {
     "visit_Repr",
     "visit_AugLoad",
     "visit_AugStore",
-    }
+}
 
 LEGAL_NODES = {
-    'visit_Module',
-    'visit_Name',
-    'visit_Str',
-    'visit_Load',
-    'visit_Store',
-    'visit_Tuple',
-    'visit_List',
-    'visit_Dict',
-    'visit_Num',
-    'visit_Expr',
-    'visit_And',
-    'visit_Or',
-    'visit_In',
-    'visit_Eq',
-    'visit_NotIn',
-    'visit_NotEq',
-    'visit_Gt',
-    'visit_GtE',
-    'visit_Lt',
-    'visit_LtE',
-    'visit_Compare',
-    'visit_IfExp',
-    'visit_BoolOp',
-    'visit_BinOp',
-    'visit_UnaryOp',
-    'visit_Not',
-    'visit_NameConstant',
-    'visit_USub',
-    'visit_Constant',
+    "visit_Module",
+    "visit_Name",
+    "visit_Str",
+    "visit_Load",
+    "visit_Store",
+    "visit_Tuple",
+    "visit_List",
+    "visit_Dict",
+    "visit_Num",
+    "visit_Expr",
+    "visit_And",
+    "visit_Or",
+    "visit_In",
+    "visit_Eq",
+    "visit_NotIn",
+    "visit_NotEq",
+    "visit_Gt",
+    "visit_GtE",
+    "visit_Lt",
+    "visit_LtE",
+    "visit_Compare",
+    "visit_IfExp",
+    "visit_BoolOp",
+    "visit_BinOp",
+    "visit_UnaryOp",
+    "visit_Not",
+    "visit_NameConstant",
+    "visit_USub",
+    "visit_Constant",
 }
 
 CUSTOMIZED_NODES = {
-    'visit_Call',
-    'visit_Assign',
-    'visit_Illegal',
-    'visit_Unknown',
+    "visit_Call",
+    "visit_Assign",
+    "visit_Illegal",
+    "visit_Unknown",
 }
 
 ALL_CATEGORIZED_NODES = set.union(ILLEGAL_NODES, LEGAL_NODES, CUSTOMIZED_NODES)
+
 
 class MappingVerifier(ast.NodeVisitor):
     """MappingVerifier visits the parse tree of a CRDS mapping file and
     raises exceptions for invalid constructs.   MappingVerifier is concerned
     with limiting rmaps to safe code,  not deep semantic checks.
     """
+
     def __init__(self, *args, **keys):
         super(MappingVerifier, self).__init__(*args, **keys)
 
@@ -146,33 +151,51 @@ class MappingVerifier(ast.NodeVisitor):
 
     def visit_Illegal(self, node):
         """Handle explicitly forbidden node types."""
-        self.assert_(node, False, "Illegal statement or expression in mapping " + repr(node))
+        self.assert_(
+            node, False, "Illegal statement or expression in mapping " + repr(node)
+        )
 
     def visit_Unknown(self, node):
         """Handle new / unforseen node types."""
         self.assert_(node, False, "Unknown node type in mapping " + repr(node))
 
-#     def generic_visit(self, node):
-#         # print "generic_visit", repr(node)
-#         return super(MappingVerifier, self).generic_visit(node)
+    #     def generic_visit(self, node):
+    #         # print "generic_visit", repr(node)
+    #         return super(MappingVerifier, self).generic_visit(node)
 
     def visit_Assign(self, node):
         """Screen assignments to limit to a subset of legal assignments."""
-        self.assert_(node, len(node.targets) == 1,
-                     "Invalid 'header' or 'selector' definition")
-        self.assert_(node, isinstance(node.targets[0], ast.Name),
-                     "Invalid 'header' or 'selector' definition")
-        self.assert_(node, node.targets[0].id in ["header","selector","comment"],
-                     "Only define 'header' or 'selector' or 'comment' sections")
-        self.assert_(node, isinstance(node.value, (ast.Call, ast.Dict, ast.Str)),
-                     "Section value must be a selector call or dictionary or string")
+        self.assert_(
+            node, len(node.targets) == 1, "Invalid 'header' or 'selector' definition"
+        )
+        self.assert_(
+            node,
+            isinstance(node.targets[0], ast.Name),
+            "Invalid 'header' or 'selector' definition",
+        )
+        self.assert_(
+            node,
+            node.targets[0].id in ["header", "selector", "comment"],
+            "Only define 'header' or 'selector' or 'comment' sections",
+        )
+        self.assert_(
+            node,
+            isinstance(node.value, (ast.Call, ast.Dict, ast.Str)),
+            "Section value must be a selector call or dictionary or string",
+        )
         self.generic_visit(node)
 
     def visit_Call(self, node):
         """Screen calls to limit to a subset of legal calls."""
-        self.assert_(node, node.func.id in selectors.SELECTORS,
-                     "Selector " + repr(node.func.id) + " is not one of supported Selectors: " +
-                     repr(sorted(selectors.SELECTORS.keys())))
+        self.assert_(
+            node,
+            node.func.id in selectors.SELECTORS,
+            "Selector "
+            + repr(node.func.id)
+            + " is not one of supported Selectors: "
+            + repr(sorted(selectors.SELECTORS.keys())),
+        )
         self.generic_visit(node)
+
 
 MAPPING_VERIFIER = MappingVerifier()

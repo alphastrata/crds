@@ -37,6 +37,7 @@ class SynphotLookupGenerator:
     Given a derived-from context and a set of newly delivered synphot files,
     produce an updated lookup file.
     """
+
     def __init__(self, context):
         self._context = context
 
@@ -49,12 +50,16 @@ class SynphotLookupGenerator:
         # local time and not UTC.
         timestamp = datetime.datetime.today().strftime(_TIMESTAMP_FORMAT)
 
-        original_ref_path = utils.get_cache_path(self._context, reftype, error_on_missing=False)
+        original_ref_path = utils.get_cache_path(
+            self._context, reftype, error_on_missing=False
+        )
         if original_ref_path is None:
             return self._generate_hdul(reftype, delivered_files, timestamp)
         else:
             with data_file.fits_open(original_ref_path) as original_ref:
-                return self._generate_hdul(reftype, delivered_files, timestamp, original_ref=original_ref)
+                return self._generate_hdul(
+                    reftype, delivered_files, timestamp, original_ref=original_ref
+                )
 
     def _generate_hdul(self, reftype, delivered_files, timestamp, original_ref=None):
         if original_ref is not None:
@@ -74,7 +79,9 @@ class SynphotLookupGenerator:
         for file in delivered_files:
             with data_file.fits_open(file) as hdul:
                 component = hdul[0].header["COMPNAME"]
-                lookup_filename = utils.get_lookup_filename(component, os.path.basename(file))
+                lookup_filename = utils.get_lookup_filename(
+                    component, os.path.basename(file)
+                )
                 description = hdul[0].header.get("DESCRIP", "")
                 if component in new_compname:
                     idx = np.argwhere(new_compname == component)[0][0]
@@ -92,9 +99,15 @@ class SynphotLookupGenerator:
         ind = np.argsort(new_compname)
         columns = [
             fits.Column(name="TIME", format="A26", array=new_time[ind], disp="A26"),
-            fits.Column(name="COMPNAME", format="A18", array=new_compname[ind], disp="A18"),
-            fits.Column(name="FILENAME", format="A56", array=new_filename[ind], disp="A56"),
-            fits.Column(name="COMMENT", format="A68", array=new_comment[ind], disp="A68")
+            fits.Column(
+                name="COMPNAME", format="A18", array=new_compname[ind], disp="A18"
+            ),
+            fits.Column(
+                name="FILENAME", format="A56", array=new_filename[ind], disp="A56"
+            ),
+            fits.Column(
+                name="COMMENT", format="A68", array=new_comment[ind], disp="A68"
+            ),
         ]
 
         new_table_hdu = fits.BinTableHDU.from_columns(columns)
@@ -118,20 +131,28 @@ class SynphotLookupGenerator:
             header.add_history("Created on {}".format(timestamp))
 
         header.add_history(" ")
-        self._add_instrument_history(reftype, header, updated_instruments, created_instruments)
+        self._add_instrument_history(
+            reftype, header, updated_instruments, created_instruments
+        )
 
         return fits.HDUList([new_primary_hdu, new_table_hdu])
 
-    def _add_instrument_history(self, reftype, header, updated_instruments, created_instruments):
+    def _add_instrument_history(
+        self, reftype, header, updated_instruments, created_instruments
+    ):
         description = _HISTORY_DESCRIPTION_BY_REFTYPE[reftype]
 
         if len(updated_instruments) > 0:
             instrument_list = self._make_instrument_list(updated_instruments)
-            header.add_history("Updated {} tables for {}".format(description, instrument_list))
+            header.add_history(
+                "Updated {} tables for {}".format(description, instrument_list)
+            )
 
         if len(created_instruments) > 0:
             instrument_list = self._make_instrument_list(created_instruments)
-            header.add_history("Created {} tables for {}".format(description, instrument_list))
+            header.add_history(
+                "Created {} tables for {}".format(description, instrument_list)
+            )
 
     def _make_instrument_list(self, instruments):
         instruments = sorted([i.upper() for i in instruments])
@@ -146,7 +167,7 @@ class SynphotLookupGenerator:
         times = [self._parse_time(t) for t in table_hdu.data["TIME"]]
         return "INFLIGHT {} {}".format(
             min(times).strftime(_PEDIGREE_DATE_FORMAT),
-            max(times).strftime(_PEDIGREE_DATE_FORMAT)
+            max(times).strftime(_PEDIGREE_DATE_FORMAT),
         )
 
     def _parse_time(self, time):
