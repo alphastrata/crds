@@ -7,8 +7,7 @@ import warnings
 
 __rationale__ = "The __rationale__ variable is no longer maintained and will be removed in a future release."
 
-warnings.filterwarnings(
-    "ignore", ".*found in sys.modules after import of package.*")
+warnings.filterwarnings("ignore", ".*found in sys.modules after import of package.*")
 
 # ============================================================================
 
@@ -24,11 +23,11 @@ __all__ = [
     "locate_mapping",
     "locate_file",
     "get_default_context",
-    ]
+]
 
 # ============================================================================
 
-from .core import config   # module
+from .core import config  # module
 
 from .core.rmap import get_cached_mapping, asmapping
 from .core.config import locate_mapping, locate_file
@@ -50,7 +49,7 @@ from ._version import version as __version__
 
 # ============================================================================
 
-'''This code section supports moving modules from the root crds namespace into
+"""This code section supports moving modules from the root crds namespace into
 sub-packages while still supporting the original CRDS package external interface.
 This allows the code to be partitioned without changing external imports.  This
 is made more difficult by the inapplicability of namespace packages because this
@@ -60,14 +59,17 @@ The strategy employed here is to implement core packages normally in crds.core,
 then alias them into the top level crds namespace using importlib.import_module()
 and sys.modules to make it appear as if each core package has already been imported
 and belongs to the top level namespace.
-'''
+"""
+
+
 def _alias_subpackage_module(subpkg, modules):
     """Alias each module from `modules` of `subpkg` to appear in this
     namespace.
     """
     for module in modules:
-        globals()[module] = importlib.import_module(subpkg + "." + module)
-        sys.modules["crds." + module] = sys.modules[subpkg + "." + module]
+        globals()[module] = importlib.import_module(f"{subpkg}.{module}")
+        sys.modules[f"crds.{module}"] = sys.modules[f"{subpkg}.{module}"]
+
 
 _CORE_MODULES = [
     "pysh",
@@ -112,12 +114,11 @@ _alias_subpackage_module("crds.refactoring", _REFACTORING_MODULES)
 # e.g. python -m crds.uniqname now called as -m crds.refactoring.uniqname
 
 _MISC_MODULES = [
-    "datalvl",               # external interface with pipelines
-    "query_affected",        # external interface with pipelines
-    "uniqname",              # external interface with submitters
-
-    "check_archive",         # misc utility
-    "sql",                   # prototype convenience wrapper
+    "datalvl",  # external interface with pipelines
+    "query_affected",  # external interface with pipelines
+    "uniqname",  # external interface with submitters
+    "check_archive",  # misc utility
+    "sql",  # prototype convenience wrapper
 ]
 
 # e.g. make crds.rmap importable same as crds.core.rmap reorganized code

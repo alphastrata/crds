@@ -10,6 +10,7 @@ Current calibration code must be available in order to automatically
 regenerates since CRDS will inspect the installed .cfg files to determine Step
 configurations and required reference types.
 """
+
 import sys
 import re
 import fnmatch
@@ -33,7 +34,7 @@ from crds.core.log import srepr
 # ----------------------------------------------------------------------------------------------
 VERSION_RE_STR = r"(\d+\.\d+.\d+).*"
 
-CAL_VER = re.match(r"^" + VERSION_RE_STR, jwst_version).group(1)
+CAL_VER = re.match(f"^{VERSION_RE_STR}", jwst_version)[1]
 
 GENERATION_DATE = timestamp.now("T").split(".")[0]
 
@@ -41,10 +42,12 @@ REFERENCE_DIVIDER = "# vvvvvvvv GENERATED vvvvvvvv"
 
 # --------------------------------------------------------------------------------------
 
+
 class CrdsCfgGenerator:
     """Used to re-generate SYSTEM CRDSCFG reference files based on modified
     versions of previous reference files.
     """
+
     def __init__(self, input_yaml):
         self.input_yaml = input_yaml
         self.loaded_cfg = self.get_body()
@@ -53,10 +56,12 @@ class CrdsCfgGenerator:
         self.pipeline_cfgs_to_steps = {}
         self.steps_to_reftypes = {}
         self.generate_pipeline_info()
-        self.exptypes_to_cfgs = { exp_type : self.exptype_to_pipelines(exp_type)
-                                  for exp_type in self.exp_types }
-        self.exptypes_to_reftypes = { exp_type : self.exptype_to_reftypes(exp_type)
-                                      for exp_type in self.exp_types }
+        self.exptypes_to_cfgs = {
+            exp_type: self.exptype_to_pipelines(exp_type) for exp_type in self.exp_types
+        }
+        self.exptypes_to_reftypes = {
+            exp_type: self.exptype_to_reftypes(exp_type) for exp_type in self.exp_types
+        }
 
     def get_body(self):
         """Load the input_yaml as a CRDS Struct and return it."""
@@ -70,14 +75,19 @@ class CrdsCfgGenerator:
         for line in self.input_yaml.splitlines():
             line2 = line.strip()
             if line2.startswith("calibration_software_version:"):
-                input_body += ["    calibration_software_version: " + CAL_VER]
+                input_body += [f"    calibration_software_version: {CAL_VER}"]
             elif line2.startswith("generation_date:"):
-                input_body += ["    generation_date: " + GENERATION_DATE]
+                input_body += [f"    generation_date: {GENERATION_DATE}"]
             elif line2.startswith("crds_version:"):
-                input_body += ["    crds_version: " + crds.__version__]
+                input_body += [f"    crds_version: {crds.__version__}"]
             else:
                 input_body += [line]
-        return "\n".join(input_body).split(REFERENCE_DIVIDER)[0] + "\n" + REFERENCE_DIVIDER + "\n"
+        return (
+            "\n".join(input_body).split(REFERENCE_DIVIDER)[0]
+            + "\n"
+            + REFERENCE_DIVIDER
+            + "\n"
+        )
 
     def generate_pipeline_info(self):
         """Based on the input YAML and JWST cal code,  generate the mappings:
@@ -87,9 +97,9 @@ class CrdsCfgGenerator:
         pysh.sh("rm -rf configs")
         pysh.sh("collect_pipeline_cfgs configs")
         self.pipeline_cfgs_to_steps["skip_2b.cfg"] = []
+        cfgdir = "configs"
         for pipeline_cfg in self.loaded_cfg.pipeline_cfgs:
             log.info("Processing", repr(pipeline_cfg))
-            cfgdir = "configs" # os.path.dirname(pipepkg.__file__) or ""
             cfgpath = os.path.join(cfgdir, pipeline_cfg)
             p = Pipeline.from_config_file(cfgpath)
             steps_to_reftypes = {}
@@ -98,22 +108,34 @@ class CrdsCfgGenerator:
                     log.info("Considering", repr(name), "skip")
                 else:
                     log.info("Considering", repr(name), "keep")
-                    step = p.step_defs[name]  # class
+                    step = p.step_defs[name]
                     if isinstance(step.reference_file_types, list):
                         steps_to_reftypes[name] = step.reference_file_types
                     else:
-                        log.warning(repr(name), " is not a Step. Setting reference list to empty.")
+                        log.warning(
+                            repr(name),
+                            " is not a Step. Setting reference list to empty.",
+                        )
                         steps_to_reftypes[name] = []
-            self.pipeline_cfgs_to_steps[pipeline_cfg] = sorted(list(steps_to_reftypes.keys()))
+            self.pipeline_cfgs_to_steps[pipeline_cfg] = sorted(
+                list(steps_to_reftypes.keys())
+            )
+
             self.steps_to_reftypes.update(steps_to_reftypes)
 
     def generate_output_yaml(self):
         """Generate the SYSTEM CRDSCFG reference YAML."""
         output_yaml = self.get_updated_yaml()
-        output_yaml += yaml.dump({"pipeline_cfgs_to_steps" : self.pipeline_cfgs_to_steps}) + "\n"
-        output_yaml += yaml.dump({"steps_to_reftypes" : self.steps_to_reftypes}) + "\n"
-        output_yaml += yaml.dump({"exptypes_to_pipelines" : self.exptypes_to_cfgs}) + "\n"
-        output_yaml += yaml.dump({"exptypes_to_reftypes" : self.exptypes_to_reftypes}) + "\n"
+        output_yaml += (
+            yaml.dump({"pipeline_cfgs_to_steps": self.pipeline_cfgs_to_steps}) + "\n"
+        )
+        output_yaml += yaml.dump({"steps_to_reftypes": self.steps_to_reftypes}) + "\n"
+        output_yaml += (
+            yaml.dump({"exptypes_to_pipelines": self.exptypes_to_cfgs}) + "\n"
+        )
+        output_yaml += (
+            yaml.dump({"exptypes_to_reftypes": self.exptypes_to_reftypes}) + "\n"
+        )
         return output_yaml
 
     def __str__(self):
@@ -178,24 +200,36 @@ class CrdsCfgGenerator:
                     found = False
                     for exptype_pattern in exptypes:
                         if glob_match(exptype_pattern, exp_type):
-                            log.verbose("Adding exceptional types", more_reftypes,
-                                        "for step", srepr(step), "case", srepr(exptype_pattern),
-                                        "based on exp_type", srepr(exp_type))
+                            log.verbose(
+                                "Adding exceptional types",
+                                more_reftypes,
+                                "for step",
+                                srepr(step),
+                                "case",
+                                srepr(exptype_pattern),
+                                "based on exp_type",
+                                srepr(exp_type),
+                            )
                             found = True
                             reftypes.extend(more_reftypes)
                             break
                     if found:
                         break
                 else:
-                    raise exceptions.CrdsPipelineTypeDeterminationError("Unhandled EXP_TYPE for exceptional Step", srepr(step))
+                    raise exceptions.CrdsPipelineTypeDeterminationError(
+                        "Unhandled EXP_TYPE for exceptional Step", srepr(step)
+                    )
         return reftypes
 
+
 # --------------------------------------------------------------------------------------
+
 
 def glob_match(expr, value):
     """Convert the given glob `expr` to a regex and match it to `value`."""
     re_str = fnmatch.translate(expr)
     return re.match(re_str, value)
+
 
 # --------------------------------------------------------------------------------------
 
